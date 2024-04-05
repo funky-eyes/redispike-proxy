@@ -55,7 +55,7 @@ public class ServerTest {
     @Test
     public void testSetAsp() {
         try (Jedis jedis = new Jedis("127.0.0.1", 6789)) {
-            String result = jedis.set("a", "b");
+            String result = jedis.set("a", "1");
             Assertions.assertEquals(result, "OK");
         }
         Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, "a");

@@ -41,7 +41,7 @@ public class RedisCommandHandler implements CommandHandler {
             if (redisRequest instanceof SetRequest) {
                 SetRequest setRequest = (SetRequest)redisRequest;
                 Bin bin = new Bin(setRequest.getKey(), setRequest.getValue());
-                Key key = new Key("test1", AeroSpikeClientFactory.set, setRequest.getKey());
+                Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, setRequest.getKey());
                 client.add(client.getWritePolicyDefault(), key, bin);
                 setRequest.setResponse("OK".getBytes(StandardCharsets.UTF_8));
             }
