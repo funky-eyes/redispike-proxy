@@ -28,11 +28,15 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.redis2asp.factory.AeroSpikeClientFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
 
 public class ServerTest {
     static Server           server;
     static IAerospikeClient aspClient;
+
+    static Logger logger = LoggerFactory.getLogger(ServerTest.class);
 
     @BeforeAll
     public static void init() throws IOException, ParseException {
@@ -61,6 +65,7 @@ public class ServerTest {
         Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, "a");
         Record record = aspClient.get(aspClient.getReadPolicyDefault(), key);
         Map<String, Object> map = record.bins;
+        logger.info("map: {}", map);
         Assertions.assertTrue(map.containsValue("a"));
     }
 
