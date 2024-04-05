@@ -29,8 +29,6 @@ jobs:
       matrix:
         java: [ 8, 21 ]
     steps:
-      - name: Create test namespace
-        run: docker exec aerospike asadm -e "asinfo -v 'namespace/test'"
       - name: "Checkout"
         uses: actions/checkout@v3
       - name: "Set up Java JDK"
