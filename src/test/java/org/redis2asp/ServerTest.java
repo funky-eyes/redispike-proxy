@@ -16,52 +16,61 @@
  */
 package org.redis2asp;
 
-import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
-import com.github.microwww.redis.RedisServer;
+import com.aerospike.client.IAerospikeClient;
+import com.aerospike.client.Key;
+import com.aerospike.client.Record;
+import org.apache.commons.cli.ParseException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.redis2asp.factory.AeroSpikeClientFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
 
 public class ServerTest {
-    static RedisServer redisServer;
-    static Server server;
+    static Server           server;
+    static IAerospikeClient aspClient;
+
+    static Logger logger = LoggerFactory.getLogger(ServerTest.class);
 
     @BeforeAll
-    public static void init() throws IOException {
-        File cgroupFile = new File("/proc/1/cgroup");
-        if (!cgroupFile.exists()) {
-            redisServer = new RedisServer();
-            redisServer.listener("127.0.0.1", 6379);
-        }
+    public static void init() throws IOException, ParseException {
         server = new Server();
-        server.start(new String[] {"6789"});
+        server.start("-p6789");
+        aspClient = AeroSpikeClientFactory.getClient();
     }
 
     @Test
-    public void testSet() {
+    public void testRedisSet() {
         try (Jedis jedis = new Jedis("127.0.0.1", 6379)) {
-            String result = jedis.set("a", "b");
+            String result = jedis.set("a", "bq");
             try (Jedis jedis2 = new Jedis("127.0.0.1", 6789)) {
-                String result2 = jedis2.set("a", "b");
+                String result2 = jedis2.set("a", "bq");
                 Assertions.assertEquals(result, result2);
             }
         }
     }
 
-    @AfterAll
-    public static void shutdown() {
-        Optional.ofNullable(redisServer).ifPresent(redisServer1 -> {
-            try {
-                redisServer1.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        Optional.ofNullable(server).ifPresent(Server::shutdown);
+    @Test
+    public void testSetAsp() {
+        try (Jedis jedis = new Jedis("127.0.0.1", 6789)) {
+            String result = jedis.set("a", "b");
+            Assertions.assertEquals(result, "OK");
+        }
+        Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, "a");
+        Record record = aspClient.get(aspClient.getReadPolicyDefault(), key);
+        Map<String, Object> map = record.bins;
+        Assertions.assertTrue(map.containsKey("a"));
     }
 
+    @AfterAll
+    public static void shutdown() {
+        Optional.ofNullable(server).ifPresent(Server::shutdown);
+        Optional.ofNullable(aspClient).ifPresent(IAerospikeClient::close);
+    }
 }

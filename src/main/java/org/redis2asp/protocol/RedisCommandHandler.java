@@ -18,20 +18,29 @@ package org.redis2asp.protocol;
 
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutorService;
+import com.aerospike.client.Bin;
+import com.aerospike.client.IAerospikeClient;
+import com.aerospike.client.Key;
 import com.alipay.remoting.CommandCode;
 import com.alipay.remoting.CommandHandler;
 import com.alipay.remoting.RemotingContext;
 import com.alipay.remoting.RemotingProcessor;
+import org.redis2asp.factory.AeroSpikeClientFactory;
 import org.redis2asp.protocol.request.CommandRequest;
 import org.redis2asp.protocol.request.SetRequest;
 
 public class RedisCommandHandler implements CommandHandler {
+    IAerospikeClient client = AeroSpikeClientFactory.getClient();
+
     @Override
-    public void handleCommand(RemotingContext ctx, Object msg) throws Exception {
+    public void handleCommand(RemotingContext ctx, Object msg) {
         if (msg instanceof RedisRequest) {
             RedisRequest<?> redisRequest = (RedisRequest) msg;
             if (redisRequest instanceof SetRequest) {
-                SetRequest setRequest = (SetRequest) redisRequest;
+                SetRequest setRequest = (SetRequest)redisRequest;
+                Bin bin = new Bin(setRequest.getKey(), setRequest.getValue());
+                Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, setRequest.getKey());
+                client.put(client.getWritePolicyDefault(), key, bin);
                 setRequest.setResponse("OK".getBytes(StandardCharsets.UTF_8));
             }
             if (redisRequest instanceof CommandRequest) {
