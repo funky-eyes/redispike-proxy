@@ -44,9 +44,9 @@ public class ServerTest {
     @Test
     public void testRedisSet() {
         try (Jedis jedis = new Jedis("127.0.0.1", 6379)) {
-            String result = jedis.set("a", "b");
+            String result = jedis.set("a", "1");
             try (Jedis jedis2 = new Jedis("127.0.0.1", 6789)) {
-                String result2 = jedis2.set("a", "b");
+                String result2 = jedis2.set("a", "1");
                 Assertions.assertEquals(result, result2);
             }
         }
