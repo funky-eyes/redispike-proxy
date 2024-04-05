@@ -16,9 +16,11 @@
  */
 package org.redis2asp;
 
+import org.apache.commons.cli.ParseException;
+
 public class ProxyMain {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParseException {
         Server server = new Server();
         server.start(args);
     }

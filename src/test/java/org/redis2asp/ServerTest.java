@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 import com.github.microwww.redis.RedisServer;
+import org.apache.commons.cli.ParseException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -28,17 +29,17 @@ import redis.clients.jedis.Jedis;
 
 public class ServerTest {
     static RedisServer redisServer;
-    static Server server;
+    static Server      server;
 
     @BeforeAll
-    public static void init() throws IOException {
+    public static void init() throws IOException, ParseException {
         File cgroupFile = new File("/proc/1/cgroup");
         if (!cgroupFile.exists()) {
             redisServer = new RedisServer();
             redisServer.listener("127.0.0.1", 6379);
         }
         server = new Server();
-        server.start(new String[] {"6789"});
+        server.start("-p6789");
     }
 
     @Test
@@ -63,5 +64,4 @@ public class ServerTest {
         });
         Optional.ofNullable(server).ifPresent(Server::shutdown);
     }
-
 }
