@@ -27,6 +27,12 @@ public class SetRequest implements RedisRequest<byte[]> {
 
     String       value;
 
+    TtlType      ttlType;
+
+    long         ttl;
+
+    Operate      operate;
+
     BulkResponse response = new BulkResponse();
 
     public SetRequest(String key, String value) {
@@ -50,6 +56,30 @@ public class SetRequest implements RedisRequest<byte[]> {
         this.value = value;
     }
 
+    public TtlType getTtlType() {
+        return ttlType;
+    }
+
+    public void setTtlType(String ttlType) {
+        this.ttlType = TtlType.valueOf(ttlType.toUpperCase());
+    }
+
+    public long getTtl() {
+        return ttl;
+    }
+
+    public void setTtl(long ttl) {
+        this.ttl = ttl;
+    }
+
+    public Operate getOperate() {
+        return operate;
+    }
+
+    public void setOperate(String operate) {
+        this.operate = Operate.valueOf(operate.toUpperCase());
+    }
+
     @Override
     public void setResponse(byte[] data) {
         this.response.setData(data);
@@ -58,6 +88,14 @@ public class SetRequest implements RedisRequest<byte[]> {
     @Override
     public RedisResponse<byte[]> getResponse() {
         return response;
+    }
+
+    static enum TtlType {
+        EX, PX
+    }
+
+    static enum Operate {
+        NX, XX
     }
 
 }

@@ -20,10 +20,9 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.junit.Assert;
-
 import com.alipay.remoting.Connection;
 import com.alipay.remoting.ConnectionEventProcessor;
+import org.junit.jupiter.api.Assertions;
 
 /**
  * ConnectionEventProcessor for ConnectionEventType.CONNECT
@@ -41,7 +40,7 @@ public class CONNECTEventProcessor implements ConnectionEventProcessor {
 
     @Override
     public void onEvent(String remoteAddr, Connection conn) {
-        Assert.assertNotNull(remoteAddr);
+        Assertions.assertNotNull(remoteAddr);
         doCheckConnection(conn);
         this.remoteAddr = remoteAddr;
         this.connection = conn;
@@ -55,12 +54,12 @@ public class CONNECTEventProcessor implements ConnectionEventProcessor {
      * @param conn
      */
     private void doCheckConnection(Connection conn) {
-        Assert.assertNotNull(conn);
-        Assert.assertNotNull(conn.getPoolKeys());
-        Assert.assertTrue(conn.getPoolKeys().size() > 0);
-        Assert.assertNotNull(conn.getChannel());
-        Assert.assertNotNull(conn.getUrl());
-        Assert.assertNotNull(conn.getChannel().attr(Connection.CONNECTION).get());
+        Assertions.assertNotNull(conn);
+        Assertions.assertNotNull(conn.getPoolKeys());
+        Assertions.assertTrue(conn.getPoolKeys().size() > 0);
+        Assertions.assertNotNull(conn.getChannel());
+        Assertions.assertNotNull(conn.getUrl());
+        Assertions.assertNotNull(conn.getChannel().attr(Connection.CONNECTION).get());
     }
 
     public boolean isConnected() throws InterruptedException {
