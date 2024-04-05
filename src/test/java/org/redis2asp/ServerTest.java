@@ -29,7 +29,7 @@ import redis.clients.jedis.Jedis;
 
 public class ServerTest {
     static RedisServer redisServer;
-    static Server      server;
+    static Server server;
 
     @BeforeAll
     public static void init() throws IOException, ParseException {
