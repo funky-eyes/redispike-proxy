@@ -16,6 +16,7 @@
  */
 package org.redis2asp;
 
+import java.io.File;
 import java.io.IOException;
 import com.github.microwww.redis.RedisServer;
 import org.junit.jupiter.api.AfterAll;
@@ -30,8 +31,11 @@ public class ServerTest {
 
     @BeforeAll
     public static void init() throws IOException {
-        redisServer = new RedisServer();
-        redisServer.listener("127.0.0.1", 6789);
+        File cgroupFile = new File("/proc/1/cgroup");
+        if (!cgroupFile.exists()) {
+            redisServer = new RedisServer();
+            redisServer.listener("127.0.0.1", 6789);
+        }
         server = new Server();
         server.start(new String[] {});
     }
