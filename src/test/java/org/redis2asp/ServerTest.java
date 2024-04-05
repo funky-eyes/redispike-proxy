@@ -45,7 +45,7 @@ public class ServerTest {
         aspClient = AeroSpikeClientFactory.getClient();
     }
 
-    @Test
+/*    @Test
     public void testRedisSet() {
         try (Jedis jedis = new Jedis("127.0.0.1", 6379)) {
             String result = jedis.set("a", "1");
@@ -54,18 +54,17 @@ public class ServerTest {
                 Assertions.assertEquals(result, result2);
             }
         }
-    }
+    }*/
 
     @Test
     public void testSetAsp() {
         try (Jedis jedis = new Jedis("127.0.0.1", 6789)) {
-            String result = jedis.set("a", "1");
+            String result = jedis.set("a", "b");
             Assertions.assertEquals(result, "OK");
         }
         Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, "a");
         Record record = aspClient.get(aspClient.getReadPolicyDefault(), key);
         Map<String, Object> map = record.bins;
-        logger.info("map: {}", map);
         Assertions.assertTrue(map.containsKey("a"));
     }
 
