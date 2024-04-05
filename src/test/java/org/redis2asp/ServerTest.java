@@ -18,6 +18,7 @@ package org.redis2asp;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 import com.github.microwww.redis.RedisServer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -27,7 +28,7 @@ import redis.clients.jedis.Jedis;
 
 public class ServerTest {
     static RedisServer redisServer;
-    static Server      server;
+    static Server server;
 
     @BeforeAll
     public static void init() throws IOException {
@@ -52,9 +53,15 @@ public class ServerTest {
     }
 
     @AfterAll
-    public static void shutdown() throws IOException {
-        redisServer.close();
-        server.shutdown();
+    public static void shutdown() {
+        Optional.of(redisServer).ifPresent(redisServer1 -> {
+            try {
+                redisServer1.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        Optional.ofNullable(server).ifPresent(Server::shutdown);
     }
 
 }
