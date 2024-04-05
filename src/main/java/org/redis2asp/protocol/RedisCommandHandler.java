@@ -18,11 +18,9 @@ package org.redis2asp.protocol;
 
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutorService;
-import com.aerospike.client.AerospikeClient;
 import com.aerospike.client.Bin;
 import com.aerospike.client.IAerospikeClient;
 import com.aerospike.client.Key;
-import com.aerospike.client.command.ParticleType;
 import com.alipay.remoting.CommandCode;
 import com.alipay.remoting.CommandHandler;
 import com.alipay.remoting.RemotingContext;
@@ -42,7 +40,7 @@ public class RedisCommandHandler implements CommandHandler {
                 SetRequest setRequest = (SetRequest)redisRequest;
                 Bin bin = new Bin(setRequest.getKey(), setRequest.getValue());
                 Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, setRequest.getKey());
-                client.append(client.getWritePolicyDefault(), key, bin);
+                client.put(client.getWritePolicyDefault(), key, bin);
                 setRequest.setResponse("OK".getBytes(StandardCharsets.UTF_8));
             }
             if (redisRequest instanceof CommandRequest) {
