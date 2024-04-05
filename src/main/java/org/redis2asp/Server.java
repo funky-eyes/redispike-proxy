@@ -36,6 +36,9 @@ public class Server {
     DISCONNECTEventProcessor    serverDisConnectProcessor = new DISCONNECTEventProcessor();
 
     public void start(String[] args) {
+        if(args.length > 0) {
+            port = Integer.parseInt(args[0]);
+        }
         server = new BoltServer(port);
         server.addConnectionEventProcessor(ConnectionEventType.CONNECT, serverConnectProcessor);
         server.addConnectionEventProcessor(ConnectionEventType.CLOSE, serverDisConnectProcessor);
