@@ -34,10 +34,10 @@ public class ServerTest {
         File cgroupFile = new File("/proc/1/cgroup");
         if (!cgroupFile.exists()) {
             redisServer = new RedisServer();
-            redisServer.listener("127.0.0.1", 6789);
+            redisServer.listener("127.0.0.1", 6379);
         }
         server = new Server();
-        server.start(new String[] {});
+        server.start(new String[] {"6789"});
     }
 
     @Test
