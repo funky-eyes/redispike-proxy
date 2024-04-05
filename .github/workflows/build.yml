@@ -12,7 +12,7 @@ jobs:
     name: "build"
     services:
       aerospike:
-        image: aerospike/aerospike-server:ee-7.0.0.7_1
+        image: aerospike/aerospike-server:7.0.0.7_1
         ports:
           - 3000:3000
           - 3001:3001
