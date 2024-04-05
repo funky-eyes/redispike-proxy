@@ -2,9 +2,9 @@ name: "build"
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   # job 1: Test based on java 8 and 21. Do not checkstyle.
