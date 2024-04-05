@@ -66,7 +66,7 @@ public class ServerTest {
         Record record = aspClient.get(aspClient.getReadPolicyDefault(), key);
         Map<String, Object> map = record.bins;
         logger.info("map: {}", map);
-        Assertions.assertTrue(map.containsValue("a"));
+        Assertions.assertTrue(map.containsKey("a"));
     }
 
     @AfterAll
