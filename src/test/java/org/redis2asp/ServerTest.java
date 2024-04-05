@@ -45,16 +45,16 @@ public class ServerTest {
         aspClient = AeroSpikeClientFactory.getClient();
     }
 
-/*    @Test
+    @Test
     public void testRedisSet() {
         try (Jedis jedis = new Jedis("127.0.0.1", 6379)) {
-            String result = jedis.set("a", "1");
+            String result = jedis.set("a", "bq");
             try (Jedis jedis2 = new Jedis("127.0.0.1", 6789)) {
-                String result2 = jedis2.set("a", "1");
+                String result2 = jedis2.set("a", "bq");
                 Assertions.assertEquals(result, result2);
             }
         }
-    }*/
+    }
 
     @Test
     public void testSetAsp() {
