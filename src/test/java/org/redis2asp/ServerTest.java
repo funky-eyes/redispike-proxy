@@ -54,7 +54,7 @@ public class ServerTest {
 
     @AfterAll
     public static void shutdown() {
-        Optional.of(redisServer).ifPresent(redisServer1 -> {
+        Optional.ofNullable(redisServer).ifPresent(redisServer1 -> {
             try {
                 redisServer1.close();
             } catch (IOException e) {
