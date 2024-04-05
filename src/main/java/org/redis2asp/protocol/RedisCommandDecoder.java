@@ -23,15 +23,19 @@ import com.alipay.remoting.CommandDecoder;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.DecoderException;
-import org.redis2asp.protocol.request.RedisRequest;
+import org.redis2asp.protocol.request.CommandRequest;
 import org.redis2asp.protocol.request.SetRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RedisCommandDecoder implements CommandDecoder {
 
-    private final static int CR       = '\r';
-    private final static int LF       = '\n';
-    private final static int DOLLAR   = '$';
-    private final static int ASTERISK = '*';
+    private final static Logger LOGGER   = LoggerFactory.getLogger(RedisCommandDecoder.class);
+
+    private final static int    CR       = '\r';
+    private final static int    LF       = '\n';
+    private final static int    DOLLAR   = '$';
+    private final static int    ASTERISK = '*';
 
     @Override
     public void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
@@ -41,13 +45,16 @@ public class RedisCommandDecoder implements CommandDecoder {
             String param = readParam(in);
             params.add(param);
         }
-        out.add(params);
-
+        // convert to RedisRequest
+        out.add(convert2RedisRequest(params));
     }
 
-    private RedisRequest convert2RedisRequest(List<String> params) {
+    private RedisRequest<?> convert2RedisRequest(List<String> params) {
         String cmd = params.get(0);
-        switch (cmd) {
+        LOGGER.info("cmd: {}", cmd);
+        switch (cmd.toLowerCase()) {
+            case "command":
+                return new CommandRequest();
             case "set":
                 return new SetRequest(params.get(1), params.get(2));
             default:
@@ -60,7 +67,8 @@ public class RedisCommandDecoder implements CommandDecoder {
         if (c != ASTERISK) {
             throw new DecoderException("expect character *");
         }
-        int len = readLen(in, 3); // max 999 params
+        // max 999 params
+        int len = readLen(in, 3);
         if (len == 0) {
             throw new DecoderException("expect non-zero params");
         }
@@ -87,11 +95,12 @@ public class RedisCommandDecoder implements CommandDecoder {
         if (c != DOLLAR) {
             throw new DecoderException("expect character *");
         }
-        return readLen(in, 6); // string maxlen 999999
+        // string maxlen 999999
+        return readLen(in, 6);
     }
 
     private int readLen(ByteBuf in, int maxBytes) {
-        byte[] digits = new byte[maxBytes]; // max 999个参数
+        byte[] digits = new byte[maxBytes];
         int len = 0;
         while (true) {
             byte d = in.getByte(in.readerIndex());

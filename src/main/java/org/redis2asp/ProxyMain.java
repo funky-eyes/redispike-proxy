@@ -16,38 +16,10 @@
  */
 package org.redis2asp;
 
-import com.alipay.remoting.ConnectionEventType;
-import com.alipay.remoting.ProtocolManager;
-import org.redis2asp.common.BoltServer;
-import org.redis2asp.common.CONNECTEventProcessor;
-import org.redis2asp.common.DISCONNECTEventProcessor;
-import org.redis2asp.protocol.RedisProtocol;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class ProxyMain {
-    private static final Logger LOGGER                    = LoggerFactory.getLogger(ProxyMain.class);
-
-    BoltServer                  server;
-
-    int                         port                      = 8999;
-
-    CONNECTEventProcessor       serverConnectProcessor    = new CONNECTEventProcessor();
-    DISCONNECTEventProcessor    serverDisConnectProcessor = new DISCONNECTEventProcessor();
-
-    public ProxyMain() {
-        server = new BoltServer(port);
-        server.addConnectionEventProcessor(ConnectionEventType.CONNECT, serverConnectProcessor);
-        server.addConnectionEventProcessor(ConnectionEventType.CLOSE, serverDisConnectProcessor);
-        ProtocolManager.registerProtocol(new RedisProtocol(), RedisProtocol.PROTOCOL_CODE);
-        if (server.start()) {
-            LOGGER.info("server start ok!");
-        } else {
-            LOGGER.error("server start failed!");
-        }
-    }
 
     public static void main(String[] args) {
-        new ProxyMain();
+        Server server = new Server();
+        server.start(args);
     }
 }

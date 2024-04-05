@@ -15,7 +15,7 @@ public class BulkResponse implements RedisResponse<byte[]> {
 
     private byte[]                   data;
 
-    private final int                len;
+    private int                      len;
 
     public BulkResponse() {
         this.data = null;
@@ -38,6 +38,7 @@ public class BulkResponse implements RedisResponse<byte[]> {
 
     public void setData(byte[] data) {
         this.data = data;
+        this.len = data.length;
     }
 
     @Override

@@ -17,9 +17,11 @@
 package org.redis2asp.protocol.request;
 
 import java.nio.charset.StandardCharsets;
+import org.redis2asp.protocol.RedisRequest;
+import org.redis2asp.protocol.RedisResponse;
 import org.redis2asp.protocol.response.BulkResponse;
 
-public class SetRequest implements RedisRequest {
+public class SetRequest implements RedisRequest<byte[]> {
 
     String       key;
 
@@ -48,8 +50,14 @@ public class SetRequest implements RedisRequest {
         this.value = value;
     }
 
-    public void setResponse(String data) {
-        this.response.setData(data.getBytes(StandardCharsets.UTF_8));
+    @Override
+    public void setResponse(byte[] data) {
+        this.response.setData(data);
+    }
+
+    @Override
+    public RedisResponse<byte[]> getResponse() {
+        return response;
     }
 
 }

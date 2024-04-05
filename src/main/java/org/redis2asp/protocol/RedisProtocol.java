@@ -31,6 +31,8 @@ public class RedisProtocol implements Protocol {
 
     RedisCommandEncoder      redisCommandEncoder = new RedisCommandEncoder();
 
+    RedisCommandHandler      redisCommandHandler = new RedisCommandHandler();
+
     @Override
     public CommandEncoder getEncoder() {
         return redisCommandEncoder;
@@ -48,7 +50,7 @@ public class RedisProtocol implements Protocol {
 
     @Override
     public CommandHandler getCommandHandler() {
-        return new RedisCommandHandler();
+        return redisCommandHandler;
     }
 
     @Override

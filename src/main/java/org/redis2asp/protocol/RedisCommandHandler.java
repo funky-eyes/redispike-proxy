@@ -17,20 +17,29 @@
 package org.redis2asp.protocol;
 
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import com.alipay.remoting.CommandCode;
 import com.alipay.remoting.CommandHandler;
 import com.alipay.remoting.RemotingContext;
 import com.alipay.remoting.RemotingProcessor;
-import org.redis2asp.protocol.response.BulkResponse;
+import org.redis2asp.protocol.request.CommandRequest;
+import org.redis2asp.protocol.request.SetRequest;
 
 public class RedisCommandHandler implements CommandHandler {
     @Override
     public void handleCommand(RemotingContext ctx, Object msg) throws Exception {
-        List<String> cmd = (List<String>) msg;
-        BulkResponse bulkReply = new BulkResponse("OK".getBytes(StandardCharsets.UTF_8));
-        ctx.writeAndFlush(bulkReply);
+        if (msg instanceof RedisRequest) {
+            RedisRequest<?> redisRequest = (RedisRequest) msg;
+            if (redisRequest instanceof SetRequest) {
+                SetRequest setRequest = (SetRequest) redisRequest;
+                setRequest.setResponse("OK".getBytes(StandardCharsets.UTF_8));
+            }
+            if (redisRequest instanceof CommandRequest) {
+                CommandRequest commandRequest = (CommandRequest) redisRequest;
+                commandRequest.setResponse("OK".getBytes(StandardCharsets.UTF_8));
+            }
+            ctx.writeAndFlush(redisRequest.getResponse());
+        }
     }
 
     @Override

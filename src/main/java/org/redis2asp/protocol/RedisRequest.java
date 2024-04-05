@@ -14,7 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.redis2asp.protocol.request;
+package org.redis2asp.protocol;
 
-public interface RedisRequest {
+public interface RedisRequest<T> {
+
+    RedisResponse<T> getResponse();
+
+    void setResponse(T data);
+
 }
