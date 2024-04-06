@@ -32,6 +32,7 @@ import org.redis2asp.factory.AeroSpikeClientFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.params.SetParams;
 
 public class ServerTest {
     static Server           server;
@@ -78,6 +79,45 @@ public class ServerTest {
         try (Jedis jedis = new Jedis("127.0.0.1", 6789, 3000)) {
             String result = jedis.get(String.valueOf(ThreadLocalRandom.current().nextInt(111)));
             Assertions.assertNull(result);
+        }
+    }
+
+    @Test
+    public void testSetExAsp() {
+        String key = String.valueOf(ThreadLocalRandom.current().nextInt(50000));
+        try (Jedis jedis = new Jedis("127.0.0.1", 6789)) {
+            String result = jedis.set(key, "b", SetParams.setParams().ex(1L));
+            Assertions.assertEquals(result, "OK");
+            Thread.sleep(3000);
+            result = jedis.get(key);
+            Assertions.assertNull(result);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testSetNxNilAsp() {
+        String key = String.valueOf(ThreadLocalRandom.current().nextInt(50000));
+        try (Jedis jedis = new Jedis("127.0.0.1", 6789)) {
+            String result = jedis.set(key, "b", SetParams.setParams().nx());
+            Assertions.assertEquals(result, "OK");
+            result = jedis.set(key, "b", SetParams.setParams().nx());
+            Assertions.assertNull(result);
+        }
+    }
+
+    @Test
+    public void testSetExNxAsp() {
+        String key = String.valueOf(ThreadLocalRandom.current().nextInt(50000));
+        try (Jedis jedis = new Jedis("127.0.0.1", 6789)) {
+            String result = jedis.set(key, "b", SetParams.setParams().nx().ex(1L));
+            Assertions.assertEquals(result, "OK");
+            Thread.sleep(3000);
+            result = jedis.get(key);
+            Assertions.assertNull(result);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 

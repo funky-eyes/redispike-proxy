@@ -44,7 +44,7 @@ public class RedisCommandDecoder implements CommandDecoder {
         List<String> params = new ArrayList<>(length);
         for (int i = 0; i < length; i++) {
             String param = readParam(in);
-            params.add(param);
+            params.add(param.toLowerCase());
         }
         // convert to RedisRequest
         out.add(convert2RedisRequest(params));
@@ -52,14 +52,14 @@ public class RedisCommandDecoder implements CommandDecoder {
 
     private RedisRequest<?> convert2RedisRequest(List<String> params) {
         String cmd = params.get(0);
-        LOGGER.info("cmd: {}", cmd);
-        switch (cmd.toLowerCase()) {
+        LOGGER.info("cmd: {}", params);
+        switch (cmd) {
             case "get":
                 return new GetRequest(params.get(1));
             case "command":
                 return new CommandRequest();
             case "set":
-                return new SetRequest(params.get(1), params.get(2));
+                return new SetRequest(params.get(1), params.get(2), params);
             default:
                 return null;
         }

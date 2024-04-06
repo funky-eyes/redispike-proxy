@@ -17,67 +17,60 @@
 package org.redis2asp.protocol.request;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import org.redis2asp.protocol.RedisRequest;
 import org.redis2asp.protocol.RedisResponse;
 import org.redis2asp.protocol.response.BulkResponse;
 
 public class SetRequest implements RedisRequest<byte[]> {
 
-    String       key;
+    final String key;
 
-    String       value;
+    final String value;
 
     TtlType      ttlType;
 
-    long         ttl;
+    Long         ttl;
 
     Operate      operate;
 
     BulkResponse response = new BulkResponse();
 
-    public SetRequest(String key, String value) {
+    public SetRequest(String key, String value, List<String> params) {
         this.key = key;
         this.value = value;
+        if (params.contains("nx")) {
+            this.operate = Operate.NX;
+        } else if (params.contains("xx")) {
+            this.operate = Operate.XX;
+        }
+        if (params.contains("ex")) {
+            this.ttlType = TtlType.EX;
+            this.ttl = Long.parseLong(params.get(params.indexOf("ex") + 1));
+        } else if (params.contains("px")) {
+            this.ttlType = TtlType.PX;
+            this.ttl = Long.parseLong(params.get(params.indexOf("px") + 1));
+        }
     }
 
     public String getKey() {
         return key;
     }
 
-    public void setKey(String key) {
-        this.key = key;
-    }
-
     public String getValue() {
         return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
     }
 
     public TtlType getTtlType() {
         return ttlType;
     }
 
-    public void setTtlType(String ttlType) {
-        this.ttlType = TtlType.valueOf(ttlType.toUpperCase());
-    }
-
-    public long getTtl() {
+    public Long getTtl() {
         return ttl;
-    }
-
-    public void setTtl(long ttl) {
-        this.ttl = ttl;
     }
 
     public Operate getOperate() {
         return operate;
-    }
-
-    public void setOperate(String operate) {
-        this.operate = Operate.valueOf(operate.toUpperCase());
     }
 
     @Override
@@ -90,12 +83,17 @@ public class SetRequest implements RedisRequest<byte[]> {
         return response;
     }
 
-    static enum TtlType {
+    public enum TtlType {
         EX, PX
     }
 
-    static enum Operate {
+    public enum Operate {
         NX, XX
     }
 
+    @Override
+    public String toString() {
+        return "SetRequest{" + "key='" + key + '\'' + ", value='" + value + '\'' + ", ttlType=" + ttlType + ", ttl="
+               + ttl + ", operate=" + operate + ", response=" + response + '}';
+    }
 }

@@ -44,4 +44,8 @@ public class GetRequest implements RedisRequest<byte[]> {
         return response;
     }
 
+    @Override
+    public String toString() {
+        return "GetRequest{" + "key='" + key + '\'' + ", response=" + response + '}';
+    }
 }
