@@ -17,6 +17,8 @@
 package org.redis2asp;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
@@ -123,6 +125,33 @@ public class ServerTest {
             Assertions.assertNull(result);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testDelAsp() {
+        String key = String.valueOf(ThreadLocalRandom.current().nextInt(50000));
+        try (Jedis jedis = new Jedis("127.0.0.1", 6789)) {
+            String result = jedis.set(key, "b");
+            Assertions.assertEquals(result, "OK");
+            result = String.valueOf(jedis.del(key));
+            Assertions.assertEquals(result, "1");
+        }
+    }
+
+    @Test
+    public void testBatchDelAsp() {
+        List<String> keys = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            keys.add(String.valueOf(ThreadLocalRandom.current().nextInt(50000)));
+        }
+        try (Jedis jedis = new Jedis("127.0.0.1", 6789)) {
+            String result = jedis.set(keys.get(0), "b");
+            Assertions.assertEquals(result, "OK");
+            result = jedis.set(keys.get(1), "b");
+            Assertions.assertEquals(result, "OK");
+            result = String.valueOf(jedis.del(keys.toArray(new String[0])));
+            Assertions.assertEquals(result, String.valueOf(keys.size()));
         }
     }
 
