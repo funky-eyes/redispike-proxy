@@ -23,6 +23,14 @@
               value="${user.home}/logs/redis2asp"/>
     <property name="FILE_LOG_PATTERN"
               value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p --- [%t] [%logger] [%M] [%X{X-TX-XID:-}]: %m%n%wEx2"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <Pattern>${FILE_LOG_PATTERN}</Pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
     <!--ALL-->
     <appender name="FILE_ALL" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_FILE_PATH}/${APPLICATION_NAME:-redis2asp}.${RPC_PORT}.all.log</file>
