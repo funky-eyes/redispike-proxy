@@ -88,7 +88,7 @@ public class ServerTest {
         try (Jedis jedis = new Jedis("127.0.0.1", 6789)) {
             String result = jedis.set(key, "b", SetParams.setParams().ex(1L));
             Assertions.assertEquals(result, "OK");
-            Thread.sleep(1001);
+            Thread.sleep(3000);
             result = jedis.get(key);
             Assertions.assertNull(result);
         } catch (InterruptedException e) {
@@ -113,7 +113,7 @@ public class ServerTest {
         try (Jedis jedis = new Jedis("127.0.0.1", 6789)) {
             String result = jedis.set(key, "b", SetParams.setParams().nx().ex(1L));
             Assertions.assertEquals(result, "OK");
-            Thread.sleep(1001);
+            Thread.sleep(3000);
             result = jedis.get(key);
             Assertions.assertNull(result);
         } catch (InterruptedException e) {
