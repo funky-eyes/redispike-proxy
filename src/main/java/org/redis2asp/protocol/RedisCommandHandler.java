@@ -52,8 +52,9 @@ public class RedisCommandHandler implements CommandHandler {
                 Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, getRequest.getKey());
                Record record = client.get(client.getReadPolicyDefault(),key);
                 logger.info("record:{}", record);
+                System.out.println("record: " + getRequest.getKey());
               String value = record.getString(getRequest.getKey());
-                System.out.println("record: " + value);
+
                 if (value != null) {
                     getRequest.setResponse(value.getBytes(StandardCharsets.UTF_8));
                 }
