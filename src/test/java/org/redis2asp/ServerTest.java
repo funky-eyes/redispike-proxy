@@ -62,14 +62,14 @@ public class ServerTest {
             String result = jedis.set("a", "b");
             Assertions.assertEquals(result, "OK");
         }
-        Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, "a");
-        Record record = aspClient.get(aspClient.getReadPolicyDefault(), key);
-        Map<String, Object> map = record.bins;
-        Assertions.assertEquals(map.get("a"), "b");
         try (Jedis jedis = new Jedis("127.0.0.1", 6789,3000)) {
             String result = jedis.get("a");
             Assertions.assertEquals(result, "b");
         }
+        Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, "a");
+        Record record = aspClient.get(aspClient.getReadPolicyDefault(), key);
+        Map<String, Object> map = record.bins;
+        Assertions.assertEquals(map.get("a"), "b");
     }
 
     @AfterAll
