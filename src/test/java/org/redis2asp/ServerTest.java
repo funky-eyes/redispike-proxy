@@ -77,7 +77,7 @@ public class ServerTest {
     public void testGetNilAsp() {
         try (Jedis jedis = new Jedis("127.0.0.1", 6789, 3000)) {
             String result = jedis.get(String.valueOf(ThreadLocalRandom.current().nextInt(111)));
-            Assertions.assertEquals(result, "b");
+            Assertions.assertNull(result);
         }
     }
 
