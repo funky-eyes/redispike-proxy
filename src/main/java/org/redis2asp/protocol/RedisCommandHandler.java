@@ -53,12 +53,13 @@ public class RedisCommandHandler implements CommandHandler {
                 client.get(null, new RecordListener() {
                     @Override
                     public void onSuccess(Key key, Record record) {
-                        logger.info("record: {}", record);
+                        if (record == null) {
+                            ctx.writeAndFlush(redisRequest.getResponse());
+                            return;
+                        }
                         String value = record.getString(getRequest.getKey());
                         if (StringUtil.isNotBlank(value)) {
                             getRequest.setResponse(value.getBytes(StandardCharsets.UTF_8));
-                        } else {
-                            getRequest.setResponse("nil".getBytes(StandardCharsets.UTF_8));
                         }
                         ctx.writeAndFlush(redisRequest.getResponse());
                     }
