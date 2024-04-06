@@ -126,6 +126,17 @@ public class ServerTest {
         }
     }
 
+    @Test
+    public void testDelAsp() {
+        String key = String.valueOf(ThreadLocalRandom.current().nextInt(50000));
+        try (Jedis jedis = new Jedis("127.0.0.1", 6789)) {
+            String result = jedis.set(key, "b");
+            Assertions.assertEquals(result, "OK");
+            result = String.valueOf(jedis.del(key));
+            Assertions.assertEquals(result, "1");
+        }
+    }
+
     @AfterAll
     public static void shutdown() {
         Optional.ofNullable(server).ifPresent(Server::shutdown);

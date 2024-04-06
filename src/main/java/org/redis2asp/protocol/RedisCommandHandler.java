@@ -23,6 +23,7 @@ import com.aerospike.client.Bin;
 import com.aerospike.client.IAerospikeClient;
 import com.aerospike.client.Key;
 import com.aerospike.client.Record;
+import com.aerospike.client.listener.DeleteListener;
 import com.aerospike.client.listener.RecordListener;
 import com.aerospike.client.listener.WriteListener;
 import com.aerospike.client.policy.RecordExistsAction;
@@ -34,6 +35,7 @@ import com.alipay.remoting.RemotingProcessor;
 import com.alipay.sofa.common.profile.StringUtil;
 import org.redis2asp.factory.AeroSpikeClientFactory;
 import org.redis2asp.protocol.request.CommandRequest;
+import org.redis2asp.protocol.request.DelRequest;
 import org.redis2asp.protocol.request.GetRequest;
 import org.redis2asp.protocol.request.SetRequest;
 import org.slf4j.Logger;
@@ -151,6 +153,23 @@ public class RedisCommandHandler implements CommandHandler {
                 CommandRequest commandRequest = (CommandRequest) redisRequest;
                 commandRequest.setResponse("OK".getBytes(StandardCharsets.UTF_8));
                 ctx.writeAndFlush(redisRequest.getResponse());
+            }
+            if (redisRequest instanceof DelRequest) {
+                DelRequest delRequest = (DelRequest) redisRequest;
+                Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, delRequest.getKey());
+                client.delete(null, new DeleteListener() {
+                    @Override
+                    public void onSuccess(Key key, boolean existed) {
+                        delRequest.setResponse("1".getBytes(StandardCharsets.UTF_8));
+                        ctx.writeAndFlush(delRequest.getResponse());
+                    }
+
+                    @Override
+                    public void onFailure(AerospikeException ae) {
+                        logger.error(ae.getMessage(), ae);
+                        ctx.writeAndFlush(delRequest.getResponse());
+                    }
+                }, client.getWritePolicyDefault(), key);
             }
         }
     }
