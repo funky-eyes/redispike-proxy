@@ -80,7 +80,7 @@
                     <id>validate</id>
                     <phase>validate</phase>
                     <configuration>
-                        <configLocation>${user.dir}/tools/check_format.sh.xml</configLocation>
+                        <configLocation>${main.user.dir}/tools/check_format.sh.xml</configLocation>
                         <encoding>UTF-8</encoding>
                         <consoleOutput>true</consoleOutput>
                         <failsOnError>true</failsOnError>
