@@ -111,6 +111,7 @@ public class RedisCommandHandler implements CommandHandler {
 
                                         @Override
                                         public void onFailure(AerospikeException ae) {
+                                            logger.error(ae.getMessage(), ae);
                                             setRequest.setResponse(ae.getMessage().getBytes(StandardCharsets.UTF_8));
                                             ctx.writeAndFlush(redisRequest.getResponse());
                                         }
@@ -120,6 +121,7 @@ public class RedisCommandHandler implements CommandHandler {
 
                             @Override
                             public void onFailure(AerospikeException ae) {
+                                logger.error(ae.getMessage(), ae);
                                 setRequest.setResponse(ae.getMessage().getBytes(StandardCharsets.UTF_8));
                                 ctx.writeAndFlush(redisRequest.getResponse());
                             }
