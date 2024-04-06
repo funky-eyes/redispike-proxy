@@ -97,11 +97,25 @@ public class SetRequest implements RedisRequest<byte[]> {
     }
 
     public enum TtlType {
-        EX, PX
+        /**
+         * EX seconds -- Set the specified expire time, in seconds.
+         */
+        EX,
+        /**
+         * PX milliseconds -- Set the specified expire time, in milliseconds.
+         */
+        PX
     }
 
     public enum Operate {
-        NX, XX
+        /**
+         * NX -- Only set the key if it does not already exist.
+         */
+        NX,
+        /**
+         * XX -- Only set the key if it already exist.
+         */
+        XX
     }
 
     @Override
