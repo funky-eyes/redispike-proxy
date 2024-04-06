@@ -23,7 +23,6 @@ import com.aerospike.client.Bin;
 import com.aerospike.client.IAerospikeClient;
 import com.aerospike.client.Key;
 import com.aerospike.client.Record;
-import com.aerospike.client.listener.RecordArrayListener;
 import com.aerospike.client.listener.RecordListener;
 import com.aerospike.client.listener.WriteListener;
 import com.alipay.remoting.CommandCode;
@@ -67,7 +66,6 @@ public class RedisCommandHandler implements CommandHandler {
                 SetRequest setRequest = (SetRequest) redisRequest;
                 Bin bin = new Bin(setRequest.getKey(), setRequest.getValue());
                 Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, setRequest.getKey());
-                client.put(client.getWritePolicyDefault(), key, bin);
                 client.put(null, new WriteListener() {
                     @Override
                     public void onSuccess(Key key) {
