@@ -67,6 +67,11 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
             <version>2.22.0</version>
+            <configuration> <!-- 添加系统属性以设置日志级别 -->
+                <systemPropertyVariables>
+                    <log.level>INFO</log.level>
+                </systemPropertyVariables>
+            </configuration>
         </plugin>
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
