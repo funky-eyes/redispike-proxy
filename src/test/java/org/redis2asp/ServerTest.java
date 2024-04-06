@@ -104,6 +104,11 @@ public class ServerTest {
             Assertions.assertEquals(result, "OK");
             result = jedis.set(key, "b", SetParams.setParams().nx());
             Assertions.assertNull(result);
+            key = String.valueOf(ThreadLocalRandom.current().nextInt(50000));
+            result = String.valueOf(jedis.setnx(key, "b"));
+            Assertions.assertEquals(result, "1");
+            result = String.valueOf(jedis.setnx(key, "b"));
+            Assertions.assertEquals(result, "0");
         }
     }
 
