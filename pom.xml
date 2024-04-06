@@ -102,6 +102,42 @@
                 <encoding>${project.build.sourceEncoding}</encoding>
             </configuration>
         </plugin>
+        <plugin>
+            <groupId>com.mycila</groupId>
+            <artifactId>license-maven-plugin</artifactId>
+            <version>3.0</version>
+            <executions>
+                <execution>
+                    <phase>generate-sources</phase>
+                    <goals>
+                        <goal>remove</goal>
+                        <goal>format</goal>
+                    </goals>
+                </execution>
+            </executions>
+            <configuration>
+                <quiet>true</quiet>
+                <header>${main.user.dir}/tools/codestyle/HEADER</header>
+                <includes>
+                    <include>**/src/main/java/**</include>
+                    <include>**/src/test/java/**</include>
+                </includes>
+                <excludes>
+                </excludes>
+                <strictCheck>true</strictCheck>
+                <mapping>
+                    <java>SLASHSTAR_STYLE</java>
+                </mapping>
+            </configuration>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-eclipse-plugin</artifactId>
+            <version>2.5.1</version>
+            <configuration>
+                <downloadSources>true</downloadSources>
+            </configuration>
+        </plugin>
     </plugins>
 </build>
 </project>
