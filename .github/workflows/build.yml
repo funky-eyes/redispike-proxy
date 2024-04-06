@@ -41,7 +41,7 @@ jobs:
       - name: "Test, Check style, Check PMD, Check license with Maven and Java8"
         if: matrix.java == '8'
         run: |
-          ./mvnw -T 4C clean test
+          ./mvnw -T 4C clean test && sh ./tools/check_format.sh
       - name: "Test with Maven and Java${{ matrix.java }}"
         if: matrix.java != '8'
         run: |

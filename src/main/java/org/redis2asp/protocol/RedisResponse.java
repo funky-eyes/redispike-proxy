@@ -34,7 +34,7 @@ public interface RedisResponse<T> extends RemotingCommand {
     byte[] CRLF = new byte[] {'\r', '\n'};
 
     T data();
-
+    void setData(byte[] data);
     void write(ByteBuf out) throws IOException;
 
     default ProtocolCode getProtocolCode() {

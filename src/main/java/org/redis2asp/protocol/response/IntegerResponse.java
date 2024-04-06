@@ -17,28 +17,37 @@
 package org.redis2asp.protocol.response;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import io.netty.buffer.ByteBuf;
 import org.redis2asp.protocol.RedisResponse;
 
-public class IntegerResponse implements RedisResponse<Integer> {
+public class IntegerResponse implements RedisResponse<byte[]> {
 
     private static final char MARKER = ':';
 
-    private final int         data;
+    private byte[]            data;
 
     public IntegerResponse(int data) {
-        this.data = data;
+        this.data = String.valueOf(data).getBytes(StandardCharsets.UTF_8);
+    }
+
+    public IntegerResponse() {
     }
 
     @Override
-    public Integer data() {
+    public byte[] data() {
         return this.data;
+    }
+
+    @Override
+    public void setData(byte[] data) {
+        this.data = data;
     }
 
     @Override
     public void write(ByteBuf out) throws IOException {
         out.writeByte(MARKER);
-        out.writeBytes(String.valueOf(data).getBytes());
+        out.writeBytes(data == null ? "0".getBytes(StandardCharsets.UTF_8) : data);
         out.writeBytes(CRLF);
     }
 

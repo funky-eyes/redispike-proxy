@@ -132,7 +132,11 @@ public class RedisCommandHandler implements CommandHandler {
                 client.put(null, new WriteListener() {
                     @Override
                     public void onSuccess(Key key) {
-                        setRequest.setResponse("OK".getBytes(StandardCharsets.UTF_8));
+                        if (setRequest.getOriginalCommand().contains("nx")) {
+                            setRequest.setResponse("1".getBytes(StandardCharsets.UTF_8));
+                        } else {
+                            setRequest.setResponse("OK".getBytes(StandardCharsets.UTF_8));
+                        }
                         ctx.writeAndFlush(redisRequest.getResponse());
                     }
 

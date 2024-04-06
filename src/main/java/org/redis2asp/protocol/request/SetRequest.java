@@ -21,24 +21,28 @@ import java.util.List;
 import org.redis2asp.protocol.RedisRequest;
 import org.redis2asp.protocol.RedisResponse;
 import org.redis2asp.protocol.response.BulkResponse;
+import org.redis2asp.protocol.response.IntegerResponse;
 
 public class SetRequest implements RedisRequest<byte[]> {
 
-    final String key;
+    final String          originalCommand;
 
-    final String value;
+    final String          key;
 
-    TtlType      ttlType;
+    final String          value;
 
-    Long         ttl;
+    TtlType               ttlType;
 
-    Operate      operate;
+    Long                  ttl;
 
-    BulkResponse response = new BulkResponse();
+    Operate               operate;
 
-    public SetRequest(String key, String value, List<String> params) {
-        this.key = key;
-        this.value = value;
+    RedisResponse<byte[]> response;
+
+    public SetRequest(List<String> params) {
+        this.originalCommand = params.get(0);
+        this.key = params.get(1);
+        this.value = params.get(2);
         if (params.contains("nx")) {
             this.operate = Operate.NX;
         } else if (params.contains("xx")) {
@@ -50,6 +54,11 @@ public class SetRequest implements RedisRequest<byte[]> {
         } else if (params.contains("px")) {
             this.ttlType = TtlType.PX;
             this.ttl = Long.parseLong(params.get(params.indexOf("px") + 1));
+        }
+        if (originalCommand.contains("nx")) {
+            this.response = new IntegerResponse();
+        } else {
+            this.response = new BulkResponse();
         }
     }
 
@@ -83,17 +92,36 @@ public class SetRequest implements RedisRequest<byte[]> {
         return response;
     }
 
+    public String getOriginalCommand() {
+        return originalCommand;
+    }
+
     public enum TtlType {
-        EX, PX
+        /**
+         * EX seconds -- Set the specified expire time, in seconds.
+         */
+        EX,
+        /**
+         * PX milliseconds -- Set the specified expire time, in milliseconds.
+         */
+        PX
     }
 
     public enum Operate {
-        NX, XX
+        /**
+         * NX -- Only set the key if it does not already exist.
+         */
+        NX,
+        /**
+         * XX -- Only set the key if it already exist.
+         */
+        XX
     }
 
     @Override
     public String toString() {
-        return "SetRequest{" + "key='" + key + '\'' + ", value='" + value + '\'' + ", ttlType=" + ttlType + ", ttl="
-               + ttl + ", operate=" + operate + ", response=" + response + '}';
+        return "SetRequest{" + "originalCommand='" + originalCommand + '\'' + ", key='" + key + '\'' + ", value='"
+               + value + '\'' + ", ttlType=" + ttlType + ", ttl=" + ttl + ", operate=" + operate + ", response="
+               + response + '}';
     }
 }

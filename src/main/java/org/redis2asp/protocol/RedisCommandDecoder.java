@@ -58,8 +58,11 @@ public class RedisCommandDecoder implements CommandDecoder {
                 return new GetRequest(params.get(1));
             case "command":
                 return new CommandRequest();
+            case "setnx":
+                params.add("nx");
+                return new SetRequest(params);
             case "set":
-                return new SetRequest(params.get(1), params.get(2), params);
+                return new SetRequest(params);
             default:
                 return null;
         }
