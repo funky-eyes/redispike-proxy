@@ -55,7 +55,7 @@ public class RedisCommandDecoder implements CommandDecoder {
         LOGGER.info("cmd: {}", cmd);
         switch (cmd.toLowerCase()) {
             case "get":
-                return new GetRequest(params.get(0));
+                return new GetRequest(params.get(1));
             case "command":
                 return new CommandRequest();
             case "set":
