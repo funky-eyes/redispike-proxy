@@ -50,23 +50,14 @@ public class RedisCommandHandler implements CommandHandler {
             if (redisRequest instanceof GetRequest) {
                 GetRequest getRequest = (GetRequest) redisRequest;
                 Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, getRequest.getKey());
-                client.get(null, new RecordListener() {
-                    @Override
-                    public void onSuccess(Key key, Record record) {
-                        System.out.println("record: "+ record.bins.size());
-                        String value = record.getString(getRequest.getKey());
-                        if (StringUtil.isNotBlank(value)) {
-                            getRequest.setResponse(value.getBytes(StandardCharsets.UTF_8));
-                        }
-                        ctx.writeAndFlush(redisRequest.getResponse());
-                    }
-
-                    @Override
-                    public void onFailure(AerospikeException ae) {
-                        getRequest.setResponse(ae.getMessage().getBytes(StandardCharsets.UTF_8));
-                        ctx.writeAndFlush(redisRequest.getResponse());
-                    }
-                }, client.getReadPolicyDefault(), key);
+               Record record = client.get(client.getReadPolicyDefault(),key);
+                logger.info("record:{}", record);
+              String value = record.getString(getRequest.getKey());
+                System.out.println("record: " + value);
+                if (value != null) {
+                    getRequest.setResponse(value.getBytes(StandardCharsets.UTF_8));
+                }
+                ctx.writeAndFlush(redisRequest.getResponse());
             }
             if (redisRequest instanceof SetRequest) {
                 SetRequest setRequest = (SetRequest) redisRequest;
