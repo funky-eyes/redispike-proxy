@@ -47,7 +47,7 @@ public class IntegerResponse implements RedisResponse<byte[]> {
     @Override
     public void write(ByteBuf out) throws IOException {
         out.writeByte(MARKER);
-        out.writeBytes(data);
+        out.writeBytes(data == null ? "0".getBytes(StandardCharsets.UTF_8) : data);
         out.writeBytes(CRLF);
     }
 
