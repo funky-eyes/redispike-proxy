@@ -138,7 +138,7 @@ public class RedisCommandHandler implements CommandHandler {
 
                     @Override
                     public void onFailure(AerospikeException ae) {
-                        setRequest.setResponse(ae.getMessage().getBytes(StandardCharsets.UTF_8));
+                        logger.error(ae.getMessage(), ae);
                         ctx.writeAndFlush(redisRequest.getResponse());
                     }
                 }, writePolicy, key, bin);
