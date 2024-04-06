@@ -18,13 +18,13 @@ package org.redis2asp.protocol.request;
 
 import org.redis2asp.protocol.RedisRequest;
 import org.redis2asp.protocol.RedisResponse;
-import org.redis2asp.protocol.response.BulkResponse;
+import org.redis2asp.protocol.response.IntegerResponse;
 
 public class DelRequest implements RedisRequest<byte[]> {
 
     String       key;
 
-    BulkResponse response = new BulkResponse();
+    IntegerResponse response = new IntegerResponse();
 
     public DelRequest(String key) {
         this.key = key;
