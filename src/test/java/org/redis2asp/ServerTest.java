@@ -151,7 +151,7 @@ public class ServerTest {
             result = jedis.set(keys.get(1), "b");
             Assertions.assertEquals(result, "OK");
             result = String.valueOf(jedis.del(keys.toArray(new String[0])));
-            Assertions.assertEquals(result, "1");
+            Assertions.assertEquals(result, String.valueOf(keys.size()));
         }
     }
 
