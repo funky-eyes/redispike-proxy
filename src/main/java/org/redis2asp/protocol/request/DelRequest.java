@@ -22,7 +22,7 @@ import org.redis2asp.protocol.response.IntegerResponse;
 
 public class DelRequest implements RedisRequest<byte[]> {
 
-    String       key;
+    String          key;
 
     IntegerResponse response = new IntegerResponse();
 
