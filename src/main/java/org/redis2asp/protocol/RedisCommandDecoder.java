@@ -24,6 +24,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.DecoderException;
 import org.redis2asp.protocol.request.CommandRequest;
+import org.redis2asp.protocol.request.GetRequest;
 import org.redis2asp.protocol.request.SetRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +54,8 @@ public class RedisCommandDecoder implements CommandDecoder {
         String cmd = params.get(0);
         LOGGER.info("cmd: {}", cmd);
         switch (cmd.toLowerCase()) {
+            case "get":
+                return new GetRequest(params.get(1));
             case "command":
                 return new CommandRequest();
             case "set":

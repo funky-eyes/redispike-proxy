@@ -19,6 +19,7 @@ package org.redis2asp;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 import com.aerospike.client.IAerospikeClient;
 import com.aerospike.client.Key;
 import com.aerospike.client.Record;
@@ -36,7 +37,7 @@ public class ServerTest {
     static Server           server;
     static IAerospikeClient aspClient;
 
-    static Logger logger = LoggerFactory.getLogger(ServerTest.class);
+    static Logger           logger = LoggerFactory.getLogger(ServerTest.class);
 
     @BeforeAll
     public static void init() throws IOException, ParseException {
@@ -57,7 +58,7 @@ public class ServerTest {
     }
 
     @Test
-    public void testSetAsp() {
+    public void testGetSetAsp() {
         try (Jedis jedis = new Jedis("127.0.0.1", 6789)) {
             String result = jedis.set("a", "b");
             Assertions.assertEquals(result, "OK");
@@ -65,7 +66,19 @@ public class ServerTest {
         Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, "a");
         Record record = aspClient.get(aspClient.getReadPolicyDefault(), key);
         Map<String, Object> map = record.bins;
-        Assertions.assertTrue(map.containsKey("a"));
+        Assertions.assertEquals(map.get("a"), "b");
+        try (Jedis jedis = new Jedis("127.0.0.1", 6789, 3000)) {
+            String result = jedis.get("a");
+            Assertions.assertEquals(result, "b");
+        }
+    }
+
+    @Test
+    public void testGetNilAsp() {
+        try (Jedis jedis = new Jedis("127.0.0.1", 6789, 3000)) {
+            String result = jedis.get(String.valueOf(ThreadLocalRandom.current().nextInt(111)));
+            Assertions.assertNull(result);
+        }
     }
 
     @AfterAll

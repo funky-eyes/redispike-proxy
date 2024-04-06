@@ -21,7 +21,14 @@ import java.util.concurrent.locks.ReentrantLock;
 import com.aerospike.client.AerospikeClient;
 import com.aerospike.client.Host;
 import com.aerospike.client.IAerospikeClient;
+import com.aerospike.client.async.EventLoops;
+import com.aerospike.client.async.EventPolicy;
+import com.aerospike.client.async.NettyEventLoops;
+import com.aerospike.client.async.NioEventLoops;
 import com.aerospike.client.policy.ClientPolicy;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.epoll.Epoll;
+import io.netty.channel.epoll.EpollEventLoopGroup;
 
 public class AeroSpikeClientFactory {
 
@@ -32,19 +39,29 @@ public class AeroSpikeClientFactory {
     public static volatile String           namespace;
 
     public static volatile String           set;
+    public static volatile EventLoops       eventLoops;
+    static {
+        EventPolicy eventPolicy = new EventPolicy();
+        if (Epoll.isAvailable()) {
+            EventLoopGroup group = new EpollEventLoopGroup(Runtime.getRuntime().availableProcessors());
+            eventLoops = new NettyEventLoops(eventPolicy, group);
+        } else {
+            eventLoops = new NioEventLoops(eventPolicy, Runtime.getRuntime().availableProcessors());
+        }
+    }
 
     /**
      * Return either a native Aerospike client or a proxy client, based on isProxy.
      *
      * @param clientPolicy			client configuration parameters, pass in null for defaults
      * @param hosts					array of server hosts that the client can connect
-     * @return IAerospikeClient
      */
     public static void createInstance(ClientPolicy clientPolicy, Host... hosts) {
         if (client == null) {
             LOCK.lock();
             try {
                 if (client == null) {
+                    clientPolicy.eventLoops = eventLoops;
                     client = new AerospikeClient(clientPolicy, hosts);
                 }
             } finally {
