@@ -34,8 +34,13 @@ import org.redis2asp.factory.AeroSpikeClientFactory;
 import org.redis2asp.protocol.request.CommandRequest;
 import org.redis2asp.protocol.request.GetRequest;
 import org.redis2asp.protocol.request.SetRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RedisCommandHandler implements CommandHandler {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     IAerospikeClient client = AeroSpikeClientFactory.getClient();
 
     @Override
@@ -48,6 +53,7 @@ public class RedisCommandHandler implements CommandHandler {
                 client.get(null, new RecordListener() {
                     @Override
                     public void onSuccess(Key key, Record record) {
+                        logger.info("record: {}", record);
                         String value = record.getString(getRequest.getKey());
                         if (StringUtil.isNotBlank(value)) {
                             getRequest.setResponse(value.getBytes(StandardCharsets.UTF_8));
