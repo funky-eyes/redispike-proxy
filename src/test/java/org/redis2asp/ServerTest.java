@@ -19,6 +19,7 @@ package org.redis2asp;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 import com.aerospike.client.IAerospikeClient;
 import com.aerospike.client.Key;
 import com.aerospike.client.Record;
@@ -66,8 +67,16 @@ public class ServerTest {
         Record record = aspClient.get(aspClient.getReadPolicyDefault(), key);
         Map<String, Object> map = record.bins;
         Assertions.assertEquals(map.get("a"), "b");
-        try (Jedis jedis = new Jedis("127.0.0.1", 6789,3000)) {
+        try (Jedis jedis = new Jedis("127.0.0.1", 6789, 3000)) {
             String result = jedis.get("a");
+            Assertions.assertEquals(result, "b");
+        }
+    }
+
+    @Test
+    public void testGetNilAsp() {
+        try (Jedis jedis = new Jedis("127.0.0.1", 6789, 3000)) {
+            String result = jedis.get(String.valueOf(ThreadLocalRandom.current().nextInt(111)));
             Assertions.assertEquals(result, "b");
         }
     }
