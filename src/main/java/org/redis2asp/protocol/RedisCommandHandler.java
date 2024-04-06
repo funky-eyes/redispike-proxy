@@ -58,13 +58,13 @@ public class RedisCommandHandler implements CommandHandler {
                         if (StringUtil.isNotBlank(value)) {
                             getRequest.setResponse(value.getBytes(StandardCharsets.UTF_8));
                         }
-                        ctx.writeAndFlush(getRequest.getResponse());
+                        ctx.writeAndFlush(redisRequest.getResponse());
                     }
 
                     @Override
                     public void onFailure(AerospikeException ae) {
                         getRequest.setResponse(ae.getMessage().getBytes(StandardCharsets.UTF_8));
-                        ctx.writeAndFlush(getRequest.getResponse());
+                        ctx.writeAndFlush(redisRequest.getResponse());
                     }
                 }, client.getReadPolicyDefault(), key);
             }
@@ -82,7 +82,7 @@ public class RedisCommandHandler implements CommandHandler {
                     @Override
                     public void onFailure(AerospikeException ae) {
                         setRequest.setResponse(ae.getMessage().getBytes(StandardCharsets.UTF_8));
-                        ctx.writeAndFlush(setRequest.getResponse());
+                        ctx.writeAndFlush(redisRequest.getResponse());
                     }
                 }, client.getWritePolicyDefault(), key, bin);
             }

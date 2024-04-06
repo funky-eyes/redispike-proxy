@@ -66,7 +66,7 @@ public class ServerTest {
         Record record = aspClient.get(aspClient.getReadPolicyDefault(), key);
         Map<String, Object> map = record.bins;
         Assertions.assertEquals(map.get("a"), "b");
-        try (Jedis jedis = new Jedis("127.0.0.1", 6789)) {
+        try (Jedis jedis = new Jedis("127.0.0.1", 6789,3000)) {
             String result = jedis.get("a");
             Assertions.assertEquals(result, "b");
         }
