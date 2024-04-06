@@ -39,17 +39,17 @@ public class SetRequest implements RedisRequest<byte[]> {
     public SetRequest(String key, String value, List<String> params) {
         this.key = key;
         this.value = value;
-        if (params.contains("NX")) {
+        if (params.contains("nx")) {
             this.operate = Operate.NX;
-        } else if (params.contains("XX")) {
+        } else if (params.contains("xx")) {
             this.operate = Operate.XX;
         }
-        if (params.contains("EX")) {
+        if (params.contains("ex")) {
             this.ttlType = TtlType.EX;
-            this.ttl = Long.parseLong(params.get(params.indexOf("EX") + 1));
-        } else if (params.contains("PX")) {
+            this.ttl = Long.parseLong(params.get(params.indexOf("ex") + 1));
+        } else if (params.contains("px")) {
             this.ttlType = TtlType.PX;
-            this.ttl = Long.parseLong(params.get(params.indexOf("PX") + 1));
+            this.ttl = Long.parseLong(params.get(params.indexOf("px") + 1));
         }
     }
 
