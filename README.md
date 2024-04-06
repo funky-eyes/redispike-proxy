@@ -1,2 +1,2 @@
 # redis2asp
-redis to aerospike proxy
+High-performance Aerospike proxy for the Redis protocol
