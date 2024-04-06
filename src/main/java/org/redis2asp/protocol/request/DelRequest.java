@@ -16,21 +16,22 @@
  */
 package org.redis2asp.protocol.request;
 
+import java.util.List;
 import org.redis2asp.protocol.RedisRequest;
 import org.redis2asp.protocol.RedisResponse;
 import org.redis2asp.protocol.response.IntegerResponse;
 
 public class DelRequest implements RedisRequest<byte[]> {
 
-    String          key;
+    List<String>    key;
 
     IntegerResponse response = new IntegerResponse();
 
-    public DelRequest(String key) {
+    public DelRequest(List<String> key) {
         this.key = key;
     }
 
-    public String getKey() {
+    public List<String> getKey() {
         return key;
     }
 

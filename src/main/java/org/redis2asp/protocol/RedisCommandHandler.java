@@ -17,12 +17,16 @@
 package org.redis2asp.protocol;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.stream.Collectors;
 import com.aerospike.client.AerospikeException;
+import com.aerospike.client.BatchRecord;
 import com.aerospike.client.Bin;
 import com.aerospike.client.IAerospikeClient;
 import com.aerospike.client.Key;
 import com.aerospike.client.Record;
+import com.aerospike.client.listener.BatchRecordArrayListener;
 import com.aerospike.client.listener.DeleteListener;
 import com.aerospike.client.listener.RecordListener;
 import com.aerospike.client.listener.WriteListener;
@@ -156,20 +160,24 @@ public class RedisCommandHandler implements CommandHandler {
             }
             if (redisRequest instanceof DelRequest) {
                 DelRequest delRequest = (DelRequest) redisRequest;
-                Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, delRequest.getKey());
-                client.delete(null, new DeleteListener() {
+                List<String> keys = delRequest.getKey();
+                List<Key> list = keys.stream().map(key->new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, key)).collect(
+                        Collectors.toList());
+                client.delete(null, new BatchRecordArrayListener() {
                     @Override
-                    public void onSuccess(Key key, boolean existed) {
-                        delRequest.setResponse("1".getBytes(StandardCharsets.UTF_8));
+                    public void onSuccess(BatchRecord[] records, boolean status) {
+                        if(records!=null&&records.length>0) {
+                            delRequest.setResponse(String.valueOf(records.length).getBytes(StandardCharsets.UTF_8));
+                        }
                         ctx.writeAndFlush(delRequest.getResponse());
                     }
 
                     @Override
-                    public void onFailure(AerospikeException ae) {
+                    public void onFailure(BatchRecord[] records, AerospikeException ae) {
                         logger.error(ae.getMessage(), ae);
                         ctx.writeAndFlush(delRequest.getResponse());
                     }
-                }, client.getWritePolicyDefault(), key);
+                }, client.getBatchPolicyDefault(), client.getBatchDeletePolicyDefault(), list.toArray(new Key[0]));
             }
         }
     }
