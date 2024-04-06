@@ -36,7 +36,7 @@ public class ServerTest {
     static Server           server;
     static IAerospikeClient aspClient;
 
-    static Logger logger = LoggerFactory.getLogger(ServerTest.class);
+    static Logger           logger = LoggerFactory.getLogger(ServerTest.class);
 
     @BeforeAll
     public static void init() throws IOException, ParseException {
@@ -57,7 +57,7 @@ public class ServerTest {
     }
 
     @Test
-    public void testSetAsp() {
+    public void testGetSetAsp() {
         try (Jedis jedis = new Jedis("127.0.0.1", 6789)) {
             String result = jedis.set("a", "b");
             Assertions.assertEquals(result, "OK");
@@ -65,7 +65,11 @@ public class ServerTest {
         Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, "a");
         Record record = aspClient.get(aspClient.getReadPolicyDefault(), key);
         Map<String, Object> map = record.bins;
-        Assertions.assertTrue(map.containsKey("a"));
+        Assertions.assertEquals(map.get("a"), "b");
+        try (Jedis jedis = new Jedis("127.0.0.1", 6789)) {
+            String result = jedis.get("a");
+            Assertions.assertEquals(result, "b");
+        }
     }
 
     @AfterAll
