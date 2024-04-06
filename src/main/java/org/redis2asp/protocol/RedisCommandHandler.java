@@ -25,6 +25,8 @@ import com.aerospike.client.Key;
 import com.aerospike.client.Record;
 import com.aerospike.client.listener.RecordListener;
 import com.aerospike.client.listener.WriteListener;
+import com.aerospike.client.policy.RecordExistsAction;
+import com.aerospike.client.policy.WritePolicy;
 import com.alipay.remoting.CommandCode;
 import com.alipay.remoting.CommandHandler;
 import com.alipay.remoting.RemotingContext;
@@ -76,6 +78,57 @@ public class RedisCommandHandler implements CommandHandler {
                 SetRequest setRequest = (SetRequest) redisRequest;
                 Bin bin = new Bin(setRequest.getKey(), setRequest.getValue());
                 Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, setRequest.getKey());
+                WritePolicy writePolicy = null;
+                if (setRequest.getTtl() != null) {
+                    writePolicy = new WritePolicy(client.getWritePolicyDefault());
+                    if (setRequest.getTtlType() == SetRequest.TtlType.EX) {
+                        writePolicy.expiration = setRequest.getTtl().intValue();
+                    } else {
+                        writePolicy.expiration = Integer.max((int) (setRequest.getTtl() / 1000), 1);
+                    }
+                }
+                if (setRequest.getOperate() != null) {
+                    if (writePolicy == null) {
+                        writePolicy = new WritePolicy(client.getWritePolicyDefault());
+                    }
+                    if (setRequest.getOperate() == SetRequest.Operate.NX) {
+                        writePolicy.recordExistsAction = RecordExistsAction.CREATE_ONLY;
+                    }
+                    if (setRequest.getOperate() == SetRequest.Operate.XX) {
+                        client.get(null, new RecordListener() {
+                            @Override
+                            public void onSuccess(Key key, Record record) {
+                                if (record == null) {
+                                    ctx.writeAndFlush(redisRequest.getResponse());
+                                } else {
+                                    client.put(null, new WriteListener() {
+                                        @Override
+                                        public void onSuccess(Key key) {
+                                            setRequest.setResponse("OK".getBytes(StandardCharsets.UTF_8));
+                                            ctx.writeAndFlush(redisRequest.getResponse());
+                                        }
+
+                                        @Override
+                                        public void onFailure(AerospikeException ae) {
+                                            setRequest.setResponse(ae.getMessage().getBytes(StandardCharsets.UTF_8));
+                                            ctx.writeAndFlush(redisRequest.getResponse());
+                                        }
+                                    }, client.getWritePolicyDefault(), key, bin);
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(AerospikeException ae) {
+                                setRequest.setResponse(ae.getMessage().getBytes(StandardCharsets.UTF_8));
+                                ctx.writeAndFlush(redisRequest.getResponse());
+                            }
+                        }, client.getReadPolicyDefault(), key);
+                        return;
+                    }
+                }
+                if (writePolicy == null) {
+                    writePolicy = client.getWritePolicyDefault();
+                }
                 client.put(null, new WriteListener() {
                     @Override
                     public void onSuccess(Key key) {
@@ -88,7 +141,7 @@ public class RedisCommandHandler implements CommandHandler {
                         setRequest.setResponse(ae.getMessage().getBytes(StandardCharsets.UTF_8));
                         ctx.writeAndFlush(redisRequest.getResponse());
                     }
-                }, client.getWritePolicyDefault(), key, bin);
+                }, writePolicy, key, bin);
             }
             if (redisRequest instanceof CommandRequest) {
                 CommandRequest commandRequest = (CommandRequest) redisRequest;
@@ -100,12 +153,10 @@ public class RedisCommandHandler implements CommandHandler {
 
     @Override
     public void registerProcessor(CommandCode cmd, RemotingProcessor<?> processor) {
-
     }
 
     @Override
     public void registerDefaultExecutor(ExecutorService executor) {
-
     }
 
     @Override
