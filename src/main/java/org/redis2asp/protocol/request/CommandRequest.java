@@ -33,4 +33,9 @@ public class CommandRequest implements RedisRequest<byte[]> {
     public void setResponse(byte[] data) {
         response.setData(data);
     }
+
+    @Override
+    public String toString() {
+        return "CommandRequest{" + "response=" + response + '}';
+    }
 }

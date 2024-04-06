@@ -91,4 +91,9 @@ public class SetRequest implements RedisRequest<byte[]> {
         NX, XX
     }
 
+    @Override
+    public String toString() {
+        return "SetRequest{" + "key='" + key + '\'' + ", value='" + value + '\'' + ", ttlType=" + ttlType + ", ttl="
+               + ttl + ", operate=" + operate + ", response=" + response + '}';
+    }
 }

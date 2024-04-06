@@ -49,6 +49,7 @@ public class RedisCommandHandler implements CommandHandler {
     public void handleCommand(RemotingContext ctx, Object msg) {
         if (msg instanceof RedisRequest) {
             RedisRequest<?> redisRequest = (RedisRequest) msg;
+            logger.info("redisRequest:{}", redisRequest);
             if (redisRequest instanceof GetRequest) {
                 GetRequest getRequest = (GetRequest) redisRequest;
                 Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, getRequest.getKey());
