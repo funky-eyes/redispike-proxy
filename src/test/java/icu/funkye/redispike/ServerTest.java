@@ -41,9 +41,9 @@ public class ServerTest {
     static Server           server;
     static IAerospikeClient aspClient;
 
-    static Logger           logger = LoggerFactory.getLogger(ServerTest.class);
+    static Logger           logger      = LoggerFactory.getLogger(ServerTest.class);
 
-    private final int RandomValue = Integer.MAX_VALUE;
+    private final int       RandomValue = Integer.MAX_VALUE;
 
     @BeforeAll
     public static void init() throws ParseException {
