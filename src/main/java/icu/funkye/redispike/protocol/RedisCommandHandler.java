@@ -24,7 +24,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import com.aerospike.client.AerospikeException;
 import com.aerospike.client.Bin;
@@ -62,28 +61,31 @@ public class RedisCommandHandler implements CommandHandler {
     @Override
     public void handleCommand(RemotingContext ctx, Object msg) {
         if (msg instanceof RedisRequest) {
-            RedisRequest<?> redisRequest = (RedisRequest) msg;
-            if(logger.isDebugEnabled()){
+            RedisRequest<?> redisRequest = (RedisRequest)msg;
+            if (logger.isDebugEnabled()) {
                 logger.debug("redisRequest:{}", redisRequest);
             }
-            if(redisRequest instanceof HDelRequest){
+            if (redisRequest instanceof HDelRequest) {
                 HDelRequest request = (HDelRequest)redisRequest;
                 Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, request.getKey());
                 client.get(AeroSpikeClientFactory.eventLoops.next(), new RecordListener() {
-                    @Override public void onSuccess(Key key, Record record) {
+                    @Override
+                    public void onSuccess(Key key, Record record) {
                         Map<String, Object> map = record.bins;
                         for (String field : ((HDelRequest)redisRequest).getFields()) {
                             map.remove(field);
                         }
                         if (map.isEmpty()) {
                             client.delete(AeroSpikeClientFactory.eventLoops.next(), new DeleteListener() {
-                                @Override public void onSuccess(Key key, boolean b) {
-                                    request.setResponse(String.valueOf(request.getFields().size())
-                                        .getBytes(StandardCharsets.UTF_8));
+                                @Override
+                                public void onSuccess(Key key, boolean b) {
+                                    request.setResponse(
+                                        String.valueOf(request.getFields().size()).getBytes(StandardCharsets.UTF_8));
                                     ctx.writeAndFlush(redisRequest.getResponse());
                                 }
 
-                                @Override public void onFailure(AerospikeException exception) {
+                                @Override
+                                public void onFailure(AerospikeException exception) {
                                     logger.error(exception.getMessage(), exception);
                                     ctx.writeAndFlush(redisRequest.getResponse());
                                 }
@@ -92,13 +94,15 @@ public class RedisCommandHandler implements CommandHandler {
                             List<Bin> newBins = new ArrayList<>();
                             map.forEach((k, v) -> newBins.add(new Bin(k, v)));
                             client.put(AeroSpikeClientFactory.eventLoops.next(), new WriteListener() {
-                                @Override public void onSuccess(Key key) {
-                                    request.setResponse(String.valueOf(request.getFields().size())
-                                        .getBytes(StandardCharsets.UTF_8));
+                                @Override
+                                public void onSuccess(Key key) {
+                                    request.setResponse(
+                                        String.valueOf(request.getFields().size()).getBytes(StandardCharsets.UTF_8));
                                     ctx.writeAndFlush(redisRequest.getResponse());
                                 }
 
-                                @Override public void onFailure(AerospikeException exception) {
+                                @Override
+                                public void onFailure(AerospikeException exception) {
                                     logger.error(exception.getMessage(), exception);
                                     ctx.writeAndFlush(redisRequest.getResponse());
                                 }
@@ -106,41 +110,43 @@ public class RedisCommandHandler implements CommandHandler {
                         }
                     }
 
-                    @Override public void onFailure(AerospikeException exception) {
+                    @Override
+                    public void onFailure(AerospikeException exception) {
                         logger.error(exception.getMessage(), exception);
                         ctx.writeAndFlush(redisRequest.getResponse());
                     }
-                },client.getReadPolicyDefault(),key);
+                }, client.getReadPolicyDefault(), key);
             }
-            if(redisRequest instanceof HSetRequest){
+            if (redisRequest instanceof HSetRequest) {
                 HSetRequest request = (HSetRequest)redisRequest;
                 Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, request.getKey());
                 List<Bin> list = new ArrayList<>();
-                request.getKv().forEach((k,v)->{
-                    list.add(new Bin(k,v));
+                request.getKv().forEach((k, v) -> {
+                    list.add(new Bin(k, v));
                 });
                 WritePolicy writePolicy;
-                if(request.getOperate()!=null&&request.getOperate()==Operate.NX){
-                    writePolicy  = new WritePolicy(client.getWritePolicyDefault());
+                if (request.getOperate() != null && request.getOperate() == Operate.NX) {
+                    writePolicy = new WritePolicy(client.getWritePolicyDefault());
                     writePolicy.recordExistsAction = RecordExistsAction.CREATE_ONLY;
-                }else {
+                } else {
                     writePolicy = client.getWritePolicyDefault();
                 }
                 client.put(AeroSpikeClientFactory.eventLoops.next(), new WriteListener() {
-                    @Override public void onSuccess(Key key) {
-                        request.setResponse(
-                            String.valueOf(request.getKv().size()).getBytes(StandardCharsets.UTF_8));
+                    @Override
+                    public void onSuccess(Key key) {
+                        request.setResponse(String.valueOf(request.getKv().size()).getBytes(StandardCharsets.UTF_8));
                         ctx.writeAndFlush(redisRequest.getResponse());
                     }
 
-                    @Override public void onFailure(AerospikeException ae) {
+                    @Override
+                    public void onFailure(AerospikeException ae) {
                         logger.error(ae.getMessage(), ae);
                         ctx.writeAndFlush(redisRequest.getResponse());
                     }
                 }, writePolicy, key, list.toArray(new Bin[0]));
             }
             if (redisRequest instanceof GetRequest) {
-                GetRequest getRequest = (GetRequest) redisRequest;
+                GetRequest getRequest = (GetRequest)redisRequest;
                 Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, getRequest.getKey());
                 client.get(AeroSpikeClientFactory.eventLoops.next(), new RecordListener() {
                     @Override
@@ -164,7 +170,7 @@ public class RedisCommandHandler implements CommandHandler {
                 }, client.getReadPolicyDefault(), key);
             }
             if (redisRequest instanceof SetRequest) {
-                SetRequest setRequest = (SetRequest) redisRequest;
+                SetRequest setRequest = (SetRequest)redisRequest;
                 Bin bin = new Bin(setRequest.getKey(), setRequest.getValue());
                 Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, setRequest.getKey());
                 WritePolicy writePolicy = null;
@@ -173,7 +179,7 @@ public class RedisCommandHandler implements CommandHandler {
                     if (setRequest.getTtlType() == TtlType.EX) {
                         writePolicy.expiration = setRequest.getTtl().intValue();
                     } else {
-                        writePolicy.expiration = Integer.max((int) (setRequest.getTtl() / 1000), 1);
+                        writePolicy.expiration = Integer.max((int)(setRequest.getTtl() / 1000), 1);
                     }
                 }
                 if (setRequest.getOperate() != null) {
@@ -182,8 +188,7 @@ public class RedisCommandHandler implements CommandHandler {
                     }
                     if (setRequest.getOperate() == Operate.NX) {
                         writePolicy.recordExistsAction = RecordExistsAction.CREATE_ONLY;
-                    }else
-                    if (setRequest.getOperate() == Operate.XX) {
+                    } else if (setRequest.getOperate() == Operate.XX) {
                         client.get(AeroSpikeClientFactory.eventLoops.next(), new RecordListener() {
                             @Override
                             public void onSuccess(Key key, Record record) {
@@ -237,22 +242,23 @@ public class RedisCommandHandler implements CommandHandler {
                 }, writePolicy, key, bin);
             }
             if (redisRequest instanceof CommandRequest) {
-                CommandRequest commandRequest = (CommandRequest) redisRequest;
+                CommandRequest commandRequest = (CommandRequest)redisRequest;
                 commandRequest.setResponse("OK".getBytes(StandardCharsets.UTF_8));
                 ctx.writeAndFlush(redisRequest.getResponse());
             }
             if (redisRequest instanceof DelRequest) {
-                DelRequest delRequest = (DelRequest) redisRequest;
+                DelRequest delRequest = (DelRequest)redisRequest;
                 List<String> keys = delRequest.getKey();
-                List<Key> list = keys.stream().map(key->new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, key)).collect(
-                        Collectors.toList());
+                List<Key> list =
+                    keys.stream().map(key -> new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, key))
+                        .collect(Collectors.toList());
                 CountDownLatch countDownLatch = new CountDownLatch(list.size());
                 for (Key key : list) {
                     client.delete(AeroSpikeClientFactory.eventLoops.next(), new DeleteListener() {
                         @Override
                         public void onSuccess(Key key, boolean b) {
-                            delRequest.setResponse(
-                                String.valueOf(delRequest.getCount().incrementAndGet()).getBytes(StandardCharsets.UTF_8));
+                            delRequest.setResponse(String.valueOf(delRequest.getCount().incrementAndGet())
+                                .getBytes(StandardCharsets.UTF_8));
                             countDownLatch.countDown();
                         }
 
