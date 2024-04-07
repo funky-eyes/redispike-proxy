@@ -17,6 +17,7 @@
 package icu.funkye.redispike.protocol.request;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import icu.funkye.redispike.protocol.RedisRequest;
 import icu.funkye.redispike.protocol.RedisResponse;
 import icu.funkye.redispike.protocol.response.IntegerResponse;
@@ -24,6 +25,8 @@ import icu.funkye.redispike.protocol.response.IntegerResponse;
 public class DelRequest implements RedisRequest<byte[]> {
 
     List<String>    key;
+
+    AtomicInteger   count    = new AtomicInteger(0);
 
     IntegerResponse response = new IntegerResponse();
 
@@ -38,6 +41,10 @@ public class DelRequest implements RedisRequest<byte[]> {
     @Override
     public void setResponse(byte[] data) {
         this.response.setData(data);
+    }
+
+    public AtomicInteger getCount() {
+        return count;
     }
 
     @Override

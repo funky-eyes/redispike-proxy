@@ -16,6 +16,9 @@
  */
 package icu.funkye.redispike;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Optional;
 import com.aerospike.client.Host;
 import com.aerospike.client.policy.ClientPolicy;
 import com.alipay.remoting.ConnectionEventType;
@@ -23,6 +26,7 @@ import com.alipay.remoting.ProtocolManager;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import icu.funkye.redispike.common.BoltServer;
@@ -61,8 +65,14 @@ public class Server {
                                                       + "for single record and batch commands.");
         options.addOption("s", "set", true, "Set name. Use 'empty' for empty set (default: demoset)");
         options.addOption("n", "namespace", true, "Namespace (default: test)");
+        options.addOption("u", "help", false, "Print usage.");
+
         CommandLineParser parser = new DefaultParser();
         CommandLine cl = parser.parse(options, args, false);
+        if (cl.hasOption("u")) {
+            logUsage(options);
+            throw new RuntimeException("Terminate after displaying usage");
+        }
         port = Integer.parseInt(cl.getOptionValue("p", "6379"));
         String host = cl.getOptionValue("th", "127.0.0.1");
         int targetPort = Integer.parseInt(cl.getOptionValue("tp", "3000"));
@@ -86,8 +96,16 @@ public class Server {
         }
     }
 
-    public void shutdown() {
-        server.stop();
+    private void logUsage(Options options) {
+        HelpFormatter formatter = new HelpFormatter();
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        String syntax = "java -jar redispike-proxy.jar -options";
+        formatter.printHelp(pw, 100, syntax, "options:", options, 0, 2, null);
+        System.out.println(sw);
     }
 
+    public void shutdown() {
+        Optional.ofNullable(server).ifPresent(BoltServer::stop);
+    }
 }

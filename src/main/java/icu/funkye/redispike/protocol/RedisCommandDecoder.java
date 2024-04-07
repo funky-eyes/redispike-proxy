@@ -53,7 +53,9 @@ public class RedisCommandDecoder implements CommandDecoder {
 
     private RedisRequest<?> convert2RedisRequest(List<String> params) {
         String cmd = params.get(0);
-        LOGGER.info("cmd: {}", params);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("cmd: {}", params);
+        }
         switch (cmd) {
             case "get":
                 return new GetRequest(params.get(1));

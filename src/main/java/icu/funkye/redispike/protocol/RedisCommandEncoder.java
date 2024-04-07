@@ -29,7 +29,6 @@ public class RedisCommandEncoder implements CommandEncoder {
 
     @Override
     public void encode(ChannelHandlerContext ctx, Serializable msg, ByteBuf out) throws Exception {
-        logger.info("RedisCommandEncoder encode");
         if (msg instanceof RedisResponse) {
             RedisResponse<?> redisResponse = (RedisResponse) msg;
             if (logger.isDebugEnabled()) {
