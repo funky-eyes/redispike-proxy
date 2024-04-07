@@ -19,6 +19,7 @@ package icu.funkye.redispike.protocol;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -44,6 +45,7 @@ import icu.funkye.redispike.factory.AeroSpikeClientFactory;
 import icu.funkye.redispike.protocol.request.CommandRequest;
 import icu.funkye.redispike.protocol.request.DelRequest;
 import icu.funkye.redispike.protocol.request.GetRequest;
+import icu.funkye.redispike.protocol.request.HDelRequest;
 import icu.funkye.redispike.protocol.request.HSetRequest;
 import icu.funkye.redispike.protocol.request.SetRequest;
 import icu.funkye.redispike.protocol.request.conts.Operate;
@@ -63,6 +65,52 @@ public class RedisCommandHandler implements CommandHandler {
             RedisRequest<?> redisRequest = (RedisRequest) msg;
             if(logger.isDebugEnabled()){
                 logger.debug("redisRequest:{}", redisRequest);
+            }
+            if(redisRequest instanceof HDelRequest){
+                HDelRequest request = (HDelRequest)redisRequest;
+                Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, request.getKey());
+                client.get(AeroSpikeClientFactory.eventLoops.next(), new RecordListener() {
+                    @Override public void onSuccess(Key key, Record record) {
+                        Map<String, Object> map = record.bins;
+                        for (String field : ((HDelRequest)redisRequest).getFields()) {
+                            map.remove(field);
+                        }
+                        if (map.isEmpty()) {
+                            client.delete(AeroSpikeClientFactory.eventLoops.next(), new DeleteListener() {
+                                @Override public void onSuccess(Key key, boolean b) {
+                                    request.setResponse(String.valueOf(request.getFields().size())
+                                        .getBytes(StandardCharsets.UTF_8));
+                                    ctx.writeAndFlush(redisRequest.getResponse());
+                                }
+
+                                @Override public void onFailure(AerospikeException exception) {
+                                    logger.error(exception.getMessage(), exception);
+                                    ctx.writeAndFlush(redisRequest.getResponse());
+                                }
+                            }, client.getWritePolicyDefault(), key);
+                        } else {
+                            List<Bin> newBins = new ArrayList<>();
+                            map.forEach((k, v) -> newBins.add(new Bin(k, v)));
+                            client.put(AeroSpikeClientFactory.eventLoops.next(), new WriteListener() {
+                                @Override public void onSuccess(Key key) {
+                                    request.setResponse(String.valueOf(request.getFields().size())
+                                        .getBytes(StandardCharsets.UTF_8));
+                                    ctx.writeAndFlush(redisRequest.getResponse());
+                                }
+
+                                @Override public void onFailure(AerospikeException exception) {
+                                    logger.error(exception.getMessage(), exception);
+                                    ctx.writeAndFlush(redisRequest.getResponse());
+                                }
+                            }, client.getWritePolicyDefault(), key, newBins.toArray(new Bin[0]));
+                        }
+                    }
+
+                    @Override public void onFailure(AerospikeException exception) {
+                        logger.error(exception.getMessage(), exception);
+                        ctx.writeAndFlush(redisRequest.getResponse());
+                    }
+                },client.getReadPolicyDefault(),key);
             }
             if(redisRequest instanceof HSetRequest){
                 HSetRequest request = (HSetRequest)redisRequest;
