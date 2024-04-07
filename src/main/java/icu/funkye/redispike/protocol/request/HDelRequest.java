@@ -35,7 +35,7 @@ public class HDelRequest implements RedisRequest<byte[]> {
 
     public HDelRequest(List<String> params) {
         params.remove(0);
-        this.key = params.remove(1);
+        this.key = params.remove(0);
         this.fields = new HashSet<>(params);
     }
 
