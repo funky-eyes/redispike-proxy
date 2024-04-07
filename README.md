@@ -2,7 +2,8 @@
 High-performance Aerospike proxy for the Redis protocol
 ### Performance Test Report
 aerospike 3.x 2c4g  redispike-proxy 2c4g:
-./redis-benchmark -h xxxx -p 6379 -n 2000000 -c 200 -t get
+
+`./redis-benchmark -h xxxx -p 6379 -n 2000000 -c 200 -t get`
 ```
 WARNING: Could not fetch server CONFIG
 ====== GET ======
