@@ -38,14 +38,9 @@ jobs:
           java-version: ${{ matrix.java }}
       - name: "Print maven version"
         run: ./mvnw -version
-      - name: "Test, Check style, Check PMD, Check license with Maven and Java8"
-        if: matrix.java == '8'
+      - name: "Test, Check style, Check PMD, Check license with Maven and Java"
         run: |
           ./mvnw -T 4C clean test && sh ./tools/check_format.sh
-      - name: "Test with Maven and Java${{ matrix.java }}"
-        if: matrix.java != '8'
-        run: |
-          ./mvnw -T 4C clean test
       - name: Upload coverage to Codecov
         if: matrix.java == '8'
         uses: codecov/codecov-action@v4
