@@ -84,7 +84,7 @@ public class Server {
         ClientPolicy clientPolicy = new ClientPolicy();
         clientPolicy.user = targetUser;
         clientPolicy.password = targetPassword;
-        AeroSpikeClientFactory.createInstance(clientPolicy, hosts);
+        //AeroSpikeClientFactory.createInstance(clientPolicy, hosts);
         server = new BoltServer(port);
         server.addConnectionEventProcessor(ConnectionEventType.CONNECT, serverConnectProcessor);
         server.addConnectionEventProcessor(ConnectionEventType.CLOSE, serverDisConnectProcessor);

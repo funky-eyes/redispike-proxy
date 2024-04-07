@@ -38,21 +38,21 @@ public class RedisCommandHandler implements CommandHandler {
 
     private final Logger                              logger       = LoggerFactory.getLogger(getClass());
 
-    Map<CommandCode, RemotingProcessor<RedisRequest>> processorMap = new HashMap<>();
+    Map<Short, RemotingProcessor<RedisRequest>> processorMap = new HashMap<>();
 
     public RedisCommandHandler() {
         CommandRequestProcessor commandRequestProcessor = new CommandRequestProcessor();
-        processorMap.put(commandRequestProcessor.getCmdCode(), commandRequestProcessor);
+        processorMap.put(commandRequestProcessor.getCmdCode().value(), commandRequestProcessor);
         DelRequestProcessor delRequestProcessor = new DelRequestProcessor();
-        processorMap.put(delRequestProcessor.getCmdCode(), delRequestProcessor);
+        processorMap.put(delRequestProcessor.getCmdCode().value(), delRequestProcessor);
         GetRequestProcessor getRequestProcessor = new GetRequestProcessor();
-        processorMap.put(getRequestProcessor.getCmdCode(), getRequestProcessor);
+        processorMap.put(getRequestProcessor.getCmdCode().value(), getRequestProcessor);
         HSetRequestProcessor hSetRequestProcessor = new HSetRequestProcessor();
-        processorMap.put(hSetRequestProcessor.getCmdCode(), hSetRequestProcessor);
+        processorMap.put(hSetRequestProcessor.getCmdCode().value(), hSetRequestProcessor);
         HDelRequestProcessor hDelRequestProcessor = new HDelRequestProcessor();
-        processorMap.put(hDelRequestProcessor.getCmdCode(), hDelRequestProcessor);
+        processorMap.put(hDelRequestProcessor.getCmdCode().value(), hDelRequestProcessor);
         SetRequestProcessor setRequestProcessor = new SetRequestProcessor();
-        processorMap.put(setRequestProcessor.getCmdCode(), setRequestProcessor);
+        processorMap.put(setRequestProcessor.getCmdCode().value(), setRequestProcessor);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class RedisCommandHandler implements CommandHandler {
         if (msg instanceof RedisRequest) {
             RedisRequest request = (RedisRequest) msg;
             try {
-                processorMap.get(request.getCmdCode()).process(ctx, request, getDefaultExecutor());
+                processorMap.get(request.getCmdCode().value()).process(ctx, request, getDefaultExecutor());
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
                 ctx.writeAndFlush(new BulkResponse());
@@ -70,7 +70,7 @@ public class RedisCommandHandler implements CommandHandler {
 
     @Override
     public void registerProcessor(CommandCode cmd, RemotingProcessor processor) {
-        processorMap.put(cmd, processor);
+        processorMap.put(cmd.value(), processor);
     }
 
     @Override
