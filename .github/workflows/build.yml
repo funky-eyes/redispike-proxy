@@ -41,11 +41,8 @@ jobs:
       - name: "Test, Check style, Check PMD, Check license with Maven and Java"
         run: |
           ./mvnw -T 4C clean test && sh ./tools/check_format.sh
-      - name: Upload coverage to Codecov
+      - name: "Codecov"
         if: matrix.java == '8'
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v4.0.1
         with:
-          flags: smart-tests
-          verbose: true
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          token: ${{ secrets.CODECOV_TOKEN }}
