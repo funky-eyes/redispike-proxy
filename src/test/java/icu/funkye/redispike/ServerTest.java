@@ -43,9 +43,9 @@ public class ServerTest {
     static Logger           logger = LoggerFactory.getLogger(ServerTest.class);
 
     @BeforeAll
-    public static void init() throws IOException, ParseException {
+    public static void init() throws ParseException {
         server = new Server();
-        server.start("-p", "6789");
+        server.start("-p6789");
         aspClient = AeroSpikeClientFactory.getClient();
     }
 
