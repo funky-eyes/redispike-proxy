@@ -14,12 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.redis2asp.protocol;
+package icu.funkye.redispike.protocol.request;
 
-public interface RedisRequest<T> {
+import icu.funkye.redispike.protocol.RedisRequest;
+import icu.funkye.redispike.protocol.RedisResponse;
+import icu.funkye.redispike.protocol.response.BulkResponse;
 
-    RedisResponse<T> getResponse();
+public class GetRequest implements RedisRequest<byte[]> {
 
-    void setResponse(T data);
+    String       key;
 
+    BulkResponse response = new BulkResponse();
+
+    public GetRequest(String key) {
+        this.key = key;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    @Override
+    public void setResponse(byte[] data) {
+        this.response.setData(data);
+    }
+
+    @Override
+    public RedisResponse<byte[]> getResponse() {
+        return response;
+    }
+
+    @Override
+    public String toString() {
+        return "GetRequest{" + "key='" + key + '\'' + ", response=" + response + '}';
+    }
 }

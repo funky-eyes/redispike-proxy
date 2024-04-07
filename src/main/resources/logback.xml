@@ -20,7 +20,7 @@
 <configuration>
     <!-- file-appender properties -->
     <property name="LOG_FILE_PATH"
-              value="${user.home}/logs/redis2asp"/>
+              value="${user.home}/logs/redispike-proxy"/>
     <property name="FILE_LOG_PATTERN"
               value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p --- [%t] [%logger] [%M] [%X{X-TX-XID:-}]: %m%n%wEx2"/>
 
@@ -33,10 +33,10 @@
 
     <!--ALL-->
     <appender name="FILE_ALL" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_FILE_PATH}/${APPLICATION_NAME:-redis2asp}redis2asp.all.log</file>
+        <file>${LOG_FILE_PATH}/${APPLICATION_NAME:-redispike-proxy}redispike-proxy.all.log</file>
         <append>true</append>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_FILE_PATH}/history/${APPLICATION_NAME:-redis2asp}redis2asp.all.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <fileNamePattern>${LOG_FILE_PATH}/history/${APPLICATION_NAME:-redispike-proxy}redispike-proxy.all.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
             <maxFileSize>2GB</maxFileSize>
             <MaxHistory>7</MaxHistory>
             <totalSizeCap>7GB</totalSizeCap>
@@ -55,10 +55,10 @@
             <onMatch>ACCEPT</onMatch>
             <onMismatch>DENY</onMismatch>
         </filter>
-        <file>${LOG_FILE_PATH}/${APPLICATION_NAME:-redis2asp}redis2asp.warn.log</file>
+        <file>${LOG_FILE_PATH}/${APPLICATION_NAME:-redispike-proxy}redispike-proxy.warn.log</file>
         <append>true</append>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_FILE_PATH}/history/${APPLICATION_NAME:-redis2asp}redis2asp.warn.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <fileNamePattern>${LOG_FILE_PATH}/history/${APPLICATION_NAME:-redispike-proxy}redispike-proxy.warn.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
             <maxFileSize>2GB</maxFileSize>
             <MaxHistory>7</MaxHistory>
             <totalSizeCap>7GB</totalSizeCap>
@@ -77,10 +77,10 @@
             <onMatch>ACCEPT</onMatch>
             <onMismatch>DENY</onMismatch>
         </filter>
-        <file>${LOG_FILE_PATH}/${APPLICATION_NAME:-redis2asp}redis2asp.error.log</file>
+        <file>${LOG_FILE_PATH}/${APPLICATION_NAME:-redispike-proxy}redispike-proxy.error.log</file>
         <append>true</append>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_FILE_PATH}/history/${APPLICATION_NAME:-redis2asp}redis2asp.error.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <fileNamePattern>${LOG_FILE_PATH}/history/${APPLICATION_NAME:-redispike-proxy}redispike-proxy.error.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
             <maxFileSize>2GB</maxFileSize>
             <MaxHistory>7</MaxHistory>
             <totalSizeCap>7GB</totalSizeCap>

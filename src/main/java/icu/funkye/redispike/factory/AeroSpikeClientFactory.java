@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.redis2asp.factory;
+package icu.funkye.redispike.factory;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -61,6 +61,7 @@ public class AeroSpikeClientFactory {
             LOCK.lock();
             try {
                 if (client == null) {
+                    clientPolicy.maxConnsPerNode = 65535;
                     clientPolicy.eventLoops = eventLoops;
                     client = new AerospikeClient(clientPolicy, hosts);
                 }

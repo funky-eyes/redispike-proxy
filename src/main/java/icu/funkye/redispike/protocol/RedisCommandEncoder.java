@@ -14,38 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.redis2asp.protocol.request;
+package icu.funkye.redispike.protocol;
 
-import org.redis2asp.protocol.RedisRequest;
-import org.redis2asp.protocol.RedisResponse;
-import org.redis2asp.protocol.response.BulkResponse;
+import java.io.Serializable;
+import com.alipay.remoting.CommandEncoder;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class GetRequest implements RedisRequest<byte[]> {
+public class RedisCommandEncoder implements CommandEncoder {
 
-    String       key;
-
-    BulkResponse response = new BulkResponse();
-
-    public GetRequest(String key) {
-        this.key = key;
-    }
-
-    public String getKey() {
-        return key;
-    }
+    Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
-    public void setResponse(byte[] data) {
-        this.response.setData(data);
+    public void encode(ChannelHandlerContext ctx, Serializable msg, ByteBuf out) throws Exception {
+        if (msg instanceof RedisResponse) {
+            RedisResponse<?> redisResponse = (RedisResponse) msg;
+            if (logger.isDebugEnabled()) {
+                logger.debug("encode redisReply:{}", redisResponse);
+            }
+            redisResponse.write(out);
+        }
     }
 
-    @Override
-    public RedisResponse<byte[]> getResponse() {
-        return response;
-    }
-
-    @Override
-    public String toString() {
-        return "GetRequest{" + "key='" + key + '\'' + ", response=" + response + '}';
-    }
 }

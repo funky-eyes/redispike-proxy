@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.redis2asp.protocol.response;
+package icu.funkye.redispike.protocol.response;
 
 import java.io.IOException;
 import java.util.Arrays;
 import io.netty.buffer.ByteBuf;
-import org.redis2asp.protocol.RedisResponse;
+import icu.funkye.redispike.protocol.RedisResponse;
 
 public class BulkResponse implements RedisResponse<byte[]> {
 

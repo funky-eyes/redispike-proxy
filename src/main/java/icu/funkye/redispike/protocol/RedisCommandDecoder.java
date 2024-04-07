@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.redis2asp.protocol;
+package icu.funkye.redispike.protocol;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -23,10 +23,10 @@ import com.alipay.remoting.CommandDecoder;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.DecoderException;
-import org.redis2asp.protocol.request.CommandRequest;
-import org.redis2asp.protocol.request.DelRequest;
-import org.redis2asp.protocol.request.GetRequest;
-import org.redis2asp.protocol.request.SetRequest;
+import icu.funkye.redispike.protocol.request.CommandRequest;
+import icu.funkye.redispike.protocol.request.DelRequest;
+import icu.funkye.redispike.protocol.request.GetRequest;
+import icu.funkye.redispike.protocol.request.SetRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +53,9 @@ public class RedisCommandDecoder implements CommandDecoder {
 
     private RedisRequest<?> convert2RedisRequest(List<String> params) {
         String cmd = params.get(0);
-        LOGGER.info("cmd: {}", params);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("cmd: {}", params);
+        }
         switch (cmd) {
             case "get":
                 return new GetRequest(params.get(1));

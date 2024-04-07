@@ -14,15 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.redis2asp.protocol.request;
+package icu.funkye.redispike.protocol.request;
 
-import org.redis2asp.protocol.RedisRequest;
-import org.redis2asp.protocol.RedisResponse;
-import org.redis2asp.protocol.response.BulkResponse;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import icu.funkye.redispike.protocol.RedisRequest;
+import icu.funkye.redispike.protocol.RedisResponse;
+import icu.funkye.redispike.protocol.response.IntegerResponse;
 
-public class CommandRequest implements RedisRequest<byte[]> {
+public class DelRequest implements RedisRequest<byte[]> {
 
-    private BulkResponse response = new BulkResponse();
+    List<String>    key;
+
+    AtomicInteger   count    = new AtomicInteger(0);
+
+    IntegerResponse response = new IntegerResponse();
+
+    public DelRequest(List<String> key) {
+        this.key = key;
+    }
+
+    public List<String> getKey() {
+        return key;
+    }
+
+    @Override
+    public void setResponse(byte[] data) {
+        this.response.setData(data);
+    }
+
+    public AtomicInteger getCount() {
+        return count;
+    }
 
     @Override
     public RedisResponse<byte[]> getResponse() {
@@ -30,12 +53,7 @@ public class CommandRequest implements RedisRequest<byte[]> {
     }
 
     @Override
-    public void setResponse(byte[] data) {
-        response.setData(data);
-    }
-
-    @Override
     public String toString() {
-        return "CommandRequest{" + "response=" + response + '}';
+        return "GetRequest{" + "key='" + key + '\'' + ", response=" + response + '}';
     }
 }
