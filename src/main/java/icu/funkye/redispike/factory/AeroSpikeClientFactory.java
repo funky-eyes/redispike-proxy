@@ -61,6 +61,7 @@ public class AeroSpikeClientFactory {
             LOCK.lock();
             try {
                 if (client == null) {
+                    clientPolicy.maxConnsPerNode = 65535;
                     clientPolicy.eventLoops = eventLoops;
                     client = new AerospikeClient(clientPolicy, hosts);
                 }
