@@ -14,25 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+flag_management:
+  individual_flags:
+    - name: smart-tests
+      carryforward: true
+      carryforward_mode: "labels"
+      statuses:
+        - type: "project"
+        - type: "patch"
 
-codecov:
-  require_ci_to_pass: yes
-coverage:
-  status:
-    patch: no
-    project:
-      default:
-        threshold: 1%
-        if_not_found: success
-    changes: no
-  precision: 2
-  range: "50...100"
-ignore:
- - ".github/.*"
- - ".mvn/.*"
- - ".style/.*"
- - "*.md"
-comment:
-  layout: "reach,diff,flags,tree"
-  behavior: default
-  require_changes: no
+cli:
+  plugins:
+    pycoverage:
+      report_type: "json"
