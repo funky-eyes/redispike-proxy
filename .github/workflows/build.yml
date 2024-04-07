@@ -46,8 +46,11 @@ jobs:
         if: matrix.java != '8'
         run: |
           ./mvnw -T 4C clean test
-      - name: "Codecov"
+      - name: Upload coverage to Codecov
         if: matrix.java == '8'
-        uses: codecov/codecov-action@v4.0.1
+        uses: codecov/codecov-action@v4
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          flags: smart-tests
+          verbose: true
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
