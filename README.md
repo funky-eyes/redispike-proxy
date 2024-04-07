@@ -1,5 +1,21 @@
 # redis2asp
-High-performance Aerospike proxy for the Redis protocol
+High-performance Aerospike proxy for the Redis protocold
+
+### support mode
+
+Details can be found here: [redispike-proxy/src/test/java/icu/funkye/redispike/ServerTest.java at main · funky-eyes/redispike-proxy (github.com)](https://github.com/funky-eyes/redispike-proxy/blob/main/src/test/java/icu/funkye/redispike/ServerTest.java)
+
+| feature | note                                                     |
+| ------- | -------------------------------------------------------- |
+| String  | Perfect support                                          |
+| Hash    | HSETNX only supports the key level, not the column level |
+| List    | Not support                                              |
+| pub/sub | Ready for support                                        |
+| Set     | Ready for support                                        |
+| ZSet    |                                                          |
+
+
+
 ### Performance Test Report
 aerospike 3.x 2c4g  redispike-proxy 2c4g:
 
