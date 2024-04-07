@@ -46,8 +46,7 @@ public class ServerTest {
     @BeforeAll
     public static void init() throws ParseException {
         server = new Server();
-        server.start("-p 6789"
-            .split(" "));
+        server.start("-p 6789".split(" "));
         aspClient = AeroSpikeClientFactory.getClient();
     }
 
@@ -64,9 +63,9 @@ public class ServerTest {
             result = jedis.hset(key, map);
             Assertions.assertEquals(result, 2);
             key = String.valueOf(ThreadLocalRandom.current().nextInt(50000));
-            result = jedis.hsetnx(key,"f","g");
+            result = jedis.hsetnx(key, "f", "g");
             Assertions.assertEquals(result, 1);
-            result = jedis.hsetnx(key,"f","g");
+            result = jedis.hsetnx(key, "f", "g");
             Assertions.assertEquals(result, 0);
         }
     }
