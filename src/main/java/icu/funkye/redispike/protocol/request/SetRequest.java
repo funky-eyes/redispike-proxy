@@ -20,6 +20,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import icu.funkye.redispike.protocol.RedisRequest;
 import icu.funkye.redispike.protocol.RedisResponse;
+import icu.funkye.redispike.protocol.request.conts.Operate;
+import icu.funkye.redispike.protocol.request.conts.TtlType;
 import icu.funkye.redispike.protocol.response.BulkResponse;
 import icu.funkye.redispike.protocol.response.IntegerResponse;
 
@@ -94,28 +96,6 @@ public class SetRequest implements RedisRequest<byte[]> {
 
     public String getOriginalCommand() {
         return originalCommand;
-    }
-
-    public enum TtlType {
-        /**
-         * EX seconds -- Set the specified expire time, in seconds.
-         */
-        EX,
-        /**
-         * PX milliseconds -- Set the specified expire time, in milliseconds.
-         */
-        PX
-    }
-
-    public enum Operate {
-        /**
-         * NX -- Only set the key if it does not already exist.
-         */
-        NX,
-        /**
-         * XX -- Only set the key if it already exist.
-         */
-        XX
     }
 
     @Override

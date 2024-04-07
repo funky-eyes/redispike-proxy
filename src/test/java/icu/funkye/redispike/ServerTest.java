@@ -16,7 +16,9 @@
  */
 package icu.funkye.redispike;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -44,8 +46,19 @@ public class ServerTest {
     @BeforeAll
     public static void init() throws ParseException {
         server = new Server();
-        server.start("-p6789");
+        server.start("-th 10.58.10.103 -tp 3000 -n test -s tdkv-test -TU tongdun-admin1 -TP xxxzzz123 -p 6789"
+            .split(" "));
         aspClient = AeroSpikeClientFactory.getClient();
+    }
+
+    @Test
+    public void testhHset() {
+        try (Jedis jedis2 = new Jedis("127.0.0.1", 6789)) {
+            Map<String, String> a = new HashMap<>();
+            Long result = jedis2.hset("a".getBytes(StandardCharsets.UTF_8), "b".getBytes(StandardCharsets.UTF_8),
+                "c".getBytes(StandardCharsets.UTF_8));
+            Assertions.assertEquals(result, 1);
+        }
     }
 
     @Test
