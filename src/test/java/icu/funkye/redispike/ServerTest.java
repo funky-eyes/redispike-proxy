@@ -52,22 +52,28 @@ public class ServerTest {
     }
 
     @Test
-    public void testhHset() {
+    public void testhHash() {
         String key = String.valueOf(ThreadLocalRandom.current().nextInt(50000));
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
             Long result = jedis.hset(key.getBytes(StandardCharsets.UTF_8), "b".getBytes(StandardCharsets.UTF_8),
                 "c".getBytes(StandardCharsets.UTF_8));
+            Assertions.assertEquals(result, 1);
+            result = jedis.hdel(key, "b");
             Assertions.assertEquals(result, 1);
             Map<String, String> map = new HashMap<>();
             map.put("b", "c");
             map.put("d", "e");
             result = jedis.hset(key, map);
             Assertions.assertEquals(result, 2);
+            result = jedis.hdel(key, map.keySet().toArray(new String[0]));
+            Assertions.assertEquals(result, 2);
             key = String.valueOf(ThreadLocalRandom.current().nextInt(50000));
             result = jedis.hsetnx(key, "f", "g");
             Assertions.assertEquals(result, 1);
             result = jedis.hsetnx(key, "f", "g");
             Assertions.assertEquals(result, 0);
+            result = jedis.del(key);
+            Assertions.assertEquals(result, 1);
         }
     }
 
