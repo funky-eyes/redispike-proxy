@@ -66,6 +66,7 @@ public class RedisCommandHandler implements CommandHandler {
                 logger.debug("redisRequest:{}", redisRequest);
             }
             if (redisRequest instanceof HDelRequest) {
+                logger.info("redisRequest:{}", redisRequest);
                 HDelRequest request = (HDelRequest)redisRequest;
                 Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, request.getKey());
                 client.get(AeroSpikeClientFactory.eventLoops.next(), new RecordListener() {
@@ -121,9 +122,7 @@ public class RedisCommandHandler implements CommandHandler {
                 HSetRequest request = (HSetRequest)redisRequest;
                 Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, request.getKey());
                 List<Bin> list = new ArrayList<>();
-                request.getKv().forEach((k, v) -> {
-                    list.add(new Bin(k, v));
-                });
+                request.getKv().forEach((k, v) -> list.add(new Bin(k, v)));
                 WritePolicy writePolicy;
                 if (request.getOperate() != null && request.getOperate() == Operate.NX) {
                     writePolicy = new WritePolicy(client.getWritePolicyDefault());

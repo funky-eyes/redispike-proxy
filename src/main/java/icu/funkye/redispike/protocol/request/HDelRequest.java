@@ -67,4 +67,9 @@ public class HDelRequest implements RedisRequest<byte[]> {
     public void setResponse(IntegerResponse response) {
         this.response = response;
     }
+
+    @Override
+    public String toString() {
+        return "HDelRequest{" + "key='" + key + '\'' + ", fields=" + fields + ", response=" + response + '}';
+    }
 }
