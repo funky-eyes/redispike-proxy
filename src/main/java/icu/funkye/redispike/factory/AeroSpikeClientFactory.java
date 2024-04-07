@@ -21,6 +21,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import com.aerospike.client.AerospikeClient;
 import com.aerospike.client.Host;
 import com.aerospike.client.IAerospikeClient;
+import com.aerospike.client.async.AsyncClientPolicy;
 import com.aerospike.client.async.EventLoops;
 import com.aerospike.client.async.EventPolicy;
 import com.aerospike.client.async.NettyEventLoops;
@@ -61,6 +62,7 @@ public class AeroSpikeClientFactory {
             LOCK.lock();
             try {
                 if (client == null) {
+                    clientPolicy.maxConnsPerNode = 65535;
                     clientPolicy.eventLoops = eventLoops;
                     client = new AerospikeClient(clientPolicy, hosts);
                 }
