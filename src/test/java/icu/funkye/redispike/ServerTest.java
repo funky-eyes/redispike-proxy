@@ -43,11 +43,9 @@ public class ServerTest {
 
     @BeforeAll
     public static void init() throws ParseException {
-        System.out.println("123123123");
         server = new Server();
         server.start("-p6789");
         aspClient = AeroSpikeClientFactory.getClient();
-        System.out.println("123123123");
     }
 
     @Test
