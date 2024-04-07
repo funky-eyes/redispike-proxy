@@ -65,7 +65,8 @@ public class ServerTest {
             map.put("d", "e");
             result = jedis.hset(key, map);
             Assertions.assertEquals(result, 2);
-            jedis.hdel(key, map.keySet().toArray(new String[0]));
+            result = jedis.hdel(key, map.keySet().toArray(new String[0]));
+            Assertions.assertEquals(result, 2);
             key = String.valueOf(ThreadLocalRandom.current().nextInt(50000));
             result = jedis.hsetnx(key, "f", "g");
             Assertions.assertEquals(result, 1);
