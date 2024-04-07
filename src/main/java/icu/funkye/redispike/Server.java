@@ -69,10 +69,10 @@ public class Server {
 
         CommandLineParser parser = new DefaultParser();
         CommandLine cl = parser.parse(options, args, false);
-        if (cl.hasOption("u")) {
+        /*        if (cl.hasOption("u")) {
             logUsage(options);
             throw new RuntimeException("Terminate after displaying usage");
-        }
+        }*/
         port = Integer.parseInt(cl.getOptionValue("p", "6379"));
         String host = cl.getOptionValue("th", "127.0.0.1");
         int targetPort = Integer.parseInt(cl.getOptionValue("tp", "3000"));
