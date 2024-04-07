@@ -48,4 +48,7 @@ jobs:
           ./mvnw -T 4C clean test
       - name: "Codecov"
         if: matrix.java == '8'
-        uses: codecov/codecov-action@v3.1.4
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: funky-eyes/redispike-proxy
