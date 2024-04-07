@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import com.alipay.remoting.CommandDecoder;
+import icu.funkye.redispike.protocol.request.HSetRequest;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.DecoderException;
@@ -61,6 +62,9 @@ public class RedisCommandDecoder implements CommandDecoder {
                 return new GetRequest(params.get(1));
             case "command":
                 return new CommandRequest();
+            case "hset":
+            case "hsetnx":
+                return new HSetRequest(params);
             case "setnx":
                 params.add("nx");
                 return new SetRequest(params);

@@ -17,6 +17,7 @@
 package icu.funkye.redispike.protocol;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
@@ -43,7 +44,10 @@ import icu.funkye.redispike.factory.AeroSpikeClientFactory;
 import icu.funkye.redispike.protocol.request.CommandRequest;
 import icu.funkye.redispike.protocol.request.DelRequest;
 import icu.funkye.redispike.protocol.request.GetRequest;
+import icu.funkye.redispike.protocol.request.HSetRequest;
 import icu.funkye.redispike.protocol.request.SetRequest;
+import icu.funkye.redispike.protocol.request.conts.Operate;
+import icu.funkye.redispike.protocol.request.conts.TtlType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +63,33 @@ public class RedisCommandHandler implements CommandHandler {
             RedisRequest<?> redisRequest = (RedisRequest) msg;
             if(logger.isDebugEnabled()){
                 logger.debug("redisRequest:{}", redisRequest);
+            }
+            if(redisRequest instanceof HSetRequest){
+                HSetRequest request = (HSetRequest)redisRequest;
+                Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, request.getKey());
+                List<Bin> list = new ArrayList<>();
+                request.getKv().forEach((k,v)->{
+                    list.add(new Bin(k,v));
+                });
+                WritePolicy writePolicy;
+                if(request.getOperate()!=null&&request.getOperate()==Operate.NX){
+                    writePolicy  = new WritePolicy(client.getWritePolicyDefault());
+                    writePolicy.recordExistsAction = RecordExistsAction.CREATE_ONLY;
+                }else {
+                    writePolicy = client.getWritePolicyDefault();
+                }
+                client.put(AeroSpikeClientFactory.eventLoops.next(), new WriteListener() {
+                    @Override public void onSuccess(Key key) {
+                        request.setResponse(
+                            String.valueOf(request.getKv().size()).getBytes(StandardCharsets.UTF_8));
+                        ctx.writeAndFlush(redisRequest.getResponse());
+                    }
+
+                    @Override public void onFailure(AerospikeException ae) {
+                        logger.error(ae.getMessage(), ae);
+                        ctx.writeAndFlush(redisRequest.getResponse());
+                    }
+                }, writePolicy, key, list.toArray(new Bin[0]));
             }
             if (redisRequest instanceof GetRequest) {
                 GetRequest getRequest = (GetRequest) redisRequest;
@@ -91,7 +122,7 @@ public class RedisCommandHandler implements CommandHandler {
                 WritePolicy writePolicy = null;
                 if (setRequest.getTtl() != null) {
                     writePolicy = new WritePolicy(client.getWritePolicyDefault());
-                    if (setRequest.getTtlType() == SetRequest.TtlType.EX) {
+                    if (setRequest.getTtlType() == TtlType.EX) {
                         writePolicy.expiration = setRequest.getTtl().intValue();
                     } else {
                         writePolicy.expiration = Integer.max((int) (setRequest.getTtl() / 1000), 1);
@@ -101,10 +132,10 @@ public class RedisCommandHandler implements CommandHandler {
                     if (writePolicy == null) {
                         writePolicy = new WritePolicy(client.getWritePolicyDefault());
                     }
-                    if (setRequest.getOperate() == SetRequest.Operate.NX) {
+                    if (setRequest.getOperate() == Operate.NX) {
                         writePolicy.recordExistsAction = RecordExistsAction.CREATE_ONLY;
-                    }
-                    if (setRequest.getOperate() == SetRequest.Operate.XX) {
+                    }else
+                    if (setRequest.getOperate() == Operate.XX) {
                         client.get(AeroSpikeClientFactory.eventLoops.next(), new RecordListener() {
                             @Override
                             public void onSuccess(Key key, Record record) {
