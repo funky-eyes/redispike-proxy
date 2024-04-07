@@ -53,18 +53,20 @@ public class ServerTest {
 
     @Test
     public void testhHset() {
+        String key = String.valueOf(ThreadLocalRandom.current().nextInt(50000));
         try (Jedis jedis = new Jedis("127.0.0.1", 6789)) {
-            Long result = jedis.hset("a".getBytes(StandardCharsets.UTF_8), "b".getBytes(StandardCharsets.UTF_8),
+            Long result = jedis.hset(key.getBytes(StandardCharsets.UTF_8), "b".getBytes(StandardCharsets.UTF_8),
                 "c".getBytes(StandardCharsets.UTF_8));
             Assertions.assertEquals(result, 1);
             Map<String, String> map = new HashMap<>();
             map.put("b", "c");
             map.put("d", "e");
-            result = jedis.hset("a", map);
+            result = jedis.hset(key, map);
             Assertions.assertEquals(result, 2);
-            result = jedis.hsetnx("a","f","g");
+            key = String.valueOf(ThreadLocalRandom.current().nextInt(50000));
+            result = jedis.hsetnx(key,"f","g");
             Assertions.assertEquals(result, 1);
-            result = jedis.hsetnx("a","f","g");
+            result = jedis.hsetnx(key,"f","g");
             Assertions.assertEquals(result, 0);
         }
     }
