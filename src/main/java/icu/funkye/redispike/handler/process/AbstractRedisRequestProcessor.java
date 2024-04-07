@@ -34,14 +34,12 @@ public abstract class AbstractRedisRequestProcessor<T extends RedisRequest<?>> i
 
     protected CommandCode            cmdCode;
 
-    @Override public void process(RemotingContext ctx, RemotingCommand msg, ExecutorService defaultExecutor)
-            throws Exception {
-        if(defaultExecutor!=null){
-            defaultExecutor.submit(()->{
-                this.handle(ctx, (T) msg);
-            });
-        }else {
-            this.handle(ctx, (T) msg);
+    @Override
+    public void process(RemotingContext ctx, RemotingCommand msg, ExecutorService defaultExecutor) throws Exception {
+        if (defaultExecutor != null) {
+            defaultExecutor.submit(() -> this.handle(ctx, (T)msg));
+        } else {
+            this.handle(ctx, (T)msg);
         }
     }
 

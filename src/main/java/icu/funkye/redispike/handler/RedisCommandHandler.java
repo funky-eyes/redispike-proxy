@@ -19,6 +19,7 @@ package icu.funkye.redispike.handler;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ForkJoinPool;
 import com.alipay.remoting.CommandCode;
 import com.alipay.remoting.CommandHandler;
 import com.alipay.remoting.RemotingContext;
@@ -79,6 +80,6 @@ public class RedisCommandHandler implements CommandHandler {
 
     @Override
     public ExecutorService getDefaultExecutor() {
-        return null;
+        return ForkJoinPool.commonPool();
     }
 }
