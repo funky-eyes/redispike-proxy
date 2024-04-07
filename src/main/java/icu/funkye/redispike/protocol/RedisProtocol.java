@@ -22,6 +22,7 @@ import com.alipay.remoting.CommandFactory;
 import com.alipay.remoting.CommandHandler;
 import com.alipay.remoting.HeartbeatTrigger;
 import com.alipay.remoting.Protocol;
+import icu.funkye.redispike.handler.RedisCommandHandler;
 
 public class RedisProtocol implements Protocol {
 
