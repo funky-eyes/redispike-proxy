@@ -14,39 +14,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.redis2asp.protocol.request;
+package icu.funkye.redispike.protocol.response;
 
-import java.util.List;
-import org.redis2asp.protocol.RedisRequest;
-import org.redis2asp.protocol.RedisResponse;
-import org.redis2asp.protocol.response.IntegerResponse;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import io.netty.buffer.ByteBuf;
+import icu.funkye.redispike.protocol.RedisResponse;
 
-public class DelRequest implements RedisRequest<byte[]> {
+public class IntegerResponse implements RedisResponse<byte[]> {
 
-    List<String>    key;
+    private static final char MARKER = ':';
 
-    IntegerResponse response = new IntegerResponse();
+    private byte[]            data;
 
-    public DelRequest(List<String> key) {
-        this.key = key;
+    public IntegerResponse(int data) {
+        this.data = String.valueOf(data).getBytes(StandardCharsets.UTF_8);
     }
 
-    public List<String> getKey() {
-        return key;
-    }
-
-    @Override
-    public void setResponse(byte[] data) {
-        this.response.setData(data);
+    public IntegerResponse() {
     }
 
     @Override
-    public RedisResponse<byte[]> getResponse() {
-        return response;
+    public byte[] data() {
+        return this.data;
+    }
+
+    @Override
+    public void setData(byte[] data) {
+        this.data = data;
+    }
+
+    @Override
+    public void write(ByteBuf out) throws IOException {
+        out.writeByte(MARKER);
+        out.writeBytes(data == null ? "0".getBytes(StandardCharsets.UTF_8) : data);
+        out.writeBytes(CRLF);
     }
 
     @Override
     public String toString() {
-        return "GetRequest{" + "key='" + key + '\'' + ", response=" + response + '}';
+        return "IntegerReply{" + "data=" + data + '}';
     }
+
 }

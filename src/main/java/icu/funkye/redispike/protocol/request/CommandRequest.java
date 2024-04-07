@@ -14,46 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.redis2asp.protocol.response;
+package icu.funkye.redispike.protocol.request;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import io.netty.buffer.ByteBuf;
-import org.redis2asp.protocol.RedisResponse;
+import icu.funkye.redispike.protocol.RedisRequest;
+import icu.funkye.redispike.protocol.RedisResponse;
+import icu.funkye.redispike.protocol.response.BulkResponse;
 
-public class IntegerResponse implements RedisResponse<byte[]> {
+public class CommandRequest implements RedisRequest<byte[]> {
 
-    private static final char MARKER = ':';
+    private BulkResponse response = new BulkResponse();
 
-    private byte[]            data;
-
-    public IntegerResponse(int data) {
-        this.data = String.valueOf(data).getBytes(StandardCharsets.UTF_8);
-    }
-
-    public IntegerResponse() {
+    @Override
+    public RedisResponse<byte[]> getResponse() {
+        return response;
     }
 
     @Override
-    public byte[] data() {
-        return this.data;
-    }
-
-    @Override
-    public void setData(byte[] data) {
-        this.data = data;
-    }
-
-    @Override
-    public void write(ByteBuf out) throws IOException {
-        out.writeByte(MARKER);
-        out.writeBytes(data == null ? "0".getBytes(StandardCharsets.UTF_8) : data);
-        out.writeBytes(CRLF);
+    public void setResponse(byte[] data) {
+        response.setData(data);
     }
 
     @Override
     public String toString() {
-        return "IntegerReply{" + "data=" + data + '}';
+        return "CommandRequest{" + "response=" + response + '}';
     }
-
 }

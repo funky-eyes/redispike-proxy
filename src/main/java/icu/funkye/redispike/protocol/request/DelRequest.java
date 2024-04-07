@@ -14,23 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.redis2asp.protocol.request;
+package icu.funkye.redispike.protocol.request;
 
-import org.redis2asp.protocol.RedisRequest;
-import org.redis2asp.protocol.RedisResponse;
-import org.redis2asp.protocol.response.BulkResponse;
+import java.util.List;
+import icu.funkye.redispike.protocol.RedisRequest;
+import icu.funkye.redispike.protocol.RedisResponse;
+import icu.funkye.redispike.protocol.response.IntegerResponse;
 
-public class GetRequest implements RedisRequest<byte[]> {
+public class DelRequest implements RedisRequest<byte[]> {
 
-    String       key;
+    List<String>    key;
 
-    BulkResponse response = new BulkResponse();
+    IntegerResponse response = new IntegerResponse();
 
-    public GetRequest(String key) {
+    public DelRequest(List<String> key) {
         this.key = key;
     }
 
-    public String getKey() {
+    public List<String> getKey() {
         return key;
     }
 
