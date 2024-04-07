@@ -66,7 +66,6 @@ public class RedisCommandHandler implements CommandHandler {
                 logger.debug("redisRequest:{}", redisRequest);
             }
             if (redisRequest instanceof HDelRequest) {
-                logger.info("redisRequest:{}", redisRequest);
                 HDelRequest request = (HDelRequest)redisRequest;
                 Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, request.getKey());
                 client.get(AeroSpikeClientFactory.eventLoops.next(), new RecordListener() {
