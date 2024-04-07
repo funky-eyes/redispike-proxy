@@ -30,22 +30,19 @@ jobs:
         java: [ 8, 21 ]
     steps:
       - name: "Checkout"
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: "Set up Java JDK"
-        uses: actions/setup-java@v3.12.0
+        uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: ${{ matrix.java }}
       - name: "Print maven version"
         run: ./mvnw -version
-      - name: "Test, Check style, Check PMD, Check license with Maven and Java8"
-        if: matrix.java == '8'
+      - name: "Test, Check style, Check PMD, Check license with Maven and Java"
         run: |
           ./mvnw -T 4C clean test && sh ./tools/check_format.sh
-      - name: "Test with Maven and Java${{ matrix.java }}"
-        if: matrix.java != '8'
-        run: |
-          ./mvnw -T 4C clean test
       - name: "Codecov"
         if: matrix.java == '8'
-        uses: codecov/codecov-action@v3.1.4
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}

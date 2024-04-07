@@ -28,10 +28,10 @@ coverage:
   precision: 2
   range: "50...100"
 ignore:
- - ".github/.*"
- - ".mvn/.*"
- - ".style/.*"
- - "*.md"
+  - ".github/.*"
+  - ".mvn/.*"
+  - ".style/.*"
+  - "*.md"
 comment:
   layout: "reach,diff,flags,tree"
   behavior: default
