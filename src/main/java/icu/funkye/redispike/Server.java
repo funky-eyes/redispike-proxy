@@ -69,10 +69,12 @@ public class Server {
 
         CommandLineParser parser = new DefaultParser();
         CommandLine cl = parser.parse(options, args, false);
+        LOGGER.info("server 1!");
         if (cl.hasOption("u")) {
             logUsage(options);
             throw new RuntimeException("Terminate after displaying usage");
         }
+        LOGGER.info("server 2!");
         port = Integer.parseInt(cl.getOptionValue("p", "6379"));
         String host = cl.getOptionValue("th", "127.0.0.1");
         int targetPort = Integer.parseInt(cl.getOptionValue("tp", "3000"));
@@ -84,11 +86,13 @@ public class Server {
         ClientPolicy clientPolicy = new ClientPolicy();
         clientPolicy.user = targetUser;
         clientPolicy.password = targetPassword;
+        LOGGER.info("server 3!");
         AeroSpikeClientFactory.createInstance(clientPolicy, hosts);
         server = new BoltServer(port);
         server.addConnectionEventProcessor(ConnectionEventType.CONNECT, serverConnectProcessor);
         server.addConnectionEventProcessor(ConnectionEventType.CLOSE, serverDisConnectProcessor);
         ProtocolManager.registerProtocol(new RedisProtocol(), RedisProtocol.PROTOCOL_CODE);
+        LOGGER.info("server 4!");
         if (server.start()) {
             LOGGER.info("server start ok!");
         } else {
