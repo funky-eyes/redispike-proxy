@@ -35,19 +35,19 @@ import icu.funkye.redispike.protocol.request.conts.TtlType;
 import icu.funkye.redispike.util.IntegerUtils;
 
 public class SetRequestProcessor extends AbstractRedisRequestProcessor<SetRequest> {
-    WritePolicy writePolicy;
+    WritePolicy defaultWritePolicy;
 
     public SetRequestProcessor() {
         this.cmdCode = new RedisRequestCommandCode(IntegerUtils.hashCodeToShort(SetRequest.class.hashCode()));
-        this.writePolicy = new WritePolicy(client.getWritePolicyDefault());
-        this.writePolicy.sendKey = true;
+        this.defaultWritePolicy = new WritePolicy(client.getWritePolicyDefault());
+        this.defaultWritePolicy.sendKey = true;
     }
 
     @Override
     public void handle(RemotingContext ctx, SetRequest request) {
         Bin bin = new Bin(request.getKey(), request.getValue());
         Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, request.getKey());
-        WritePolicy writePolicy = this.writePolicy;
+        WritePolicy writePolicy = this.defaultWritePolicy;
         if (request.getTtl() != null) {
             writePolicy = new WritePolicy(writePolicy);
             if (request.getTtlType() == TtlType.EX) {

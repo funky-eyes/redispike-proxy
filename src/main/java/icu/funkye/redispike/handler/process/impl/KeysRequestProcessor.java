@@ -73,6 +73,7 @@ public class KeysRequestProcessor extends AbstractRedisRequestProcessor<KeysRequ
             @Override
             public void onRecord(Key key, Record record) throws AerospikeException {
                 if (key != null) {
+                    logger.info("userKey:{}", key);
                     if (key.userKey != null) {
                         String userKey = key.userKey.toString();
                         logger.info("userKey:{}", userKey);
