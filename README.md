@@ -5,14 +5,15 @@ High-performance Aerospike proxy for the Redis protocold
 
 Details can be found here: [redispike-proxy/src/test/java/icu/funkye/redispike/ServerTest.java at main · funky-eyes/redispike-proxy (github.com)](https://github.com/funky-eyes/redispike-proxy/blob/main/src/test/java/icu/funkye/redispike/ServerTest.java)
 
-| feature | note                                                     |
-| ------- | -------------------------------------------------------- |
-| String  | Perfect support                                          |
-| Hash    | HSETNX only supports the key level, not the column level |
-| List    | Not support                                              |
-| pub/sub | Ready for support                                        |
-| Set     | Ready for support                                        |
-| ZSet    |                                                          |
+| feature | support | note |
+|---------|---------|------|
+| String  | done    |      |
+| Hash    | done    |     HSETNX only supports the key level, not the column level  |
+| Scan    |         |      |
+| List    |         |      |
+| Set     |         |      |
+| ZSet    |         |      |
+| keys    |         |      |
 
 
 
