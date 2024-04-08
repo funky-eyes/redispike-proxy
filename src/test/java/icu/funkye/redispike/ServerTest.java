@@ -107,7 +107,7 @@ public class ServerTest {
     public void testRedisSet() {
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
             String result = jedis.set("a", "bq");
-            try (Jedis jedis2 = JedisPooledFactory.getJedisInstance()) {
+            try (Jedis jedis2 = new Jedis("127.0.0.1", 6379)) {
                 String result2 = jedis2.set("a", "bq");
                 Assertions.assertEquals(result, result2);
             }

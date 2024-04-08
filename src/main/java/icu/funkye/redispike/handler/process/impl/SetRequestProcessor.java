@@ -47,7 +47,7 @@ public class SetRequestProcessor extends AbstractRedisRequestProcessor<SetReques
     public void handle(RemotingContext ctx, SetRequest request) {
         Bin bin = new Bin(request.getKey(), request.getValue());
         Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, request.getKey());
-
+        WritePolicy writePolicy = this.writePolicy;
         if (request.getTtl() != null) {
             if (request.getTtlType() == TtlType.EX) {
                 writePolicy.expiration = request.getTtl().intValue();
@@ -57,6 +57,7 @@ public class SetRequestProcessor extends AbstractRedisRequestProcessor<SetReques
         }
         if (request.getOperate() != null) {
             if (request.getOperate() == Operate.NX) {
+                writePolicy = new WritePolicy(writePolicy);
                 writePolicy.recordExistsAction = RecordExistsAction.CREATE_ONLY;
             } else if (request.getOperate() == Operate.XX) {
                 client.get(AeroSpikeClientFactory.eventLoops.next(), new RecordListener() {
