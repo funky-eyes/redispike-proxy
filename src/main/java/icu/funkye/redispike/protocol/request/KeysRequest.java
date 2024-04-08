@@ -30,7 +30,7 @@ public class KeysRequest implements RedisRequest<String> {
 
     final String originalCommand;
 
-    final String pattern;
+    String       pattern;
 
     BulkResponse response;
 
@@ -64,4 +64,7 @@ public class KeysRequest implements RedisRequest<String> {
                + ", response=" + response + '}';
     }
 
+    public void setPattern(String pattern) {
+        this.pattern = pattern;
+    }
 }

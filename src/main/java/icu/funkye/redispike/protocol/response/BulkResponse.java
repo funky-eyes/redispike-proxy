@@ -59,7 +59,7 @@ public class BulkResponse implements RedisResponse<String> {
 
     @Override
     public void write(ByteBuf out) throws IOException {
-        if (list != null && list.size() > 0) {
+        if (list != null) {
             out.writeByte(ARRAY_PREFIX);
             out.writeBytes(String.valueOf(list.size()).getBytes(StandardCharsets.UTF_8));
             out.writeBytes(CRLF);

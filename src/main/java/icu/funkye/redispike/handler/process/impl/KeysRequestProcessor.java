@@ -21,8 +21,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.aerospike.client.AerospikeException;
 import com.aerospike.client.Bin;
@@ -33,6 +36,7 @@ import com.aerospike.client.listener.RecordListener;
 import com.aerospike.client.listener.RecordSequenceListener;
 import com.aerospike.client.policy.ScanPolicy;
 import com.alipay.remoting.RemotingContext;
+import com.alipay.remoting.util.StringUtils;
 import com.alipay.sofa.common.profile.StringUtil;
 
 import icu.funkye.redispike.factory.AeroSpikeClientFactory;
@@ -46,8 +50,6 @@ import icu.funkye.redispike.util.UUIDGenerator;
 
 public class KeysRequestProcessor extends AbstractRedisRequestProcessor<KeysRequest> {
 
-    final long MAX_ID = (long) Math.pow(10, 14);
-
     public KeysRequestProcessor() {
         this.cmdCode = new RedisRequestCommandCode(IntegerUtils.hashCodeToShort(KeysRequest.class.hashCode()));
     }
@@ -55,12 +57,44 @@ public class KeysRequestProcessor extends AbstractRedisRequestProcessor<KeysRequ
     @Override
     public void handle(RemotingContext ctx, KeysRequest request) {
         ScanPolicy scanPolicy = new ScanPolicy(client.getScanPolicyDefault());
-        scanPolicy.includeBinData = false;
         scanPolicy.failOnClusterChange = true;
+        scanPolicy.includeBinData = false;
+        boolean all = StringUtils.equals(request.getPattern(), "*");
+        boolean left = request.getPattern().startsWith("*");
+        if (left) {
+            request.setPattern(request.getPattern().substring(1));
+        }
+        boolean right = request.getPattern().endsWith("*");
+        if (right) {
+            request.setPattern(request.getPattern().substring(0, request.getPattern().length() - 1));
+        }
         client.scanAll(AeroSpikeClientFactory.eventLoops.next(), new RecordSequenceListener() {
             @Override
             public void onRecord(Key key, Record record) throws AerospikeException {
-                request.setResponse(key.userKey.toString());
+                if (key != null) {
+                    if (key.userKey != null) {
+                        String userKey = key.userKey.toString();
+                        if (all) {
+                            request.setResponse(userKey);
+                        } else if (left) {
+                            if (right) {
+                                if (userKey.contains(request.getPattern())) {
+                                    request.setResponse(userKey);
+                                }
+                            } else if (userKey.endsWith(request.getPattern())) {
+                                request.setResponse(userKey);
+                            }
+                        } else if (right) {
+                            if (userKey.startsWith(request.getPattern())) {
+                                request.setResponse(userKey);
+                            }
+                        } else {
+                            if (StringUtils.equals(userKey, request.getPattern())) {
+                                request.setResponse(userKey);
+                            }
+                        }
+                    }
+                }
             }
 
             @Override
@@ -75,20 +109,5 @@ public class KeysRequestProcessor extends AbstractRedisRequestProcessor<KeysRequ
             }
         }, scanPolicy, AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set);
     }
-
-    /*
-        public static void main(String[] args) {
-            List<String> list = new ArrayList<>();
-            list.add("keys");
-            list.add("*");
-            KeysRequest keysRequest = new KeysRequest(list);
-            Set<String> set = new HashSet<>();
-            set.add("1");
-            set.add("2");
-            keysRequest.setResponse(Arrays.toString(set.toArray(new String[0])).getBytes(StandardCharsets.UTF_8));
-            System.out.println(new String(keysRequest.getResponse().data()));
-
-        }
-    */
 
 }

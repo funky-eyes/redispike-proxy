@@ -36,7 +36,6 @@ import icu.funkye.redispike.factory.AeroSpikeClientFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.params.SetParams;
 
 public class ServerTest {
@@ -45,7 +44,7 @@ public class ServerTest {
 
     static Logger           logger      = LoggerFactory.getLogger(ServerTest.class);
 
-    private final int       RandomValue = Integer.MAX_VALUE;
+    private final int       RandomValue = 10000000;
 
     @BeforeAll
     public static void init() throws ParseException {
@@ -55,20 +54,28 @@ public class ServerTest {
         aspClient = AeroSpikeClientFactory.getClient();
     }
 
-    /*    @Test
-        public void testhKeys() {
-            List<String> keys = new ArrayList<>();
-            for (int i = 0; i < 2; i++) {
-                keys.add(String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue)));
+    @Test
+    public void testhKeys() {
+        List<String> keys = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            keys.add(String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue)));
+        }
+        try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
+            for (String key : keys) {
+                jedis.set(key, "b");
             }
-            try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
-                for (String key : keys) {
-                    jedis.set(key, "b");
-                }
-                Set<String> result = jedis.keys("*");
-                Assertions.assertEquals(result.size(), keys.size());
-            }
-        }*/
+            Set<String> result = jedis.keys("123");
+            Assertions.assertEquals(result.size(), 0);
+            result = jedis.keys("*");
+            Assertions.assertNotEquals(result.size(), 0);
+            result = jedis.keys("*");
+            jedis.set("abc123", "123");
+            result = jedis.keys("abc*");
+            Assertions.assertEquals(result.size(), 1);
+            result = jedis.keys("*123");
+            Assertions.assertEquals(result.size(), 1);
+        }
+    }
 
     @Test
     public void testhHash() {
