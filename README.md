@@ -18,7 +18,7 @@ Details can be found here: [redispike-proxy/src/test/java/icu/funkye/redispike/S
 | List    |         |      |
 | Set     |         |      |
 | ZSet    |         |      |
-| keys    |         |      |
+| keys    |    done     |      |
 
 
 
