@@ -16,7 +16,6 @@
  */
 package icu.funkye.redispike.handler.process.impl;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import com.aerospike.client.AerospikeException;

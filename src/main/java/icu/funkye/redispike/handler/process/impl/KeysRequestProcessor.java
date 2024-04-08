@@ -16,37 +16,19 @@
  */
 package icu.funkye.redispike.handler.process.impl;
 
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.aerospike.client.AerospikeException;
-import com.aerospike.client.Bin;
 import com.aerospike.client.Key;
 import com.aerospike.client.Record;
-import com.aerospike.client.Value;
-import com.aerospike.client.listener.RecordListener;
 import com.aerospike.client.listener.RecordSequenceListener;
 import com.aerospike.client.policy.ScanPolicy;
 import com.alipay.remoting.RemotingContext;
 import com.alipay.remoting.util.StringUtils;
-import com.alipay.sofa.common.profile.StringUtil;
 
 import icu.funkye.redispike.factory.AeroSpikeClientFactory;
 import icu.funkye.redispike.handler.process.AbstractRedisRequestProcessor;
 import icu.funkye.redispike.protocol.RedisRequestCommandCode;
-import icu.funkye.redispike.protocol.request.GetRequest;
 import icu.funkye.redispike.protocol.request.KeysRequest;
-import icu.funkye.redispike.util.IdWorker;
 import icu.funkye.redispike.util.IntegerUtils;
-import icu.funkye.redispike.util.UUIDGenerator;
 
 public class KeysRequestProcessor extends AbstractRedisRequestProcessor<KeysRequest> {
     ScanPolicy scanPolicy = new ScanPolicy(client.getScanPolicyDefault());

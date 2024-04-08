@@ -18,8 +18,6 @@ package icu.funkye.redispike.protocol.response;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import io.netty.buffer.ByteBuf;
 import icu.funkye.redispike.protocol.RedisResponse;
