@@ -21,33 +21,28 @@ import java.nio.charset.StandardCharsets;
 import io.netty.buffer.ByteBuf;
 import icu.funkye.redispike.protocol.RedisResponse;
 
-public class IntegerResponse implements RedisResponse<byte[]> {
+public class IntegerResponse implements RedisResponse<String> {
 
     private static final char MARKER = ':';
 
-    private byte[]            data;
+    private String            data;
 
-    public IntegerResponse(int data) {
-        this.data = String.valueOf(data).getBytes(StandardCharsets.UTF_8);
+    public IntegerResponse(String data) {
+        this.data = data;
     }
 
     public IntegerResponse() {
     }
 
     @Override
-    public byte[] data() {
-        return this.data;
-    }
-
-    @Override
-    public void setData(byte[] data) {
+    public void setData(String data) {
         this.data = data;
     }
 
     @Override
     public void write(ByteBuf out) throws IOException {
         out.writeByte(MARKER);
-        out.writeBytes(data == null ? "0".getBytes(StandardCharsets.UTF_8) : data);
+        out.writeBytes(data == null ? "0".getBytes(StandardCharsets.UTF_8) : data.getBytes(StandardCharsets.UTF_8));
         out.writeBytes(CRLF);
     }
 

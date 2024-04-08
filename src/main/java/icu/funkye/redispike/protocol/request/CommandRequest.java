@@ -20,17 +20,17 @@ import icu.funkye.redispike.protocol.RedisRequest;
 import icu.funkye.redispike.protocol.RedisResponse;
 import icu.funkye.redispike.protocol.response.BulkResponse;
 
-public class CommandRequest implements RedisRequest<byte[]> {
+public class CommandRequest implements RedisRequest<String> {
 
-    private BulkResponse response = new BulkResponse();
+    private final BulkResponse response = new BulkResponse();
 
     @Override
-    public RedisResponse<byte[]> getResponse() {
+    public RedisResponse<String> getResponse() {
         return response;
     }
 
     @Override
-    public void setResponse(byte[] data) {
+    public void setResponse(String data) {
         response.setData(data);
     }
 

@@ -25,7 +25,7 @@ import icu.funkye.redispike.protocol.request.conts.TtlType;
 import icu.funkye.redispike.protocol.response.BulkResponse;
 import icu.funkye.redispike.protocol.response.IntegerResponse;
 
-public class SetRequest implements RedisRequest<byte[]> {
+public class SetRequest implements RedisRequest<String> {
 
     final String          originalCommand;
 
@@ -39,7 +39,7 @@ public class SetRequest implements RedisRequest<byte[]> {
 
     Operate               operate;
 
-    RedisResponse<byte[]> response;
+    RedisResponse<String> response;
 
     public SetRequest(List<String> params) {
         this.originalCommand = params.get(0);
@@ -85,12 +85,12 @@ public class SetRequest implements RedisRequest<byte[]> {
     }
 
     @Override
-    public void setResponse(byte[] data) {
+    public void setResponse(String data) {
         this.response.setData(data);
     }
 
     @Override
-    public RedisResponse<byte[]> getResponse() {
+    public RedisResponse<String> getResponse() {
         return response;
     }
 

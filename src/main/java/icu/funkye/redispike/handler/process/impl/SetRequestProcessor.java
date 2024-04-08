@@ -69,7 +69,7 @@ public class SetRequestProcessor extends AbstractRedisRequestProcessor<SetReques
                             client.put(AeroSpikeClientFactory.eventLoops.next(), new WriteListener() {
                                 @Override
                                 public void onSuccess(Key key) {
-                                    request.setResponse("OK".getBytes(StandardCharsets.UTF_8));
+                                    request.setResponse("OK");
                                     ctx.writeAndFlush(request.getResponse());
                                 }
 
@@ -98,9 +98,9 @@ public class SetRequestProcessor extends AbstractRedisRequestProcessor<SetReques
             @Override
             public void onSuccess(Key key) {
                 if (request.getOriginalCommand().contains("nx")) {
-                    request.setResponse("1".getBytes(StandardCharsets.UTF_8));
+                    request.setResponse("1");
                 } else {
-                    request.setResponse("OK".getBytes(StandardCharsets.UTF_8));
+                    request.setResponse("OK");
                 }
                 ctx.writeAndFlush(request.getResponse());
             }

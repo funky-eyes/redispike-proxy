@@ -47,7 +47,7 @@ public class GetRequestProcessor extends AbstractRedisRequestProcessor<GetReques
                 }
                 String value = record.getString(request.getKey());
                 if (StringUtil.isNotBlank(value)) {
-                    request.setResponse(value.getBytes(StandardCharsets.UTF_8));
+                    request.setResponse(value);
                 }
                 ctx.writeAndFlush(request.getResponse());
             }

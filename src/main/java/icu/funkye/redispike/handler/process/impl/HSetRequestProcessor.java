@@ -53,7 +53,7 @@ public class HSetRequestProcessor extends AbstractRedisRequestProcessor<HSetRequ
         client.put(AeroSpikeClientFactory.eventLoops.next(), new WriteListener() {
             @Override
             public void onSuccess(Key key) {
-                request.setResponse(String.valueOf(request.getKv().size()).getBytes(StandardCharsets.UTF_8));
+                request.setResponse(String.valueOf(request.getKv().size()));
                 ctx.writeAndFlush(request.getResponse());
             }
 

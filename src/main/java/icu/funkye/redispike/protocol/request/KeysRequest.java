@@ -16,35 +16,33 @@
  */
 package icu.funkye.redispike.protocol.request;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+
 import icu.funkye.redispike.protocol.RedisRequest;
 import icu.funkye.redispike.protocol.RedisResponse;
+import icu.funkye.redispike.protocol.request.conts.Operate;
+import icu.funkye.redispike.protocol.request.conts.TtlType;
+import icu.funkye.redispike.protocol.response.BulkResponse;
 import icu.funkye.redispike.protocol.response.IntegerResponse;
 
-public class DelRequest implements RedisRequest<String> {
+public class KeysRequest implements RedisRequest<String> {
 
-    List<String>    key;
+    final String originalCommand;
 
-    AtomicInteger   count    = new AtomicInteger(0);
+    final String pattern;
 
-    IntegerResponse response = new IntegerResponse();
+    BulkResponse response;
 
-    public DelRequest(List<String> key) {
-        this.key = key;
-    }
-
-    public List<String> getKey() {
-        return key;
+    public KeysRequest(List<String> params) {
+        this.originalCommand = params.get(0);
+        this.pattern = params.get(1);
+        this.response = new BulkResponse(new ArrayList<>());
     }
 
     @Override
     public void setResponse(String data) {
-        this.response.setData(data);
-    }
-
-    public AtomicInteger getCount() {
-        return count;
+        this.response.appender(data);
     }
 
     @Override
@@ -52,8 +50,18 @@ public class DelRequest implements RedisRequest<String> {
         return response;
     }
 
+    public String getOriginalCommand() {
+        return originalCommand;
+    }
+
+    public String getPattern() {
+        return pattern;
+    }
+
     @Override
     public String toString() {
-        return "GetRequest{" + "key='" + key + '\'' + ", response=" + response + '}';
+        return "KeysRequest{" + "originalCommand='" + originalCommand + '\'' + ", pattern='" + pattern + '\''
+               + ", response=" + response + '}';
     }
+
 }

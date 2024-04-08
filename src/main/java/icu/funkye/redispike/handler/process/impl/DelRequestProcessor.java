@@ -48,8 +48,7 @@ public class DelRequestProcessor extends AbstractRedisRequestProcessor<DelReques
             client.delete(AeroSpikeClientFactory.eventLoops.next(), new DeleteListener() {
                 @Override
                 public void onSuccess(Key key, boolean b) {
-                    request.setResponse(String.valueOf(request.getCount().incrementAndGet())
-                            .getBytes(StandardCharsets.UTF_8));
+                    request.setResponse(String.valueOf(request.getCount().incrementAndGet()));
                     countDownLatch.countDown();
                 }
 

@@ -54,7 +54,7 @@ public class HDelRequestProcessor extends AbstractRedisRequestProcessor<HDelRequ
                             @Override
                             public void onSuccess(Key key, boolean b) {
                                 request.setResponse(
-                                        String.valueOf(request.getFields().size()).getBytes(StandardCharsets.UTF_8));
+                                        String.valueOf(request.getFields().size()));
                                 ctx.writeAndFlush(request.getResponse());
                             }
 
@@ -71,7 +71,7 @@ public class HDelRequestProcessor extends AbstractRedisRequestProcessor<HDelRequ
                             @Override
                             public void onSuccess(Key key) {
                                 request.setResponse(
-                                        String.valueOf(request.getFields().size()).getBytes(StandardCharsets.UTF_8));
+                                        String.valueOf(request.getFields().size()));
                                 ctx.writeAndFlush(request.getResponse());
                             }
 

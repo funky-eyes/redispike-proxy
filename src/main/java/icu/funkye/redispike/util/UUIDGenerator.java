@@ -14,24 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package icu.funkye.redispike.handler.process.impl;
+package icu.funkye.redispike.util;
 
-import java.nio.charset.StandardCharsets;
-import com.alipay.remoting.RemotingContext;
-import icu.funkye.redispike.handler.process.AbstractRedisRequestProcessor;
-import icu.funkye.redispike.protocol.RedisRequestCommandCode;
-import icu.funkye.redispike.protocol.request.CommandRequest;
-import icu.funkye.redispike.util.IntegerUtils;
+/**
+ * The type Uuid generator.
+ */
+public class UUIDGenerator {
 
-public class CommandRequestProcessor extends AbstractRedisRequestProcessor<CommandRequest> {
+    private static volatile IdWorker idWorker;
 
-    public CommandRequestProcessor() {
-        this.cmdCode = new RedisRequestCommandCode(IntegerUtils.hashCodeToShort(CommandRequest.class.hashCode()));
+    /**
+     * generate UUID using snowflake algorithm
+     * @return UUID
+     */
+    public static long generateUUID() {
+        if (idWorker == null) {
+            synchronized (UUIDGenerator.class) {
+                if (idWorker == null) {
+                    init(null);
+                }
+            }
+        }
+        return idWorker.nextId();
     }
 
-    @Override
-    public void handle(RemotingContext ctx, CommandRequest request) {
-        request.setResponse("OK");
-        ctx.writeAndFlush(request.getResponse());
+    /**
+     * init IdWorker
+     * @param serverNode the server node id, consider as machine id in snowflake
+     */
+    public static void init(Long serverNode) {
+        idWorker = new IdWorker(serverNode);
     }
+
 }
