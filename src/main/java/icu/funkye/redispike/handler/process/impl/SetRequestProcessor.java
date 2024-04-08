@@ -49,6 +49,7 @@ public class SetRequestProcessor extends AbstractRedisRequestProcessor<SetReques
         Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, request.getKey());
         WritePolicy writePolicy = this.writePolicy;
         if (request.getTtl() != null) {
+            writePolicy = new WritePolicy(writePolicy);
             if (request.getTtlType() == TtlType.EX) {
                 writePolicy.expiration = request.getTtl().intValue();
             } else {
