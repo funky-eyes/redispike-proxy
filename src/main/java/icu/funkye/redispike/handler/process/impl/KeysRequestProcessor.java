@@ -75,6 +75,7 @@ public class KeysRequestProcessor extends AbstractRedisRequestProcessor<KeysRequ
                 if (key != null) {
                     if (key.userKey != null) {
                         String userKey = key.userKey.toString();
+                        logger.info("userKey:{}", userKey);
                         if (all) {
                             request.setResponse(userKey);
                         } else if (left) {
