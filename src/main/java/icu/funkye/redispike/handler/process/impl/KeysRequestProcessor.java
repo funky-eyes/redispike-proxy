@@ -53,7 +53,6 @@ public class KeysRequestProcessor extends AbstractRedisRequestProcessor<KeysRequ
 
     public KeysRequestProcessor() {
         this.cmdCode = new RedisRequestCommandCode(IntegerUtils.hashCodeToShort(KeysRequest.class.hashCode()));
-        this.scanPolicy.failOnClusterChange = true;
         this.scanPolicy.includeBinData = false;
     }
 
