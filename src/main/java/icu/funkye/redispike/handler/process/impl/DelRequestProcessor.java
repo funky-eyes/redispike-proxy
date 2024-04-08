@@ -38,11 +38,12 @@ public class DelRequestProcessor extends AbstractRedisRequestProcessor<DelReques
         this.cmdCode = new RedisRequestCommandCode(IntegerUtils.hashCodeToShort(DelRequest.class.hashCode()));
     }
 
-    @Override public void handle(RemotingContext ctx, DelRequest request) {
+    @Override
+    public void handle(RemotingContext ctx, DelRequest request) {
         List<String> keys = request.getKey();
         List<Key> list =
-                keys.stream().map(key -> new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, key))
-                        .collect(Collectors.toList());
+            keys.stream().map(key -> new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, key))
+                .collect(Collectors.toList());
         CountDownLatch countDownLatch = new CountDownLatch(list.size());
         for (Key key : list) {
             client.delete(AeroSpikeClientFactory.eventLoops.next(), new DeleteListener() {

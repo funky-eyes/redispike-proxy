@@ -49,16 +49,17 @@ import icu.funkye.redispike.util.IntegerUtils;
 import icu.funkye.redispike.util.UUIDGenerator;
 
 public class KeysRequestProcessor extends AbstractRedisRequestProcessor<KeysRequest> {
+    ScanPolicy scanPolicy = new ScanPolicy(client.getScanPolicyDefault());
 
     public KeysRequestProcessor() {
         this.cmdCode = new RedisRequestCommandCode(IntegerUtils.hashCodeToShort(KeysRequest.class.hashCode()));
+        this.scanPolicy.failOnClusterChange = true;
+        this.scanPolicy.includeBinData = false;
     }
 
     @Override
     public void handle(RemotingContext ctx, KeysRequest request) {
-        ScanPolicy scanPolicy = new ScanPolicy(client.getScanPolicyDefault());
-        scanPolicy.failOnClusterChange = true;
-        scanPolicy.includeBinData = false;
+
         boolean all = StringUtils.equals(request.getPattern(), "*");
         boolean left = request.getPattern().startsWith("*");
         if (left) {
