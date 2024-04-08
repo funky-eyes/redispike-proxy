@@ -1,6 +1,11 @@
 # redis2asp
 High-performance Aerospike proxy for the Redis protocold
 
+### compatibility
+
+Aerospike: 3.x - 7.x (8.x version has not been tested yet as there is no Docker image available currently)
+Redis 3.x - 7.x
+
 ### support mode
 
 Details can be found here: [redispike-proxy/src/test/java/icu/funkye/redispike/ServerTest.java at main · funky-eyes/redispike-proxy (github.com)](https://github.com/funky-eyes/redispike-proxy/blob/main/src/test/java/icu/funkye/redispike/ServerTest.java)
@@ -13,7 +18,7 @@ Details can be found here: [redispike-proxy/src/test/java/icu/funkye/redispike/S
 | List    |         |      |
 | Set     |         |      |
 | ZSet    |         |      |
-| keys    |         |      |
+| keys    |    done     |      |
 
 
 

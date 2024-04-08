@@ -17,62 +17,72 @@
 package icu.funkye.redispike.protocol.response;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 import io.netty.buffer.ByteBuf;
 import icu.funkye.redispike.protocol.RedisResponse;
 
-public class BulkResponse implements RedisResponse<byte[]> {
+public class BulkResponse implements RedisResponse<String> {
 
-    public static final BulkResponse NIL_REPLY = new BulkResponse();
+    private static final char MARKER       = '$';
 
-    private static final char        MARKER    = '$';
+    private static final char PREFIX       = '+';
 
-    private static final char        PREFIX    = '+';
+    private static final char ERROR_PREFIX = '-';
 
-    private byte[]                   data;
+    private static final char ARRAY_PREFIX = '*';
 
-    private int                      len;
+    private List<byte[]>      list;
+
+    private String            data;
+
+    public BulkResponse(List<byte[]> list) {
+        this.list = list;
+    }
+
+    public BulkResponse(String data) {
+        this.data = data;
+    }
 
     public BulkResponse() {
-        this.data = null;
-        this.len = -1;
     }
 
-    public BulkResponse(byte[] data) {
+    public void appender(String data) {
+        list.add(data.getBytes(StandardCharsets.UTF_8));
+    }
+
+    public void setData(String data) {
         this.data = data;
-        this.len = data.length;
-    }
-
-    @Override
-    public byte[] data() {
-        return this.data;
-    }
-
-    public byte[] getData() {
-        return data;
-    }
-
-    public void setData(byte[] data) {
-        this.data = data;
-        this.len = data.length;
     }
 
     @Override
     public void write(ByteBuf out) throws IOException {
-        // 1.Write header
-        out.writeByte(MARKER);
-        out.writeBytes(String.valueOf(len).getBytes());
-        out.writeBytes(CRLF);
-
-        // 2.Write data
-        if (len > 0) {
-            out.writeBytes(data);
+        if (list != null) {
+            out.writeByte(ARRAY_PREFIX);
+            out.writeBytes(String.valueOf(list.size()).getBytes(StandardCharsets.UTF_8));
+            out.writeBytes(CRLF);
+            for (byte[] data : list) {
+                out.writeByte(MARKER);
+                out.writeBytes(String.valueOf(data.length).getBytes(StandardCharsets.UTF_8));
+                out.writeBytes(CRLF);
+                out.writeBytes(data);
+                out.writeBytes(CRLF);
+            }
+            return;
+        }
+        if (data == null) {
+            out.writeByte(MARKER);
+            out.writeBytes(String.valueOf(-1).getBytes());
+            out.writeBytes(CRLF);
+        } else {
+            out.writeByte(PREFIX);
+            out.writeBytes(data.getBytes(StandardCharsets.UTF_8));
             out.writeBytes(CRLF);
         }
     }
 
     @Override
     public String toString() {
-        return "BulkReply{" + "bytes=" + Arrays.toString(data) + '}';
+        return "BulkResponse{" + "list=" + list + '}';
     }
 }

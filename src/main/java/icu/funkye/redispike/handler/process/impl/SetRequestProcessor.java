@@ -16,7 +16,6 @@
  */
 package icu.funkye.redispike.handler.process.impl;
 
-import java.nio.charset.StandardCharsets;
 import com.aerospike.client.AerospikeException;
 import com.aerospike.client.Bin;
 import com.aerospike.client.Key;
@@ -35,18 +34,21 @@ import icu.funkye.redispike.protocol.request.conts.TtlType;
 import icu.funkye.redispike.util.IntegerUtils;
 
 public class SetRequestProcessor extends AbstractRedisRequestProcessor<SetRequest> {
+    WritePolicy defaultWritePolicy;
 
     public SetRequestProcessor() {
         this.cmdCode = new RedisRequestCommandCode(IntegerUtils.hashCodeToShort(SetRequest.class.hashCode()));
+        this.defaultWritePolicy = new WritePolicy(client.getWritePolicyDefault());
+        this.defaultWritePolicy.sendKey = true;
     }
 
     @Override
     public void handle(RemotingContext ctx, SetRequest request) {
         Bin bin = new Bin(request.getKey(), request.getValue());
         Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, request.getKey());
-        WritePolicy writePolicy = null;
+        WritePolicy writePolicy = this.defaultWritePolicy;
         if (request.getTtl() != null) {
-            writePolicy = new WritePolicy(client.getWritePolicyDefault());
+            writePolicy = new WritePolicy(writePolicy);
             if (request.getTtlType() == TtlType.EX) {
                 writePolicy.expiration = request.getTtl().intValue();
             } else {
@@ -54,10 +56,8 @@ public class SetRequestProcessor extends AbstractRedisRequestProcessor<SetReques
             }
         }
         if (request.getOperate() != null) {
-            if (writePolicy == null) {
-                writePolicy = new WritePolicy(client.getWritePolicyDefault());
-            }
             if (request.getOperate() == Operate.NX) {
+                writePolicy = new WritePolicy(writePolicy);
                 writePolicy.recordExistsAction = RecordExistsAction.CREATE_ONLY;
             } else if (request.getOperate() == Operate.XX) {
                 client.get(AeroSpikeClientFactory.eventLoops.next(), new RecordListener() {
@@ -69,7 +69,7 @@ public class SetRequestProcessor extends AbstractRedisRequestProcessor<SetReques
                             client.put(AeroSpikeClientFactory.eventLoops.next(), new WriteListener() {
                                 @Override
                                 public void onSuccess(Key key) {
-                                    request.setResponse("OK".getBytes(StandardCharsets.UTF_8));
+                                    request.setResponse("OK");
                                     ctx.writeAndFlush(request.getResponse());
                                 }
 
@@ -91,16 +91,13 @@ public class SetRequestProcessor extends AbstractRedisRequestProcessor<SetReques
                 return;
             }
         }
-        if (writePolicy == null) {
-            writePolicy = client.getWritePolicyDefault();
-        }
         client.put(AeroSpikeClientFactory.eventLoops.next(), new WriteListener() {
             @Override
             public void onSuccess(Key key) {
                 if (request.getOriginalCommand().contains("nx")) {
-                    request.setResponse("1".getBytes(StandardCharsets.UTF_8));
+                    request.setResponse("1");
                 } else {
-                    request.setResponse("OK".getBytes(StandardCharsets.UTF_8));
+                    request.setResponse("OK");
                 }
                 ctx.writeAndFlush(request.getResponse());
             }

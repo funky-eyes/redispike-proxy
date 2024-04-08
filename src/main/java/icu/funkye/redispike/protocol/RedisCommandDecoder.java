@@ -22,6 +22,7 @@ import java.util.List;
 import com.alipay.remoting.CommandDecoder;
 import icu.funkye.redispike.protocol.request.HDelRequest;
 import icu.funkye.redispike.protocol.request.HSetRequest;
+import icu.funkye.redispike.protocol.request.KeysRequest;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.DecoderException;
@@ -73,6 +74,8 @@ public class RedisCommandDecoder implements CommandDecoder {
                 return new SetRequest(params);
             case "set":
                 return new SetRequest(params);
+            case "keys":
+                return new KeysRequest(params);
             case "del":
                 params.remove(0);
                 return new DelRequest(params);

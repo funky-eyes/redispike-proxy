@@ -16,7 +16,6 @@
  */
 package icu.funkye.redispike.handler.process.impl;
 
-import java.nio.charset.StandardCharsets;
 import com.alipay.remoting.RemotingContext;
 import icu.funkye.redispike.handler.process.AbstractRedisRequestProcessor;
 import icu.funkye.redispike.protocol.RedisRequestCommandCode;
@@ -31,7 +30,7 @@ public class CommandRequestProcessor extends AbstractRedisRequestProcessor<Comma
 
     @Override
     public void handle(RemotingContext ctx, CommandRequest request) {
-        request.setResponse("OK".getBytes(StandardCharsets.UTF_8));
+        request.setResponse("OK");
         ctx.writeAndFlush(request.getResponse());
     }
 }

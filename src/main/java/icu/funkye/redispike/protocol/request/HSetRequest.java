@@ -25,7 +25,7 @@ import icu.funkye.redispike.protocol.request.conts.Operate;
 import icu.funkye.redispike.protocol.response.IntegerResponse;
 import icu.funkye.redispike.util.CollectionUtils;
 
-public class HSetRequest implements RedisRequest<byte[]> {
+public class HSetRequest implements RedisRequest<String> {
 
     final String              originalCommand;
 
@@ -35,7 +35,7 @@ public class HSetRequest implements RedisRequest<byte[]> {
 
     Operate                   operate;
 
-    RedisResponse<byte[]>     response;
+    RedisResponse<String>     response;
 
     public HSetRequest(List<String> params) {
         this.originalCommand = params.remove(0);
@@ -50,12 +50,12 @@ public class HSetRequest implements RedisRequest<byte[]> {
     }
 
     @Override
-    public RedisResponse<byte[]> getResponse() {
+    public RedisResponse<String> getResponse() {
         return this.response;
     }
 
     @Override
-    public void setResponse(byte[] data) {
+    public void setResponse(String data) {
         this.response.setData(data);
     }
 
@@ -75,7 +75,7 @@ public class HSetRequest implements RedisRequest<byte[]> {
         this.operate = operate;
     }
 
-    public void setResponse(RedisResponse<byte[]> response) {
+    public void setResponse(RedisResponse<String> response) {
         this.response = response;
     }
 

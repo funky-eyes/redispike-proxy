@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import com.aerospike.client.IAerospikeClient;
 import com.aerospike.client.Key;
@@ -43,7 +44,7 @@ public class ServerTest {
 
     static Logger           logger      = LoggerFactory.getLogger(ServerTest.class);
 
-    private final int       RandomValue = Integer.MAX_VALUE;
+    private final int       RandomValue = 10000000;
 
     @BeforeAll
     public static void init() throws ParseException {
@@ -51,6 +52,29 @@ public class ServerTest {
         server.start("-p 6789".split(" "));
         JedisPooledFactory.getJedisPoolInstance("127.0.0.1", 6789);
         aspClient = AeroSpikeClientFactory.getClient();
+    }
+
+    @Test
+    public void testhKeys() {
+        List<String> keys = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            keys.add(String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue)));
+        }
+        try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
+            for (String key : keys) {
+                jedis.set(key, "b");
+            }
+            Set<String> result = jedis.keys("123");
+            Assertions.assertEquals(result.size(), 0);
+            result = jedis.keys("*");
+            Assertions.assertNotEquals(result.size(), 0);
+            result = jedis.keys("*");
+            jedis.set("abc123", "123");
+            result = jedis.keys("abc*");
+            Assertions.assertEquals(result.size(), 1);
+            result = jedis.keys("*123");
+            Assertions.assertEquals(result.size(), 1);
+        }
     }
 
     @Test
@@ -81,9 +105,9 @@ public class ServerTest {
 
     @Test
     public void testRedisSet() {
-        try (Jedis jedis = new Jedis("127.0.0.1", 6379)) {
+        try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
             String result = jedis.set("a", "bq");
-            try (Jedis jedis2 = JedisPooledFactory.getJedisInstance()) {
+            try (Jedis jedis2 = new Jedis("127.0.0.1", 6379)) {
                 String result2 = jedis2.set("a", "bq");
                 Assertions.assertEquals(result, result2);
             }
@@ -100,7 +124,7 @@ public class ServerTest {
         Record record = aspClient.get(aspClient.getReadPolicyDefault(), key);
         Map<String, Object> map = record.bins;
         Assertions.assertEquals(map.get("a"), "b");
-        try (Jedis jedis = new Jedis("127.0.0.1", 6789, 3000)) {
+        try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
             String result = jedis.get("a");
             Assertions.assertEquals(result, "b");
         }
@@ -108,8 +132,8 @@ public class ServerTest {
 
     @Test
     public void testGetNilAsp() {
-        try (Jedis jedis = new Jedis("127.0.0.1", 6789, 3000)) {
-            String result = jedis.get(String.valueOf(ThreadLocalRandom.current().nextInt(111)));
+        try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
+            String result = jedis.get(String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue)));
             Assertions.assertNull(result);
         }
     }

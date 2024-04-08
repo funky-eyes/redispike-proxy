@@ -37,7 +37,13 @@ public abstract class AbstractRedisRequestProcessor<T extends RedisRequest<?>> i
     @Override
     public void process(RemotingContext ctx, RemotingCommand msg, ExecutorService defaultExecutor) throws Exception {
         if (defaultExecutor != null) {
-            defaultExecutor.submit(() -> this.handle(ctx, (T)msg));
+            defaultExecutor.submit(() -> {
+                try {
+                    this.handle(ctx, (T)msg);
+                } catch (Exception e) {
+                    logger.error("process error: {}",e.getMessage(), e);
+                }
+            });
         } else {
             this.handle(ctx, (T)msg);
         }

@@ -16,7 +16,6 @@
  */
 package icu.funkye.redispike.handler.process.impl;
 
-import java.nio.charset.StandardCharsets;
 import com.aerospike.client.AerospikeException;
 import com.aerospike.client.Key;
 import com.aerospike.client.Record;
@@ -47,7 +46,7 @@ public class GetRequestProcessor extends AbstractRedisRequestProcessor<GetReques
                 }
                 String value = record.getString(request.getKey());
                 if (StringUtil.isNotBlank(value)) {
-                    request.setResponse(value.getBytes(StandardCharsets.UTF_8));
+                    request.setResponse(value);
                 }
                 ctx.writeAndFlush(request.getResponse());
             }

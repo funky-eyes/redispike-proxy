@@ -25,7 +25,7 @@ import icu.funkye.redispike.protocol.RedisRequest;
 import icu.funkye.redispike.protocol.RedisResponse;
 import icu.funkye.redispike.protocol.response.IntegerResponse;
 
-public class HDelRequest implements RedisRequest<byte[]> {
+public class HDelRequest implements RedisRequest<String> {
 
     String          key;
 
@@ -40,12 +40,12 @@ public class HDelRequest implements RedisRequest<byte[]> {
     }
 
     @Override
-    public void setResponse(byte[] data) {
+    public void setResponse(String data) {
         this.response.setData(data);
     }
 
     @Override
-    public RedisResponse<byte[]> getResponse() {
+    public RedisResponse<String> getResponse() {
         return response;
     }
 
