@@ -57,7 +57,7 @@ public class ServerTest {
     }
 
     @Test
-    @DisabledIfSystemProperty(named = "asp-client.version", matches = "6.3.0")
+    @DisabledIfSystemProperty(named = "asp-client.version", matches = "4.1.2")
     public void testhKeys() {
         List<String> keys = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
