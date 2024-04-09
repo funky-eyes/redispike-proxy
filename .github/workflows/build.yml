@@ -44,7 +44,7 @@ jobs:
       - name: "Test with Maven and Java${{ matrix.java }}"
         if: matrix.java != '8'
         run: |
-          ./mvnw -T 4C clean test
+          ./mvnw -T 4C clean test -Dasp-client.version=4.1.2
       - name: "Codecov"
         if: matrix.java == '8'
         uses: codecov/codecov-action@v4.0.1

@@ -36,8 +36,7 @@ public class KeysRequest implements RedisRequest<String> {
 
     public KeysRequest(List<String> params) {
         this.originalCommand = params.get(0);
-
-        if (params.size() != 3) {
+        if (params.size() != 2) {
             this.response = new BulkResponse();
             this.response.setError("ERR wrong number of arguments for 'keys' command");
         } else {
