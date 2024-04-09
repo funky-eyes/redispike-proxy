@@ -64,14 +64,14 @@ public class ServerTest {
         }
         String key = String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue));
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
-            try(Pipeline pipeline = jedis.pipelined()) {
+            try (Pipeline pipeline = jedis.pipelined()) {
                 for (String value : keys) {
-                    pipeline.hset(key, value,"b");
+                    pipeline.hset(key, value, "b");
                     pipeline.sync();
                 }
             }
             jedis.del(key);
-            try(Pipeline pipeline = jedis.pipelined()) {
+            try (Pipeline pipeline = jedis.pipelined()) {
                 for (String value : keys) {
                     pipeline.set(key, value);
                     pipeline.sync();
