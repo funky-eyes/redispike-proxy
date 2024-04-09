@@ -16,38 +16,34 @@
  */
 package icu.funkye.redispike.protocol.request;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.alipay.remoting.util.StringUtils;
 import icu.funkye.redispike.protocol.RedisRequest;
 import icu.funkye.redispike.protocol.RedisResponse;
-import icu.funkye.redispike.protocol.request.conts.Operate;
-import icu.funkye.redispike.protocol.request.conts.TtlType;
 import icu.funkye.redispike.protocol.response.BulkResponse;
-import icu.funkye.redispike.protocol.response.IntegerResponse;
 
-public class KeysRequest implements RedisRequest<String> {
+public class HGetRequest implements RedisRequest<String> {
 
-    final String originalCommand;
+    final String key;
 
-    String       pattern;
+    final String field;
 
-    BulkResponse response;
+    BulkResponse response = new BulkResponse();
 
-    public KeysRequest(List<String> params) {
-        this.originalCommand = params.get(0);
-        if (params.size() != 2) {
-            this.response = new BulkResponse();
-            this.response.setError("ERR wrong number of arguments for 'keys' command");
-        } else {
-            this.response = new BulkResponse(new ArrayList<>());
-            this.pattern = params.get(1);
+    public HGetRequest(String key, String field) {
+        this.key = key;
+        if (StringUtils.isBlank(field)) {
+            response.setError("ERR wrong number of arguments for 'hget' command");
         }
+        this.field = field;
+    }
+
+    public String getKey() {
+        return key;
     }
 
     @Override
     public void setResponse(String data) {
-        this.response.appender(data);
+        this.response.setData(data);
     }
 
     @Override
@@ -55,21 +51,20 @@ public class KeysRequest implements RedisRequest<String> {
         return response;
     }
 
-    public String getOriginalCommand() {
-        return originalCommand;
+    public String getField() {
+        return field;
     }
 
-    public String getPattern() {
-        return pattern;
+    public void setResponse(BulkResponse response) {
+        this.response = response;
+    }
+
+    public void setError(String errorMsg) {
+        this.response.setError(errorMsg);
     }
 
     @Override
     public String toString() {
-        return "KeysRequest{" + "originalCommand='" + originalCommand + '\'' + ", pattern='" + pattern + '\''
-               + ", response=" + response + '}';
-    }
-
-    public void setPattern(String pattern) {
-        this.pattern = pattern;
+        return "HGetRequest{" + "key='" + key + '\'' + ", field='" + field + '\'' + ", response=" + response + '}';
     }
 }

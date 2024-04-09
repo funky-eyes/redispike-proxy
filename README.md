@@ -16,11 +16,9 @@ Details can be found here: [redispike-proxy/src/test/java/icu/funkye/redispike/S
 | Hash    | done    |     HSETNX only supports the key level, not the column level  |
 | Scan    |         |      |
 | List    |         |      |
-| Set     |         |      |
-| ZSet    |         |      |
-| keys    |    done     |      |
-
-
+| Set     | wait    |      |
+| ZSet    | wait    |      |
+| keys    | done    |      |
 
 ### Performance Test Report
 aerospike 3.x 2c4g  redispike-proxy 2c4g:

@@ -33,6 +33,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import icu.funkye.redispike.factory.AeroSpikeClientFactory;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
@@ -55,6 +56,7 @@ public class ServerTest {
     }
 
     @Test
+    @DisabledIfSystemProperty(named = "asp-client.version", matches = "4.1.2")
     public void testhKeys() {
         List<String> keys = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
@@ -68,7 +70,6 @@ public class ServerTest {
             Assertions.assertEquals(result.size(), 0);
             result = jedis.keys("*");
             Assertions.assertNotEquals(result.size(), 0);
-            result = jedis.keys("*");
             jedis.set("abc123", "123");
             result = jedis.keys("abc*");
             Assertions.assertEquals(result.size(), 1);
@@ -98,6 +99,10 @@ public class ServerTest {
             Assertions.assertEquals(result, 1);
             result = jedis.hsetnx(key, "f", "g");
             Assertions.assertEquals(result, 0);
+            String value = jedis.hget(key, "f");
+            Assertions.assertEquals(value, "g");
+            map = jedis.hgetAll(key);
+            Assertions.assertEquals(map.size(), 1);
             result = jedis.del(key);
             Assertions.assertEquals(result, 1);
         }

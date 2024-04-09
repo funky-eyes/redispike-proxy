@@ -17,32 +17,22 @@
 package icu.funkye.redispike.protocol.request;
 
 import java.util.ArrayList;
-import java.util.List;
-
 import icu.funkye.redispike.protocol.RedisRequest;
 import icu.funkye.redispike.protocol.RedisResponse;
-import icu.funkye.redispike.protocol.request.conts.Operate;
-import icu.funkye.redispike.protocol.request.conts.TtlType;
 import icu.funkye.redispike.protocol.response.BulkResponse;
-import icu.funkye.redispike.protocol.response.IntegerResponse;
 
-public class KeysRequest implements RedisRequest<String> {
+public class HGetAllRequest implements RedisRequest<String> {
 
-    final String originalCommand;
+    String       key;
 
-    String       pattern;
+    BulkResponse response = new BulkResponse(new ArrayList<>());
 
-    BulkResponse response;
+    public HGetAllRequest(String key) {
+        this.key = key;
+    }
 
-    public KeysRequest(List<String> params) {
-        this.originalCommand = params.get(0);
-        if (params.size() != 2) {
-            this.response = new BulkResponse();
-            this.response.setError("ERR wrong number of arguments for 'keys' command");
-        } else {
-            this.response = new BulkResponse(new ArrayList<>());
-            this.pattern = params.get(1);
-        }
+    public String getKey() {
+        return key;
     }
 
     @Override
@@ -55,21 +45,8 @@ public class KeysRequest implements RedisRequest<String> {
         return response;
     }
 
-    public String getOriginalCommand() {
-        return originalCommand;
-    }
-
-    public String getPattern() {
-        return pattern;
-    }
-
     @Override
     public String toString() {
-        return "KeysRequest{" + "originalCommand='" + originalCommand + '\'' + ", pattern='" + pattern + '\''
-               + ", response=" + response + '}';
-    }
-
-    public void setPattern(String pattern) {
-        this.pattern = pattern;
+        return "GetRequest{" + "key='" + key + '\'' + ", response=" + response + '}';
     }
 }
