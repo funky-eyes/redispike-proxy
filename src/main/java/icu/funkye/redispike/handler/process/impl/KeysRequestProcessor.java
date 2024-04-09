@@ -40,7 +40,10 @@ public class KeysRequestProcessor extends AbstractRedisRequestProcessor<KeysRequ
 
     @Override
     public void handle(RemotingContext ctx, KeysRequest request) {
-
+        if (StringUtils.isBlank(request.getPattern())) {
+            ctx.writeAndFlush(request.getResponse());
+            return;
+        }
         boolean all = StringUtils.equals(request.getPattern(), "*");
         boolean left = request.getPattern().startsWith("*");
         if (left) {

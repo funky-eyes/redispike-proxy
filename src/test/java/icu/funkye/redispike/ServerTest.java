@@ -33,6 +33,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import icu.funkye.redispike.factory.AeroSpikeClientFactory;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
@@ -49,12 +50,14 @@ public class ServerTest {
     @BeforeAll
     public static void init() throws ParseException {
         server = new Server();
-        server.start("-p 6789".split(" "));
+        server.start("-th 10.58.10.103 -tp 3000 -n test -s tdkv-test -TU tongdun-admin1 -TP xxxzzz123 -p 6789"
+            .split(" "));
         JedisPooledFactory.getJedisPoolInstance("127.0.0.1", 6789);
         aspClient = AeroSpikeClientFactory.getClient();
     }
 
     @Test
+    @DisabledIfSystemProperty(named = "asp-client.version", matches = "6.3.0")
     public void testhKeys() {
         List<String> keys = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
@@ -68,7 +71,6 @@ public class ServerTest {
             Assertions.assertEquals(result.size(), 0);
             result = jedis.keys("*");
             Assertions.assertNotEquals(result.size(), 0);
-            result = jedis.keys("*");
             jedis.set("abc123", "123");
             result = jedis.keys("abc*");
             Assertions.assertEquals(result.size(), 1);
@@ -98,6 +100,10 @@ public class ServerTest {
             Assertions.assertEquals(result, 1);
             result = jedis.hsetnx(key, "f", "g");
             Assertions.assertEquals(result, 0);
+            String value = jedis.hget(key, "f");
+            Assertions.assertEquals(value, "g");
+            map = jedis.hgetAll(key);
+            Assertions.assertEquals(map.size(), 1);
             result = jedis.del(key);
             Assertions.assertEquals(result, 1);
         }

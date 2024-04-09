@@ -19,6 +19,7 @@ package icu.funkye.redispike.protocol.response;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import com.alipay.remoting.util.StringUtils;
 import io.netty.buffer.ByteBuf;
 import icu.funkye.redispike.protocol.RedisResponse;
 
@@ -35,6 +36,8 @@ public class BulkResponse implements RedisResponse<String> {
     private List<byte[]>      list;
 
     private String            data;
+
+    private String            error;
 
     public BulkResponse(List<byte[]> list) {
         this.list = list;
@@ -56,7 +59,13 @@ public class BulkResponse implements RedisResponse<String> {
     }
 
     @Override
-    public void write(ByteBuf out) throws IOException {
+    public void write(ByteBuf out) {
+        if (StringUtils.isNotBlank(error)) {
+            out.writeByte(ERROR_PREFIX);
+            out.writeBytes(error.getBytes(StandardCharsets.UTF_8));
+            out.writeBytes(CRLF);
+            return;
+        }
         if (list != null) {
             out.writeByte(ARRAY_PREFIX);
             out.writeBytes(String.valueOf(list.size()).getBytes(StandardCharsets.UTF_8));
@@ -79,6 +88,14 @@ public class BulkResponse implements RedisResponse<String> {
             out.writeBytes(data.getBytes(StandardCharsets.UTF_8));
             out.writeBytes(CRLF);
         }
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
     }
 
     @Override
