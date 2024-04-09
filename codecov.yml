@@ -32,6 +32,7 @@ ignore:
   - ".mvn/.*"
   - ".style/.*"
   - "*.md"
+  - "*Test"
 comment:
   layout: "reach,diff,flags,tree"
   behavior: default

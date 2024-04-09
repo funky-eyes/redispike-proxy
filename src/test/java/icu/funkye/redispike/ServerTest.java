@@ -37,6 +37,7 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.params.SetParams;
 
 public class ServerTest {
@@ -50,10 +51,34 @@ public class ServerTest {
     @BeforeAll
     public static void init() throws ParseException {
         server = new Server();
-        server.start("-p 6789"
-            .split(" "));
+        server.start("-p 6789".split(" "));
         JedisPooledFactory.getJedisPoolInstance("127.0.0.1", 6789);
         aspClient = AeroSpikeClientFactory.getClient();
+    }
+
+    @Test
+    public void TestPippline() {
+        List<String> keys = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            keys.add(String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue)));
+        }
+        String key = String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue));
+        try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
+            try (Pipeline pipeline = jedis.pipelined()) {
+                for (String value : keys) {
+                    pipeline.hset(key, value, "b");
+                    pipeline.sync();
+                }
+            }
+            jedis.del(key);
+            try (Pipeline pipeline = jedis.pipelined()) {
+                for (String value : keys) {
+                    pipeline.set(key, value);
+                    pipeline.sync();
+                }
+            }
+            jedis.del(key);
+        }
     }
 
     @Test
