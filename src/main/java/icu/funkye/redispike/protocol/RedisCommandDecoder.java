@@ -25,6 +25,9 @@ import icu.funkye.redispike.protocol.request.HGetAllRequest;
 import icu.funkye.redispike.protocol.request.HGetRequest;
 import icu.funkye.redispike.protocol.request.HSetRequest;
 import icu.funkye.redispike.protocol.request.KeysRequest;
+import icu.funkye.redispike.protocol.request.SAddRequest;
+import icu.funkye.redispike.protocol.request.SMembersRequest;
+import icu.funkye.redispike.protocol.request.SPopRequest;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.DecoderException;
@@ -58,8 +61,8 @@ public class RedisCommandDecoder implements CommandDecoder {
 
     private RedisRequest<?> convert2RedisRequest(List<String> params) {
         String cmd = params.get(0);
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("cmd: {}", params);
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("cmd: {}", params);
         }
         switch (cmd) {
             case "hdel":
@@ -85,6 +88,13 @@ public class RedisCommandDecoder implements CommandDecoder {
                 return new HGetRequest(params.get(1), params.size() > 2 ? params.get(2) : null);
             case "hgetall":
                 return new HGetAllRequest(params.get(1));
+            case "sadd":
+                return new SAddRequest(params);
+            case "smembers":
+                return new SMembersRequest(params.get(1));
+            case "spop":
+                params.remove(0);
+                return new SPopRequest(params.remove(0), params.size() > 0 ? Integer.parseInt(params.get(0)) : null);
             default:
                 return null;
         }

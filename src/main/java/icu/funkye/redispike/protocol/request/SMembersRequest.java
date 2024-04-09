@@ -21,13 +21,13 @@ import icu.funkye.redispike.protocol.RedisRequest;
 import icu.funkye.redispike.protocol.RedisResponse;
 import icu.funkye.redispike.protocol.response.BulkResponse;
 
-public class HGetAllRequest implements RedisRequest<String> {
+public class SMembersRequest implements RedisRequest<String> {
 
     String       key;
 
     BulkResponse response = new BulkResponse(new ArrayList<>());
 
-    public HGetAllRequest(String key) {
+    public SMembersRequest(String key) {
         this.key = key;
     }
 
@@ -37,7 +37,7 @@ public class HGetAllRequest implements RedisRequest<String> {
 
     @Override
     public void setResponse(String data) {
-        this.response.appender(data);
+        this.response.setData(data);
     }
 
     @Override
@@ -47,6 +47,6 @@ public class HGetAllRequest implements RedisRequest<String> {
 
     @Override
     public String toString() {
-        return "HGetAllRequest{" + "key='" + key + '\'' + ", response=" + response + '}';
+        return "SMembersRequest{" + "key='" + key + '\'' + ", response=" + response + '}';
     }
 }

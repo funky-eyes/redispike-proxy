@@ -16,28 +16,31 @@
  */
 package icu.funkye.redispike.protocol.request;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import icu.funkye.redispike.protocol.RedisRequest;
 import icu.funkye.redispike.protocol.RedisResponse;
-import icu.funkye.redispike.protocol.response.BulkResponse;
+import icu.funkye.redispike.protocol.response.IntegerResponse;
 
-public class HGetAllRequest implements RedisRequest<String> {
+public class SAddRequest implements RedisRequest<String> {
 
-    String       key;
+    String          key;
 
-    BulkResponse response = new BulkResponse(new ArrayList<>());
+    Set<String>     fields;
 
-    public HGetAllRequest(String key) {
-        this.key = key;
-    }
+    IntegerResponse response = new IntegerResponse();
 
-    public String getKey() {
-        return key;
+    public SAddRequest(List<String> params) {
+        params.remove(0);
+        this.key = params.remove(0);
+        this.fields = new HashSet<>(params);
     }
 
     @Override
     public void setResponse(String data) {
-        this.response.appender(data);
+        this.response.setData(data);
     }
 
     @Override
@@ -45,8 +48,28 @@ public class HGetAllRequest implements RedisRequest<String> {
         return response;
     }
 
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public Set<String> getFields() {
+        return fields;
+    }
+
+    public void setFields(Set<String> fields) {
+        this.fields = fields;
+    }
+
+    public void setResponse(IntegerResponse response) {
+        this.response = response;
+    }
+
     @Override
     public String toString() {
-        return "HGetAllRequest{" + "key='" + key + '\'' + ", response=" + response + '}';
+        return "SAddRequest{" + "key='" + key + '\'' + ", fields=" + fields + ", response=" + response + '}';
     }
 }

@@ -82,4 +82,10 @@ public class HSetRequest implements RedisRequest<String> {
     public String getKey() {
         return key;
     }
+
+    @Override
+    public String toString() {
+        return "HSetRequest{" + "originalCommand='" + originalCommand + '\'' + ", key='" + key + '\'' + ", kv=" + kv
+               + ", operate=" + operate + ", response=" + response + '}';
+    }
 }
