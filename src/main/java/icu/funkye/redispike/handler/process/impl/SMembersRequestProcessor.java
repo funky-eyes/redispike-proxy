@@ -16,47 +16,35 @@
  */
 package icu.funkye.redispike.handler.process.impl;
 
-import java.util.ArrayList;
-import java.util.List;
 import com.aerospike.client.AerospikeException;
-import com.aerospike.client.Bin;
 import com.aerospike.client.Key;
-import com.aerospike.client.listener.WriteListener;
-import com.aerospike.client.policy.RecordExistsAction;
-import com.aerospike.client.policy.WritePolicy;
+import com.aerospike.client.Record;
+import com.aerospike.client.listener.RecordListener;
 import com.alipay.remoting.RemotingContext;
+
 import icu.funkye.redispike.factory.AeroSpikeClientFactory;
 import icu.funkye.redispike.handler.process.AbstractRedisRequestProcessor;
 import icu.funkye.redispike.protocol.RedisRequestCommandCode;
-import icu.funkye.redispike.protocol.request.HSetRequest;
-import icu.funkye.redispike.protocol.request.conts.Operate;
+import icu.funkye.redispike.protocol.request.SMembersRequest;
 import icu.funkye.redispike.util.IntegerUtils;
 
-public class HSetRequestProcessor extends AbstractRedisRequestProcessor<HSetRequest> {
-    WritePolicy defaultWritePolicy;
+public class SMembersRequestProcessor extends AbstractRedisRequestProcessor<SMembersRequest> {
 
-    public HSetRequestProcessor() {
-        this.cmdCode = new RedisRequestCommandCode(IntegerUtils.hashCodeToShort(HSetRequest.class.hashCode()));
-        this.defaultWritePolicy = client.getWritePolicyDefault();
-        this.defaultWritePolicy.sendKey = true;
+    public SMembersRequestProcessor() {
+        this.cmdCode = new RedisRequestCommandCode(IntegerUtils.hashCodeToShort(SMembersRequest.class.hashCode()));
     }
 
     @Override
-    public void handle(RemotingContext ctx, HSetRequest request) {
+    public void handle(RemotingContext ctx, SMembersRequest request) {
         Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, request.getKey());
-        List<Bin> list = new ArrayList<>();
-        request.getKv().forEach((k, v) -> list.add(new Bin(k, v)));
-        WritePolicy writePolicy;
-        if (request.getOperate() != null && request.getOperate() == Operate.NX) {
-            writePolicy = new WritePolicy(defaultWritePolicy);
-            writePolicy.recordExistsAction = RecordExistsAction.CREATE_ONLY;
-        } else {
-            writePolicy = defaultWritePolicy;
-        }
-        client.put(AeroSpikeClientFactory.eventLoops.next(), new WriteListener() {
+        client.get(AeroSpikeClientFactory.eventLoops.next(), new RecordListener() {
             @Override
-            public void onSuccess(Key key) {
-                request.setResponse(String.valueOf(request.getKv().size()));
+            public void onSuccess(Key key, Record record) {
+                if (record == null) {
+                    ctx.writeAndFlush(request.getResponse());
+                    return;
+                }
+                record.bins.keySet().forEach(request::setResponse);
                 ctx.writeAndFlush(request.getResponse());
             }
 
@@ -65,6 +53,6 @@ public class HSetRequestProcessor extends AbstractRedisRequestProcessor<HSetRequ
                 logger.error(ae.getMessage(), ae);
                 ctx.writeAndFlush(request.getResponse());
             }
-        }, writePolicy, key, list.toArray(new Bin[0]));
+        }, client.getReadPolicyDefault(), key);
     }
 }

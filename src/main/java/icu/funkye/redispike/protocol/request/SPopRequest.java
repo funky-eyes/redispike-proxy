@@ -17,27 +17,51 @@
 package icu.funkye.redispike.protocol.request;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import icu.funkye.redispike.protocol.RedisRequest;
 import icu.funkye.redispike.protocol.RedisResponse;
 import icu.funkye.redispike.protocol.response.BulkResponse;
+import icu.funkye.redispike.protocol.response.IntegerResponse;
 
-public class HGetAllRequest implements RedisRequest<String> {
+public class SPopRequest implements RedisRequest<String> {
 
     String       key;
 
-    BulkResponse response = new BulkResponse(new ArrayList<>());
+    Integer      count;
 
-    public HGetAllRequest(String key) {
+    BulkResponse response;
+
+    public SPopRequest(String key, Integer count) {
         this.key = key;
+        this.count = count;
+        if (count != null) {
+            this.response = new BulkResponse(new ArrayList<>());
+        } else {
+            this.response = new BulkResponse();
+        }
     }
 
     public String getKey() {
         return key;
     }
 
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public Integer getCount() {
+        return count;
+    }
+
+    public void setCount(Integer count) {
+        this.count = count;
+    }
+
     @Override
     public void setResponse(String data) {
-        this.response.appender(data);
+        this.response.setData(data);
     }
 
     @Override
@@ -45,8 +69,4 @@ public class HGetAllRequest implements RedisRequest<String> {
         return response;
     }
 
-    @Override
-    public String toString() {
-        return "HGetAllRequest{" + "key='" + key + '\'' + ", response=" + response + '}';
-    }
 }

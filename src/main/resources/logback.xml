@@ -22,7 +22,7 @@
     <property name="LOG_FILE_PATH"
               value="${user.home}/logs/redispike-proxy"/>
     <property name="FILE_LOG_PATTERN"
-              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p --- [%t] [%logger] [%M] [%X{X-TX-XID:-}]: %m%n%wEx2"/>
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -37,28 +37,6 @@
         <append>true</append>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>${LOG_FILE_PATH}/history/${APPLICATION_NAME:-redispike-proxy}redispike-proxy.all.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
-            <maxFileSize>2GB</maxFileSize>
-            <MaxHistory>7</MaxHistory>
-            <totalSizeCap>7GB</totalSizeCap>
-            <cleanHistoryOnStart>true</cleanHistoryOnStart>
-        </rollingPolicy>
-        <encoder>
-            <Pattern>${FILE_LOG_PATTERN}</Pattern>
-            <charset>UTF-8</charset>
-        </encoder>
-    </appender>
-
-    <!--WARN-->
-    <appender name="FILE_WARN" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>WARN</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
-        </filter>
-        <file>${LOG_FILE_PATH}/${APPLICATION_NAME:-redispike-proxy}redispike-proxy.warn.log</file>
-        <append>true</append>
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_FILE_PATH}/history/${APPLICATION_NAME:-redispike-proxy}redispike-proxy.warn.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
             <maxFileSize>2GB</maxFileSize>
             <MaxHistory>7</MaxHistory>
             <totalSizeCap>7GB</totalSizeCap>
@@ -94,7 +72,6 @@
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE_ALL"/>
-        <appender-ref ref="FILE_WARN"/>
         <appender-ref ref="FILE_ERROR"/>
     </root>
 </configuration>

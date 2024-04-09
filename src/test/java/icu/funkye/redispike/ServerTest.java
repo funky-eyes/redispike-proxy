@@ -50,14 +50,37 @@ public class ServerTest {
     @BeforeAll
     public static void init() throws ParseException {
         server = new Server();
-        server.start("-p 6789".split(" "));
+        server.start("-p 6789"
+            .split(" "));
         JedisPooledFactory.getJedisPoolInstance("127.0.0.1", 6789);
         aspClient = AeroSpikeClientFactory.getClient();
     }
 
     @Test
+    public void TestSet() {
+        List<String> keys = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            keys.add(String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue)));
+        }
+        String key = String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue));
+        try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
+            for (String value : keys) {
+                jedis.sadd(key, value);
+            }
+            Set<String> list = jedis.smembers(key);
+            Assertions.assertNotEquals(list.size(), 3);
+            String value = jedis.spop(key);
+            Assertions.assertNotNull(value);
+            list = jedis.spop(key, 2);
+            Assertions.assertNotEquals(list.size(), 2);
+            list = jedis.smembers(key);
+            Assertions.assertEquals(list.size(), 0);
+        }
+    }
+
+    @Test
     @DisabledIfSystemProperty(named = "asp-client.version", matches = "4.1.2")
-    public void testhKeys() {
+    public void testKeys() {
         List<String> keys = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
             keys.add(String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue)));

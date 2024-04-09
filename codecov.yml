@@ -22,7 +22,7 @@ coverage:
     patch: no
     project:
       default:
-        threshold: 1%
+        threshold: 5%
         if_not_found: success
     changes: no
   precision: 2

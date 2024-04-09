@@ -30,9 +30,12 @@ import icu.funkye.redispike.handler.process.impl.HGetAllRequestProcessor;
 import icu.funkye.redispike.handler.process.impl.HGetRequestProcessor;
 import icu.funkye.redispike.handler.process.impl.HSetRequestProcessor;
 import icu.funkye.redispike.handler.process.impl.KeysRequestProcessor;
+import icu.funkye.redispike.handler.process.impl.SPopRequestProcessor;
 import icu.funkye.redispike.handler.process.impl.SetRequestProcessor;
 import icu.funkye.redispike.handler.process.impl.CommandRequestProcessor;
 import icu.funkye.redispike.handler.process.impl.DelRequestProcessor;
+import icu.funkye.redispike.handler.process.impl.SAddRequestProcessor;
+import icu.funkye.redispike.handler.process.impl.SMembersRequestProcessor;
 import icu.funkye.redispike.protocol.RedisRequest;
 import icu.funkye.redispike.protocol.response.BulkResponse;
 import org.slf4j.Logger;
@@ -63,6 +66,12 @@ public class RedisCommandHandler implements CommandHandler {
         processorMap.put(hGetAllRequestProcessor.getCmdCode().value(), hGetAllRequestProcessor);
         HGetRequestProcessor hGetRequestProcessor = new HGetRequestProcessor();
         processorMap.put(hGetRequestProcessor.getCmdCode().value(), hGetRequestProcessor);
+        SMembersRequestProcessor smembersRequestProcessor = new SMembersRequestProcessor();
+        processorMap.put(smembersRequestProcessor.getCmdCode().value(), smembersRequestProcessor);
+        SAddRequestProcessor sAddRequestProcessor = new SAddRequestProcessor();
+        processorMap.put(sAddRequestProcessor.getCmdCode().value(), sAddRequestProcessor);
+        SPopRequestProcessor sPopRequestProcessor = new SPopRequestProcessor();
+        processorMap.put(sPopRequestProcessor.getCmdCode().value(), sPopRequestProcessor);
     }
 
     @Override
