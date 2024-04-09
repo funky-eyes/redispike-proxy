@@ -60,10 +60,6 @@ public class SAddRequest implements RedisRequest<String> {
         return fields;
     }
 
-    public void setFields(Set<String> fields) {
-        this.fields = fields;
-    }
-
     public void setResponse(IntegerResponse response) {
         this.response = response;
     }

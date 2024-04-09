@@ -16,7 +16,6 @@
  */
 package icu.funkye.redispike.handler.process.impl;
 
-import java.util.List;
 import java.util.Objects;
 
 import com.aerospike.client.AerospikeException;
@@ -34,9 +33,6 @@ import icu.funkye.redispike.protocol.request.SPopRequest;
 import icu.funkye.redispike.util.IntegerUtils;
 
 public class SPopRequestProcessor extends AbstractRedisRequestProcessor<SPopRequest> {
-    String luaScriptPath = Objects.requireNonNull(this.getClass().getClassLoader().getResource("lua/spop.lua"))
-                             .getPath();
-
     public SPopRequestProcessor() {
         this.cmdCode = new RedisRequestCommandCode(IntegerUtils.hashCodeToShort(SPopRequest.class.hashCode()));
         RegisterTask task = client.register(null, SPopRequestProcessor.class.getClassLoader(), "lua/spop.lua",

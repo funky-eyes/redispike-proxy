@@ -17,13 +17,10 @@
 package icu.funkye.redispike.protocol.request;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import icu.funkye.redispike.protocol.RedisRequest;
 import icu.funkye.redispike.protocol.RedisResponse;
 import icu.funkye.redispike.protocol.response.BulkResponse;
-import icu.funkye.redispike.protocol.response.IntegerResponse;
 
 public class SPopRequest implements RedisRequest<String> {
 
@@ -53,10 +50,6 @@ public class SPopRequest implements RedisRequest<String> {
 
     public Integer getCount() {
         return count;
-    }
-
-    public void setCount(Integer count) {
-        this.count = count;
     }
 
     @Override
