@@ -16,8 +16,6 @@
  */
 package icu.funkye.redispike.handler.process.impl;
 
-import java.util.Objects;
-
 import com.aerospike.client.AerospikeException;
 import com.aerospike.client.Key;
 import com.aerospike.client.Language;
