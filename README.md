@@ -4,7 +4,8 @@ High-performance Aerospike proxy for the Redis protocold
 ### compatibility
 
 Aerospike: 3.x - 7.x (8.x version has not been tested yet as there is no Docker image available currently)
-Redis 3.x - 7.x
+
+Redis 3.x - latest
 
 ### support mode
 
