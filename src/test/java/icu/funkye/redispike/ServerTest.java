@@ -104,6 +104,13 @@ public class ServerTest {
             Assertions.assertNotEquals(list.size(), 2);
             list = jedis.smembers(key);
             Assertions.assertEquals(list.size(), 0);
+            for (String value2 : keys) {
+                jedis.sadd(key, value2);
+            }
+            long result = jedis.srem(key, keys.remove(0));
+            Assertions.assertEquals(result, 1);
+            result = jedis.srem(key, keys.toArray(new String[0]));
+            Assertions.assertEquals(result, 2);
         }
     }
 
