@@ -94,7 +94,11 @@ public class ServerTest {
             }
             Set<String> list = jedis.smembers(key);
             Assertions.assertNotEquals(list.size(), 3);
-            String value = jedis.spop(key);
+            String value = jedis.srandmember(key);
+            Assertions.assertTrue(keys.contains(value));
+            List<String> values = jedis.srandmember(key, 2);
+            Assertions.assertTrue(keys.containsAll(values));
+            value = jedis.spop(key);
             Assertions.assertNotNull(value);
             list = jedis.spop(key, 2);
             Assertions.assertNotEquals(list.size(), 2);
