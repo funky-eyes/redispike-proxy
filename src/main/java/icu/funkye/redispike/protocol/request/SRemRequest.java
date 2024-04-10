@@ -27,9 +27,9 @@ import icu.funkye.redispike.protocol.response.IntegerResponse;
 
 public class SRemRequest implements RedisRequest<String> {
 
-    String       key;
+    String                key;
 
-    List<String>      bins;
+    List<String>          bins;
 
     RedisResponse<String> response;
 

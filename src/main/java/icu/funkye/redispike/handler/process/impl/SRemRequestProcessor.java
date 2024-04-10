@@ -44,8 +44,7 @@ public class SRemRequestProcessor extends AbstractRedisRequestProcessor<SRemRequ
 
     public SRemRequestProcessor() {
         this.cmdCode = new RedisRequestCommandCode(IntegerUtils.hashCodeToShort(SRemRequest.class.hashCode()));
-        RegisterTask
-            task = client.register(null, SPopRequestProcessor.class.getClassLoader(), "lua/srem.lua",
+        RegisterTask task = client.register(null, SPopRequestProcessor.class.getClassLoader(), "lua/srem.lua",
             "srem.lua", Language.LUA);
         task.waitTillComplete();
     }
@@ -69,6 +68,7 @@ public class SRemRequestProcessor extends AbstractRedisRequestProcessor<SRemRequ
                 logger.error(exception.getMessage(), exception);
                 ctx.writeAndFlush(request.getResponse());
             }
-        }, client.getWritePolicyDefault(), key, "srem", "delete_bins_return_count", Value.get(String.join(",", request.getBins())));
+        }, client.getWritePolicyDefault(), key, "srem", "delete_bins_return_count",
+            Value.get(String.join(",", request.getBins())));
     }
 }
