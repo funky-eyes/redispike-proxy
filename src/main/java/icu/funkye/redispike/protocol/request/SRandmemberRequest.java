@@ -25,8 +25,8 @@ import icu.funkye.redispike.protocol.response.BulkResponse;
 public class SRandmemberRequest implements RedisRequest<String> {
 
     String       key;
-    
-    int count;
+
+    int          count;
 
     BulkResponse response = new BulkResponse(new ArrayList<>());
 

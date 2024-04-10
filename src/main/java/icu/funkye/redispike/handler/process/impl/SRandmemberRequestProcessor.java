@@ -63,6 +63,6 @@ public class SRandmemberRequestProcessor extends AbstractRedisRequestProcessor<S
                 logger.error(exception.getMessage(), exception);
                 ctx.writeAndFlush(request.getResponse());
             }
-        }, client.getWritePolicyDefault(), key, "srandmember", "getBinNames",Value.get(request.getCount()));
+        }, client.getWritePolicyDefault(), key, "srandmember", "getBinNames", Value.get(request.getCount()));
     }
 }
