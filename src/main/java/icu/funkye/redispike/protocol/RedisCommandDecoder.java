@@ -29,6 +29,7 @@ import icu.funkye.redispike.protocol.request.SAddRequest;
 import icu.funkye.redispike.protocol.request.SMembersRequest;
 import icu.funkye.redispike.protocol.request.SPopRequest;
 import icu.funkye.redispike.protocol.request.SRandmemberRequest;
+import icu.funkye.redispike.protocol.request.SRemRequest;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.DecoderException;
@@ -93,6 +94,9 @@ public class RedisCommandDecoder implements CommandDecoder {
                 return new SAddRequest(params);
             case "smembers":
                 return new SMembersRequest(params.get(1));
+            case "srem":
+                params.remove(0);
+                return new SRemRequest(params);
             case "srandmember":
                 return new SRandmemberRequest(params.get(1), params.size() > 2 ? Integer.parseInt(params.get(2)) : 1);
             case "spop":
