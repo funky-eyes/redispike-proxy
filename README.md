@@ -11,15 +11,15 @@ Redis 3.x - latest
 
 Details can be found here: [redispike-proxy/src/test/java/icu/funkye/redispike/ServerTest.java at main · funky-eyes/redispike-proxy (github.com)](https://github.com/funky-eyes/redispike-proxy/blob/main/src/test/java/icu/funkye/redispike/ServerTest.java)
 
-| feature | support                                                                        | note                                                     |
-|---------|--------------------------------------------------------------------------------|----------------------------------------------------------|
-| String  | done                                                                           |                                                          |
-| Hash    | done                                                                           | hsetnx only supports the key level, not the column level |
-| Scan    |                                                                                |                                                          |
-| List    |                                                                                |                                                          |
-| Set     | sadd done<br/>spop done<br/>smembers done <br/>srandmember done<br/>other wait |                                                          |
-| ZSet    | wait                                                                           |                                                          |
-| keys    | done                                                                           |                                                          |
+| feature | support                                                                                       | note                                                     |
+|---------|-----------------------------------------------------------------------------------------------|----------------------------------------------------------|
+| String  | done                                                                                          |                                                          |
+| Hash    | done                                                                                          | hsetnx only supports the key level, not the column level |
+| Scan    |                                                                                               |                                                          |
+| List    |                                                                                               |                                                          |
+| Set     | srem done <br/>sadd done<br/>spop done<br/>smembers done <br/>srandmember done<br/>other wait |                                                          |
+| ZSet    | wait                                                                                          |                                                          |
+| keys    | done                                                                                          |                                                          |
 
 ### Performance Test Report
 aerospike 3.x 2c4g  redispike-proxy 2c4g:
