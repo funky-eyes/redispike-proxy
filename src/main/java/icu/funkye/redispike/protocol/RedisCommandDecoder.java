@@ -25,6 +25,7 @@ import com.alipay.remoting.CommandDecoder;
 import icu.funkye.redispike.protocol.request.HDelRequest;
 import icu.funkye.redispike.protocol.request.HGetAllRequest;
 import icu.funkye.redispike.protocol.request.HGetRequest;
+import icu.funkye.redispike.protocol.request.HMgetRequest;
 import icu.funkye.redispike.protocol.request.HSetRequest;
 import icu.funkye.redispike.protocol.request.KeysRequest;
 import icu.funkye.redispike.protocol.request.SAddRequest;
@@ -88,6 +89,9 @@ public class RedisCommandDecoder implements CommandDecoder {
             LOGGER.debug("cmd: {}", params);
         }
         switch (cmd) {
+            case "hmget":
+                params.remove(0);
+                return new HMgetRequest(params.remove(0), params, flush);
             case "hdel":
                 return new HDelRequest(params, flush);
             case "get":

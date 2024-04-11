@@ -51,7 +51,7 @@ public class ServerTest {
     @BeforeAll
     public static void init() throws ParseException {
         server = new Server();
-        server.start("-p 6789".split(" "));
+        server.start("-th 10.58.10.103 -tp 3000 -n test -s tdkv-test -TU tongdun-admin1 -TP xxxzzz123 -p 6789".split(" "));
         JedisPooledFactory.getJedisPoolInstance("127.0.0.1", 6789);
         aspClient = AeroSpikeClientFactory.getClient();
     }
@@ -160,6 +160,8 @@ public class ServerTest {
             map.put("d", "e");
             result = jedis.hset(key, map);
             Assertions.assertEquals(result, 2);
+            List<String> list = jedis.hmget(key,"b","d");
+            Assertions.assertEquals(list.size(), 2);
             result = jedis.hdel(key, map.keySet().toArray(new String[0]));
             Assertions.assertEquals(result, 2);
             key = String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue));
