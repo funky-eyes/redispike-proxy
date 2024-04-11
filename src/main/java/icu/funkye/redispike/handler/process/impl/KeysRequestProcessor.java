@@ -41,7 +41,7 @@ public class KeysRequestProcessor extends AbstractRedisRequestProcessor<KeysRequ
     @Override
     public void handle(RemotingContext ctx, KeysRequest request) {
         if (StringUtils.isBlank(request.getPattern())) {
-            ctx.writeAndFlush(request.getResponse());
+            write(ctx, request);
             return;
         }
         boolean all = StringUtils.equals(request.getPattern(), "*");
@@ -84,13 +84,13 @@ public class KeysRequestProcessor extends AbstractRedisRequestProcessor<KeysRequ
 
             @Override
             public void onSuccess() {
-                ctx.writeAndFlush(request.getResponse());
+                write(ctx, request);
             }
 
             @Override
             public void onFailure(AerospikeException exception) {
                 logger.error(exception.getMessage(), exception);
-                ctx.writeAndFlush(request.getResponse());
+                write(ctx, request);
             }
         }, scanPolicy, AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set);
     }

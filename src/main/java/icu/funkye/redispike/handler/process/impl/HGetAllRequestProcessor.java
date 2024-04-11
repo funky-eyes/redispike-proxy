@@ -43,20 +43,20 @@ public class HGetAllRequestProcessor extends AbstractRedisRequestProcessor<HGetA
             @Override
             public void onSuccess(Key key, Record record) {
                 if (record == null) {
-                    ctx.writeAndFlush(request.getResponse());
+                    write(ctx,request);
                     return;
                 }
                 record.bins.forEach((k,v)-> {
                     request.setResponse(k);
                     request.setResponse(v.toString());
                 });
-                ctx.writeAndFlush(request.getResponse());
+                write(ctx,request);
             }
 
             @Override
             public void onFailure(AerospikeException ae) {
                 logger.error(ae.getMessage(), ae);
-                ctx.writeAndFlush(request.getResponse());
+                write(ctx,request);
             }
         }, client.getReadPolicyDefault(), key);
     }

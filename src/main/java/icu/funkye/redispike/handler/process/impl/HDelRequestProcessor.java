@@ -54,13 +54,13 @@ public class HDelRequestProcessor extends AbstractRedisRequestProcessor<HDelRequ
                             public void onSuccess(Key key, boolean b) {
                                 request.setResponse(
                                         String.valueOf(request.getFields().size()));
-                                ctx.writeAndFlush(request.getResponse());
+                                write(ctx,request);
                             }
 
                             @Override
                             public void onFailure(AerospikeException exception) {
                                 logger.error(exception.getMessage(), exception);
-                                ctx.writeAndFlush(request.getResponse());
+                                write(ctx,request);
                             }
                         }, client.getWritePolicyDefault(), key);
                     } else {
@@ -71,13 +71,13 @@ public class HDelRequestProcessor extends AbstractRedisRequestProcessor<HDelRequ
                             public void onSuccess(Key key) {
                                 request.setResponse(
                                         String.valueOf(request.getFields().size()));
-                                ctx.writeAndFlush(request.getResponse());
+                                write(ctx,request);
                             }
 
                             @Override
                             public void onFailure(AerospikeException exception) {
                                 logger.error(exception.getMessage(), exception);
-                                ctx.writeAndFlush(request.getResponse());
+                                write(ctx,request);
                             }
                         }, client.getWritePolicyDefault(), key, newBins.toArray(new Bin[0]));
                     }
@@ -86,7 +86,7 @@ public class HDelRequestProcessor extends AbstractRedisRequestProcessor<HDelRequ
                 @Override
                 public void onFailure(AerospikeException exception) {
                     logger.error(exception.getMessage(), exception);
-                    ctx.writeAndFlush(request.getResponse());
+                    write(ctx,request);
                 }
             }, client.getReadPolicyDefault(), key);
     }

@@ -16,13 +16,17 @@
  */
 package icu.funkye.redispike.protocol.request;
 
-import icu.funkye.redispike.protocol.RedisRequest;
+import icu.funkye.redispike.protocol.AbstractRedisRequest;
 import icu.funkye.redispike.protocol.RedisResponse;
 import icu.funkye.redispike.protocol.response.BulkResponse;
 
-public class CommandRequest implements RedisRequest<String> {
+public class CommandRequest extends AbstractRedisRequest<String> {
 
     private final BulkResponse response = new BulkResponse();
+
+    public CommandRequest(boolean flush) {
+        this.flush = flush;
+    }
 
     @Override
     public RedisResponse<String> getResponse() {

@@ -16,16 +16,15 @@
  */
 package icu.funkye.redispike.protocol.request;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
-import icu.funkye.redispike.protocol.RedisRequest;
 import icu.funkye.redispike.protocol.RedisResponse;
 import icu.funkye.redispike.protocol.request.conts.Operate;
 import icu.funkye.redispike.protocol.request.conts.TtlType;
 import icu.funkye.redispike.protocol.response.BulkResponse;
 import icu.funkye.redispike.protocol.response.IntegerResponse;
+import icu.funkye.redispike.protocol.AbstractRedisRequest;
 
-public class SetRequest implements RedisRequest<String> {
+public class SetRequest extends AbstractRedisRequest<String> {
 
     final String          originalCommand;
 
@@ -41,7 +40,8 @@ public class SetRequest implements RedisRequest<String> {
 
     RedisResponse<String> response;
 
-    public SetRequest(List<String> params) {
+    public SetRequest(List<String> params, boolean flush) {
+        this.flush = flush;
         this.originalCommand = params.get(0);
         this.key = params.get(1);
         this.value = params.get(2);

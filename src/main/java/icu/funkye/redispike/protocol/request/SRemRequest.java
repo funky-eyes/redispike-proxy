@@ -16,16 +16,14 @@
  */
 package icu.funkye.redispike.protocol.request;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import com.alipay.remoting.util.StringUtils;
-import icu.funkye.redispike.protocol.RedisRequest;
+import icu.funkye.redispike.protocol.AbstractRedisRequest;
 import icu.funkye.redispike.protocol.RedisResponse;
 import icu.funkye.redispike.protocol.response.BulkResponse;
 import icu.funkye.redispike.protocol.response.IntegerResponse;
 
-public class SRemRequest implements RedisRequest<String> {
+public class SRemRequest extends AbstractRedisRequest<String> {
 
     String                key;
 
@@ -33,7 +31,8 @@ public class SRemRequest implements RedisRequest<String> {
 
     RedisResponse<String> response;
 
-    public SRemRequest(List<String> params) {
+    public SRemRequest(List<String> params, boolean flush) {
+        this.flush = flush;
         this.key = params.remove(0);
         if (params.isEmpty()) {
             BulkResponse bulkResponse = new BulkResponse();

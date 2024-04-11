@@ -16,6 +16,7 @@
  */
 package icu.funkye.redispike;
 
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +43,11 @@ public class JedisPooledFactory {
         if (jedisPool == null) {
             synchronized (JedisPooledFactory.class) {
                 if (jedisPool == null) {
-                    jedisPool = new JedisPool(ip, port);
+                    GenericObjectPoolConfig<Jedis> config = new GenericObjectPoolConfig<Jedis>();
+                    config.setMaxTotal(100);
+                    config.setMinIdle(2);
+                    config.setMaxIdle(10);
+                    jedisPool = new JedisPool(config, ip, port, 10000);
                 }
             }
         }

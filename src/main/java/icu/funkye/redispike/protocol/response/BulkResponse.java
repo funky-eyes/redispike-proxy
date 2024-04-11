@@ -100,6 +100,6 @@ public class BulkResponse implements RedisResponse<String> {
 
     @Override
     public String toString() {
-        return "BulkResponse{" + "list=" + list + '}';
+        return "BulkResponse{" + "list=" + list + ", data='" + data + '\'' + ", error='" + error + '\'' + '}';
     }
 }

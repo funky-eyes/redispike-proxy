@@ -41,17 +41,17 @@ public class SMembersRequestProcessor extends AbstractRedisRequestProcessor<SMem
             @Override
             public void onSuccess(Key key, Record record) {
                 if (record == null) {
-                    ctx.writeAndFlush(request.getResponse());
+                    write(ctx,request);
                     return;
                 }
                 record.bins.keySet().forEach(request::setResponse);
-                ctx.writeAndFlush(request.getResponse());
+                write(ctx,request);
             }
 
             @Override
             public void onFailure(AerospikeException ae) {
                 logger.error(ae.getMessage(), ae);
-                ctx.writeAndFlush(request.getResponse());
+                write(ctx,request);
             }
         }, client.getReadPolicyDefault(), key);
     }

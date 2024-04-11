@@ -41,20 +41,20 @@ public class GetRequestProcessor extends AbstractRedisRequestProcessor<GetReques
             @Override
             public void onSuccess(Key key, Record record) {
                 if (record == null) {
-                    ctx.writeAndFlush(request.getResponse());
+                    write(ctx, request);
                     return;
                 }
                 String value = record.getString(" ");
                 if (StringUtil.isNotBlank(value)) {
                     request.setResponse(value);
                 }
-                ctx.writeAndFlush(request.getResponse());
+                write(ctx, request);
             }
 
             @Override
             public void onFailure(AerospikeException ae) {
                 logger.error(ae.getMessage(), ae);
-                ctx.writeAndFlush(request.getResponse());
+                write(ctx, request);
             }
         }, client.getReadPolicyDefault(), key);
     }

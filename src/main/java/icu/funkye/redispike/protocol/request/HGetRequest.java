@@ -17,11 +17,12 @@
 package icu.funkye.redispike.protocol.request;
 
 import com.alipay.remoting.util.StringUtils;
+import icu.funkye.redispike.protocol.AbstractRedisRequest;
 import icu.funkye.redispike.protocol.RedisRequest;
 import icu.funkye.redispike.protocol.RedisResponse;
 import icu.funkye.redispike.protocol.response.BulkResponse;
 
-public class HGetRequest implements RedisRequest<String> {
+public class HGetRequest extends AbstractRedisRequest<String> {
 
     final String key;
 
@@ -29,7 +30,8 @@ public class HGetRequest implements RedisRequest<String> {
 
     BulkResponse response = new BulkResponse();
 
-    public HGetRequest(String key, String field) {
+    public HGetRequest(String key, String field, boolean flush) {
+        this.flush = flush;
         this.key = key;
         if (StringUtils.isBlank(field)) {
             response.setError("ERR wrong number of arguments for 'hget' command");

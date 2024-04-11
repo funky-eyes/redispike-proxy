@@ -17,17 +17,18 @@
 package icu.funkye.redispike.protocol.request;
 
 import java.util.ArrayList;
-import icu.funkye.redispike.protocol.RedisRequest;
+import icu.funkye.redispike.protocol.AbstractRedisRequest;
 import icu.funkye.redispike.protocol.RedisResponse;
 import icu.funkye.redispike.protocol.response.BulkResponse;
 
-public class HGetAllRequest implements RedisRequest<String> {
+public class HGetAllRequest extends AbstractRedisRequest<String> {
 
     String       key;
 
     BulkResponse response = new BulkResponse(new ArrayList<>());
 
-    public HGetAllRequest(String key) {
+    public HGetAllRequest(String key, boolean flush) {
+        this.flush = flush;
         this.key = key;
     }
 

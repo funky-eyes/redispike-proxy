@@ -52,7 +52,7 @@ public class SRemRequestProcessor extends AbstractRedisRequestProcessor<SRemRequ
     @Override
     public void handle(RemotingContext ctx, SRemRequest request) {
         if (request.getBins().isEmpty()) {
-            ctx.writeAndFlush(request.getResponse());
+            write(ctx, request);
             return;
         }
         Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, request.getKey());
@@ -60,13 +60,13 @@ public class SRemRequestProcessor extends AbstractRedisRequestProcessor<SRemRequ
             @Override
             public void onSuccess(Key key, Object obj) {
                 request.setResponse(obj.toString());
-                ctx.writeAndFlush(request.getResponse());
+                write(ctx, request);
             }
 
             @Override
             public void onFailure(AerospikeException exception) {
                 logger.error(exception.getMessage(), exception);
-                ctx.writeAndFlush(request.getResponse());
+                write(ctx, request);
             }
         }, client.getWritePolicyDefault(), key, "srem", "delete_bins_return_count",
             Value.get(String.join(",", request.getBins())));

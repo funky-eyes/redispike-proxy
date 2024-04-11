@@ -16,9 +16,13 @@
  */
 package icu.funkye.redispike.handler;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import com.alipay.remoting.CommandCode;
 import com.alipay.remoting.CommandHandler;
@@ -85,8 +89,19 @@ public class RedisCommandHandler implements CommandHandler {
 
     @Override
     public void handleCommand(RemotingContext ctx, Object msg) {
-        if (msg instanceof RedisRequest) {
-            RedisRequest request = (RedisRequest) msg;
+        if (msg instanceof List) {
+            List<Object> list = (List<Object>) msg;
+            for (Object object : list) {
+                processSingleRequest(ctx, object);
+            }
+        } else {
+            processSingleRequest(ctx, msg);
+        }
+    }
+
+    private void processSingleRequest(RemotingContext ctx, Object object) {
+        if (object instanceof RedisRequest) {
+            RedisRequest request = (RedisRequest) object;
             try {
                 processorMap.get(request.getCmdCode().value()).process(ctx, request, getDefaultExecutor());
             } catch (Exception e) {

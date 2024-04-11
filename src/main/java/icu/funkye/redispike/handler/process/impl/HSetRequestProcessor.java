@@ -57,13 +57,13 @@ public class HSetRequestProcessor extends AbstractRedisRequestProcessor<HSetRequ
             @Override
             public void onSuccess(Key key) {
                 request.setResponse(String.valueOf(request.getKv().size()));
-                ctx.writeAndFlush(request.getResponse());
+                write(ctx,request);
             }
 
             @Override
             public void onFailure(AerospikeException ae) {
                 logger.error(ae.getMessage(), ae);
-                ctx.writeAndFlush(request.getResponse());
+                write(ctx,request);
             }
         }, writePolicy, key, list.toArray(new Bin[0]));
     }

@@ -51,7 +51,8 @@ public class ServerTest {
     @BeforeAll
     public static void init() throws ParseException {
         server = new Server();
-        server.start("-p 6789".split(" "));
+        server.start("-th 10.58.10.103 -tp 3000 -n test -s tdkv-test -TU tongdun-admin1 -TP xxxzzz123 -p 6789"
+            .split(" "));
         JedisPooledFactory.getJedisPoolInstance("127.0.0.1", 6789);
         aspClient = AeroSpikeClientFactory.getClient();
     }
@@ -67,16 +68,22 @@ public class ServerTest {
             try (Pipeline pipeline = jedis.pipelined()) {
                 for (String value : keys) {
                     pipeline.hset(key, value, "b");
-                    pipeline.syncAndReturnAll();
                 }
+                pipeline.syncAndReturnAll();
             }
             jedis.del(key);
             try (Pipeline pipeline = jedis.pipelined()) {
                 for (String value : keys) {
-                    pipeline.set(key, value);
-                    pipeline.sync();
+                    pipeline.set(value, value);
                 }
-
+                pipeline.sync();
+                for (String value : keys) {
+                    pipeline.get(value);
+                }
+                List<Object> list = pipeline.syncAndReturnAll();
+                for (Object object : list) {
+                    Assertions.assertTrue(keys.contains(object.toString()));
+                }
             }
             jedis.del(key);
         }

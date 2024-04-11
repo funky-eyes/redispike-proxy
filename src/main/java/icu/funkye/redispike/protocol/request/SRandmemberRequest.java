@@ -17,23 +17,25 @@
 package icu.funkye.redispike.protocol.request;
 
 import java.util.ArrayList;
+import java.util.concurrent.CountDownLatch;
 
-import icu.funkye.redispike.protocol.RedisRequest;
 import icu.funkye.redispike.protocol.RedisResponse;
 import icu.funkye.redispike.protocol.response.BulkResponse;
+import icu.funkye.redispike.protocol.AbstractRedisRequest;
 
-public class SRandmemberRequest implements RedisRequest<String> {
+public class SRandmemberRequest extends AbstractRedisRequest<String> {
 
     String       key;
 
-    int          count;
+    int          sum;
 
-    BulkResponse response = new BulkResponse(new ArrayList<>());
+    BulkResponse response;
 
-    public SRandmemberRequest(String key, int count) {
+    public SRandmemberRequest(String key, int sum, boolean flush) {
+        this.flush = flush;
         this.key = key;
-        this.count = count;
-        if (count > 1) {
+        this.sum = sum;
+        if (sum > 1) {
             this.response = new BulkResponse(new ArrayList<>());
         } else {
             this.response = new BulkResponse();
@@ -54,13 +56,13 @@ public class SRandmemberRequest implements RedisRequest<String> {
         return response;
     }
 
-    public int getCount() {
-        return count;
+    public int getSum() {
+        return sum;
     }
 
     @Override
     public String toString() {
-        return "SRandmemberRequest{" + "key='" + key + '\'' + ", count=" + count + ", response=" + response + '}';
+        return "SRandmemberRequest{" + "key='" + key + '\'' + ", count=" + sum + ", response=" + response + '}';
     }
 
 }

@@ -19,14 +19,11 @@ package icu.funkye.redispike.protocol.request;
 import java.util.ArrayList;
 import java.util.List;
 
-import icu.funkye.redispike.protocol.RedisRequest;
+import icu.funkye.redispike.protocol.AbstractRedisRequest;
 import icu.funkye.redispike.protocol.RedisResponse;
-import icu.funkye.redispike.protocol.request.conts.Operate;
-import icu.funkye.redispike.protocol.request.conts.TtlType;
 import icu.funkye.redispike.protocol.response.BulkResponse;
-import icu.funkye.redispike.protocol.response.IntegerResponse;
 
-public class KeysRequest implements RedisRequest<String> {
+public class KeysRequest extends AbstractRedisRequest<String> {
 
     final String originalCommand;
 
@@ -34,7 +31,8 @@ public class KeysRequest implements RedisRequest<String> {
 
     BulkResponse response;
 
-    public KeysRequest(List<String> params) {
+    public KeysRequest(List<String> params, boolean flush) {
+        this.flush = flush;
         this.originalCommand = params.get(0);
         if (params.size() != 2) {
             this.response = new BulkResponse();
