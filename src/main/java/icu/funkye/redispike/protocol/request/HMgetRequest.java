@@ -25,11 +25,11 @@ import icu.funkye.redispike.protocol.response.BulkResponse;
 
 public class HMgetRequest extends AbstractRedisRequest<String> {
 
-    final String key;
+    final String       key;
 
     final List<String> field;
 
-    BulkResponse response = new BulkResponse(new ArrayList<>());
+    BulkResponse       response = new BulkResponse(new ArrayList<>());
 
     public HMgetRequest(String key, List<String> field, boolean flush) {
         this.flush = flush;
