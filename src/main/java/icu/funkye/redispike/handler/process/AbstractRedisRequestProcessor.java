@@ -67,12 +67,16 @@ public abstract class AbstractRedisRequestProcessor<T extends RedisRequest<?>> i
                     logger.error(e.getMessage(), e);
                 }
             }
-            logger.info("writeAndFlush response:{}", request.getResponse());
+            if (logger.isDebugEnabled()) {
+                logger.debug("writeAndFlush response:{}", request.getResponse());
+            }
             ctx.writeAndFlush(request.getResponse());
         } else {
             ctx.getChannelContext().write(request.getResponse());
             countDownLatch.countDown();
-            logger.info("write response:{}", request.getResponse());
+            if (logger.isDebugEnabled()) {
+                logger.debug("write response:{}", request.getResponse());
+            }
         }
     }
 

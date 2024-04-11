@@ -65,8 +65,8 @@ public class RedisCommandDecoder implements CommandDecoder {
             paramsList.add(params);
         }
         int size = paramsList.size() - 1;
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("cmds: {}", paramsList);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("cmds: {}", paramsList);
         }
         CountDownLatch countDownLatch = null;
         if(size>0){
@@ -85,8 +85,8 @@ public class RedisCommandDecoder implements CommandDecoder {
 
     private AbstractRedisRequest<?> convert2RedisRequest(List<String> params, boolean flush) {
         String cmd = params.get(0);
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("cmd: {}", params);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("cmd: {}", params);
         }
         switch (cmd) {
             case "hdel":
