@@ -51,15 +51,15 @@ public class SPopRequestProcessor extends AbstractRedisRequestProcessor<SPopRequ
                         request.setResponse(s);
                     }
                 }
-                ctx.writeAndFlush(request.getResponse());
+                write(ctx, request);
             }
 
             @Override
             public void onFailure(AerospikeException exception) {
                 logger.error(exception.getMessage(), exception);
-                ctx.writeAndFlush(request.getResponse());
+                write(ctx, request);
             }
-        }, client.getWritePolicyDefault(), key, "spop", "random_delete_bins", request.getCount() == null ? Value.get(1)
-            : Value.get(request.getCount()));
+        }, client.getWritePolicyDefault(), key, "spop", "random_delete_bins", request.getSum() == null ? Value.get(1)
+            : Value.get(request.getSum()));
     }
 }

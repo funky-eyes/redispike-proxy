@@ -47,13 +47,13 @@ public class SCardRequestProcessor extends AbstractRedisRequestProcessor<SCardRe
             @Override
             public void onSuccess(Key key, Object obj) {
                 request.setResponse(obj.toString());
-                ctx.writeAndFlush(request.getResponse());
+                write(ctx, request);
             }
 
             @Override
             public void onFailure(AerospikeException exception) {
                 logger.error(exception.getMessage(), exception);
-                ctx.writeAndFlush(request.getResponse());
+                write(ctx, request);
             }
         }, client.getWritePolicyDefault(), key, "scard", "count_bins");
     }

@@ -18,11 +18,12 @@ package icu.funkye.redispike.protocol.request;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import icu.funkye.redispike.protocol.AbstractRedisRequest;
 import icu.funkye.redispike.protocol.RedisRequest;
 import icu.funkye.redispike.protocol.RedisResponse;
 import icu.funkye.redispike.protocol.response.IntegerResponse;
 
-public class DelRequest implements RedisRequest<String> {
+public class DelRequest extends AbstractRedisRequest<String> {
 
     List<String>    key;
 
@@ -30,7 +31,8 @@ public class DelRequest implements RedisRequest<String> {
 
     IntegerResponse response = new IntegerResponse();
 
-    public DelRequest(List<String> key) {
+    public DelRequest(List<String> key, boolean flush) {
+        this.flush = flush;
         this.key = key;
     }
 

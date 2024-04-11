@@ -38,7 +38,7 @@ public class HGetRequestProcessor extends AbstractRedisRequestProcessor<HGetRequ
     @Override
     public void handle(RemotingContext ctx, HGetRequest request) {
         if (request.getField() == null) {
-            ctx.writeAndFlush(request.getResponse());
+            write(ctx, request);
             return;
         }
         Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, request.getKey());
@@ -46,20 +46,20 @@ public class HGetRequestProcessor extends AbstractRedisRequestProcessor<HGetRequ
             @Override
             public void onSuccess(Key key, Record record) {
                 if (record == null) {
-                    ctx.writeAndFlush(request.getResponse());
+                    write(ctx, request);
                     return;
                 }
                 String value = record.getString(request.getField());
                 if (StringUtil.isNotBlank(value)) {
                     request.setResponse(value);
                 }
-                ctx.writeAndFlush(request.getResponse());
+                write(ctx, request);
             }
 
             @Override
             public void onFailure(AerospikeException ae) {
                 logger.error(ae.getMessage(), ae);
-                ctx.writeAndFlush(request.getResponse());
+                write(ctx, request);
             }
         }, client.getReadPolicyDefault(), key, request.getField());
     }

@@ -20,11 +20,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import icu.funkye.redispike.protocol.RedisRequest;
+import icu.funkye.redispike.protocol.AbstractRedisRequest;
 import icu.funkye.redispike.protocol.RedisResponse;
 import icu.funkye.redispike.protocol.response.IntegerResponse;
 
-public class SAddRequest implements RedisRequest<String> {
+public class SAddRequest extends AbstractRedisRequest<String> {
 
     String          key;
 
@@ -32,7 +32,8 @@ public class SAddRequest implements RedisRequest<String> {
 
     IntegerResponse response = new IntegerResponse();
 
-    public SAddRequest(List<String> params) {
+    public SAddRequest(List<String> params, boolean flush) {
+        this.flush = flush;
         params.remove(0);
         this.key = params.remove(0);
         this.fields = new HashSet<>(params);

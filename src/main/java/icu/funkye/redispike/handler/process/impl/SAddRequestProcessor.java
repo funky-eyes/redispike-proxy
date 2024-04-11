@@ -52,13 +52,13 @@ public class SAddRequestProcessor extends AbstractRedisRequestProcessor<SAddRequ
             @Override
             public void onSuccess(Key key) {
                 request.setResponse(String.valueOf(request.getFields().size()));
-                ctx.writeAndFlush(request.getResponse());
+                write(ctx, request);
             }
 
             @Override
             public void onFailure(AerospikeException ae) {
                 logger.error(ae.getMessage(), ae);
-                ctx.writeAndFlush(request.getResponse());
+                write(ctx, request);
             }
         }, defaultWritePolicy, key, list.toArray(new Bin[0]));
     }

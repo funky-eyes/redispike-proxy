@@ -14,23 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package icu.funkye.redispike.handler.process.impl;
+package icu.funkye.redispike.protocol;
 
-import com.alipay.remoting.RemotingContext;
-import icu.funkye.redispike.handler.process.AbstractRedisRequestProcessor;
-import icu.funkye.redispike.protocol.RedisRequestCommandCode;
-import icu.funkye.redispike.protocol.request.CommandRequest;
-import icu.funkye.redispike.util.IntegerUtils;
+import java.util.concurrent.CountDownLatch;
 
-public class CommandRequestProcessor extends AbstractRedisRequestProcessor<CommandRequest> {
+/**
+ * @author jianbin@apache.org
+ */
+public abstract class AbstractRedisRequest<T> implements RedisRequest<T> {
 
-    public CommandRequestProcessor() {
-        this.cmdCode = new RedisRequestCommandCode(IntegerUtils.hashCodeToShort(CommandRequest.class.hashCode()));
+    protected boolean        flush;
+
+    protected CountDownLatch countDownLatch;
+
+    public CountDownLatch getCountDownLatch() {
+        return countDownLatch;
     }
 
-    @Override
-    public void handle(RemotingContext ctx, CommandRequest request) {
-        request.setResponse("OK");
-        write(ctx, request);
+    public void setCountDownLatch(CountDownLatch countDownLatch) {
+        this.countDownLatch = countDownLatch;
     }
+
+    public boolean isFlush() {
+        return flush;
+    }
+
+    public void setFlush(boolean flush) {
+        this.flush = flush;
+    }
+
 }

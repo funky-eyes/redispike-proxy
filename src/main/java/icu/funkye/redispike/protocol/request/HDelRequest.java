@@ -19,13 +19,12 @@ package icu.funkye.redispike.protocol.request;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import icu.funkye.redispike.protocol.RedisRequest;
+import icu.funkye.redispike.protocol.AbstractRedisRequest;
 import icu.funkye.redispike.protocol.RedisResponse;
 import icu.funkye.redispike.protocol.response.IntegerResponse;
 
-public class HDelRequest implements RedisRequest<String> {
+public class HDelRequest extends AbstractRedisRequest<String> {
 
     String          key;
 
@@ -33,7 +32,8 @@ public class HDelRequest implements RedisRequest<String> {
 
     IntegerResponse response = new IntegerResponse();
 
-    public HDelRequest(List<String> params) {
+    public HDelRequest(List<String> params, boolean flush) {
+        this.flush = flush;
         params.remove(0);
         this.key = params.remove(0);
         this.fields = new HashSet<>(params);

@@ -19,18 +19,14 @@ package icu.funkye.redispike.handler.process.impl;
 import com.aerospike.client.AerospikeException;
 import com.aerospike.client.Key;
 import com.aerospike.client.Language;
-import com.aerospike.client.Record;
 import com.aerospike.client.Value;
 import com.aerospike.client.listener.ExecuteListener;
-import com.aerospike.client.listener.RecordListener;
-import com.aerospike.client.policy.QueryPolicy;
 import com.aerospike.client.task.RegisterTask;
 import com.alipay.remoting.RemotingContext;
 
 import icu.funkye.redispike.factory.AeroSpikeClientFactory;
 import icu.funkye.redispike.handler.process.AbstractRedisRequestProcessor;
 import icu.funkye.redispike.protocol.RedisRequestCommandCode;
-import icu.funkye.redispike.protocol.request.SMembersRequest;
 import icu.funkye.redispike.protocol.request.SRandmemberRequest;
 import icu.funkye.redispike.util.IntegerUtils;
 
@@ -55,14 +51,14 @@ public class SRandmemberRequestProcessor extends AbstractRedisRequestProcessor<S
                         request.setResponse(s);
                     }
                 }
-                ctx.writeAndFlush(request.getResponse());
+                write(ctx, request);
             }
 
             @Override
             public void onFailure(AerospikeException exception) {
                 logger.error(exception.getMessage(), exception);
-                ctx.writeAndFlush(request.getResponse());
+                write(ctx, request);
             }
-        }, client.getWritePolicyDefault(), key, "srandmember", "getBinNames", Value.get(request.getCount()));
+        }, client.getWritePolicyDefault(), key, "srandmember", "getBinNames", Value.get(request.getSum()));
     }
 }

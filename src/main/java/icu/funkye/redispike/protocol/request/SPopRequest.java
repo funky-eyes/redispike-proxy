@@ -17,23 +17,25 @@
 package icu.funkye.redispike.protocol.request;
 
 import java.util.ArrayList;
+import java.util.concurrent.CountDownLatch;
 
-import icu.funkye.redispike.protocol.RedisRequest;
+import icu.funkye.redispike.protocol.AbstractRedisRequest;
 import icu.funkye.redispike.protocol.RedisResponse;
 import icu.funkye.redispike.protocol.response.BulkResponse;
 
-public class SPopRequest implements RedisRequest<String> {
+public class SPopRequest extends AbstractRedisRequest<String> {
 
     String       key;
 
-    Integer      count;
+    Integer      sum;
 
     BulkResponse response;
 
-    public SPopRequest(String key, Integer count) {
+    public SPopRequest(String key, Integer sum, boolean flush) {
+        this.flush = flush;
         this.key = key;
-        this.count = count;
-        if (count != null) {
+        this.sum = sum;
+        if (sum != null) {
             this.response = new BulkResponse(new ArrayList<>());
         } else {
             this.response = new BulkResponse();
@@ -48,8 +50,8 @@ public class SPopRequest implements RedisRequest<String> {
         this.key = key;
     }
 
-    public Integer getCount() {
-        return count;
+    public Integer getSum() {
+        return sum;
     }
 
     @Override

@@ -67,16 +67,22 @@ public class ServerTest {
             try (Pipeline pipeline = jedis.pipelined()) {
                 for (String value : keys) {
                     pipeline.hset(key, value, "b");
-                    pipeline.syncAndReturnAll();
                 }
+                pipeline.syncAndReturnAll();
             }
             jedis.del(key);
             try (Pipeline pipeline = jedis.pipelined()) {
                 for (String value : keys) {
-                    pipeline.set(key, value);
-                    pipeline.sync();
+                    pipeline.set(value, value);
                 }
-
+                pipeline.sync();
+                for (String value : keys) {
+                    pipeline.get(value);
+                }
+                List<Object> list = pipeline.syncAndReturnAll();
+                for (Object object : list) {
+                    Assertions.assertTrue(keys.contains(object.toString()));
+                }
             }
             jedis.del(key);
         }

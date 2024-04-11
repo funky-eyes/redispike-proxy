@@ -16,20 +16,18 @@
  */
 package icu.funkye.redispike.protocol.request;
 
-import java.util.List;
-
-import icu.funkye.redispike.protocol.RedisRequest;
+import icu.funkye.redispike.protocol.AbstractRedisRequest;
 import icu.funkye.redispike.protocol.RedisResponse;
-import icu.funkye.redispike.protocol.response.BulkResponse;
 import icu.funkye.redispike.protocol.response.IntegerResponse;
 
-public class SCardRequest implements RedisRequest<String> {
+public class SCardRequest extends AbstractRedisRequest<String> {
 
     final String          key;
 
     RedisResponse<String> response;
 
-    public SCardRequest(String key) {
+    public SCardRequest(String key, boolean flush) {
+        this.flush = flush;
         this.key = key;
         this.response = new IntegerResponse();
     }

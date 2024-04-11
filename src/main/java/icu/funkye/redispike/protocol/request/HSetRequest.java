@@ -19,13 +19,13 @@ package icu.funkye.redispike.protocol.request;
 import java.util.List;
 import java.util.Map;
 
-import icu.funkye.redispike.protocol.RedisRequest;
+import icu.funkye.redispike.protocol.AbstractRedisRequest;
 import icu.funkye.redispike.protocol.RedisResponse;
 import icu.funkye.redispike.protocol.request.conts.Operate;
 import icu.funkye.redispike.protocol.response.IntegerResponse;
 import icu.funkye.redispike.util.CollectionUtils;
 
-public class HSetRequest implements RedisRequest<String> {
+public class HSetRequest extends AbstractRedisRequest<String> {
 
     final String              originalCommand;
 
@@ -37,7 +37,8 @@ public class HSetRequest implements RedisRequest<String> {
 
     RedisResponse<String>     response;
 
-    public HSetRequest(List<String> params) {
+    public HSetRequest(List<String> params, boolean flush) {
+        this.flush = flush;
         this.originalCommand = params.remove(0);
         this.key = params.remove(0);
         this.kv = CollectionUtils.arrayToMap(params);

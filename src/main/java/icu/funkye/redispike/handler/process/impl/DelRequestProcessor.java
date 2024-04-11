@@ -61,10 +61,10 @@ public class DelRequestProcessor extends AbstractRedisRequestProcessor<DelReques
         CompletableFuture.runAsync(() -> {
             try {
                 countDownLatch.await(10, TimeUnit.SECONDS);
-                ctx.writeAndFlush(request.getResponse());
+                write(ctx,request);
             } catch (InterruptedException e) {
                 logger.error(e.getMessage(), e);
-                ctx.writeAndFlush(request.getResponse());
+                write(ctx,request);
             }
         });
     }

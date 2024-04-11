@@ -64,19 +64,19 @@ public class SetRequestProcessor extends AbstractRedisRequestProcessor<SetReques
                     @Override
                     public void onSuccess(Key key, Record record) {
                         if (record == null) {
-                            ctx.writeAndFlush(request.getResponse());
+                            write(ctx, request);
                         } else {
                             client.put(AeroSpikeClientFactory.eventLoops.next(), new WriteListener() {
                                 @Override
                                 public void onSuccess(Key key) {
                                     request.setResponse("OK");
-                                    ctx.writeAndFlush(request.getResponse());
+                                    write(ctx, request);
                                 }
 
                                 @Override
                                 public void onFailure(AerospikeException ae) {
                                     logger.error(ae.getMessage(), ae);
-                                    ctx.writeAndFlush(request.getResponse());
+                                    write(ctx, request);
                                 }
                             }, client.getWritePolicyDefault(), key, bin);
                         }
@@ -85,7 +85,7 @@ public class SetRequestProcessor extends AbstractRedisRequestProcessor<SetReques
                     @Override
                     public void onFailure(AerospikeException ae) {
                         logger.error(ae.getMessage(), ae);
-                        ctx.writeAndFlush(request.getResponse());
+                        write(ctx, request);
                     }
                 }, client.getReadPolicyDefault(), key);
                 return;
@@ -99,13 +99,13 @@ public class SetRequestProcessor extends AbstractRedisRequestProcessor<SetReques
                 } else {
                     request.setResponse("OK");
                 }
-                ctx.writeAndFlush(request.getResponse());
+                write(ctx, request);
             }
 
             @Override
             public void onFailure(AerospikeException ae) {
                 logger.error(ae.getMessage(), ae);
-                ctx.writeAndFlush(request.getResponse());
+                write(ctx, request);
             }
         }, writePolicy, key, bin);
     }

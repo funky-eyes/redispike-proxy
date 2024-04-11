@@ -19,6 +19,8 @@ package icu.funkye.redispike.protocol;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
 import com.alipay.remoting.CommandDecoder;
 import icu.funkye.redispike.protocol.request.HDelRequest;
 import icu.funkye.redispike.protocol.request.HGetAllRequest;
@@ -52,59 +54,79 @@ public class RedisCommandDecoder implements CommandDecoder {
 
     @Override
     public void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
-        int length = readParamsLen(in);
-        List<String> params = new ArrayList<>(length);
-        for (int i = 0; i < length; i++) {
-            String param = readParam(in);
-            params.add(param.toLowerCase());
+        List<List<String>> paramsList = new ArrayList<>();
+        while (in.isReadable()) {
+            int length = readParamsLen(in);
+            List<String> params = new ArrayList<>();
+            for (int i = 0; i < length; i++) {
+                String param = readParam(in);
+                params.add(param.toLowerCase());
+            }
+            paramsList.add(params);
+        }
+        int size = paramsList.size() - 1;
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("cmds: {}", paramsList);
+        }
+        CountDownLatch countDownLatch = null;
+        if(size>0){
+            countDownLatch = new CountDownLatch(size);
         }
         // convert to RedisRequest
-        out.add(convert2RedisRequest(params));
+        for (int i = 0; i < paramsList.size(); i++) {
+            AbstractRedisRequest<?> request = convert2RedisRequest(paramsList.get(i), size == i);
+            if (request != null) {
+                Optional.ofNullable(countDownLatch).ifPresent(request::setCountDownLatch);
+            }
+            out.add(request);
+        }
     }
 
-    private RedisRequest<?> convert2RedisRequest(List<String> params) {
+    private AbstractRedisRequest<?> convert2RedisRequest(List<String> params, boolean flush) {
         String cmd = params.get(0);
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("cmd: {}", params);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("cmd: {}", params);
         }
         switch (cmd) {
             case "hdel":
-                return new HDelRequest(params);
+                return new HDelRequest(params, flush);
             case "get":
-                return new GetRequest(params.get(1));
+                return new GetRequest(params.get(1), flush);
             case "command":
-                return new CommandRequest();
+                return new CommandRequest(flush);
             case "hset":
             case "hsetnx":
-                return new HSetRequest(params);
+                return new HSetRequest(params, flush);
             case "setnx":
                 params.add("nx");
-                return new SetRequest(params);
+                return new SetRequest(params, flush);
             case "set":
-                return new SetRequest(params);
+                return new SetRequest(params, flush);
             case "keys":
-                return new KeysRequest(params);
+                return new KeysRequest(params, flush);
             case "del":
                 params.remove(0);
-                return new DelRequest(params);
+                return new DelRequest(params, flush);
             case "hget":
-                return new HGetRequest(params.get(1), params.size() > 2 ? params.get(2) : null);
+                return new HGetRequest(params.get(1), params.size() > 2 ? params.get(2) : null, flush);
             case "hgetall":
-                return new HGetAllRequest(params.get(1));
+                return new HGetAllRequest(params.get(1), flush);
             case "scard":
-                return new SCardRequest(params.get(1));
+                return new SCardRequest(params.get(1), flush);
             case "sadd":
-                return new SAddRequest(params);
+                return new SAddRequest(params, flush);
             case "smembers":
-                return new SMembersRequest(params.get(1));
+                return new SMembersRequest(params.get(1), flush);
             case "srem":
                 params.remove(0);
-                return new SRemRequest(params);
+                return new SRemRequest(params, flush);
             case "srandmember":
-                return new SRandmemberRequest(params.get(1), params.size() > 2 ? Integer.parseInt(params.get(2)) : 1);
+                return new SRandmemberRequest(params.get(1), params.size() > 2 ? Integer.parseInt(params.get(2)) : 1,
+                    flush);
             case "spop":
                 params.remove(0);
-                return new SPopRequest(params.remove(0), params.size() > 0 ? Integer.parseInt(params.get(0)) : null);
+                return new SPopRequest(params.remove(0), params.size() > 0 ? Integer.parseInt(params.get(0)) : null,
+                    flush);
             default:
                 return null;
         }
