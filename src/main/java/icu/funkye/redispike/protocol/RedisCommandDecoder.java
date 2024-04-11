@@ -75,10 +75,9 @@ public class RedisCommandDecoder implements CommandDecoder {
         // convert to RedisRequest
         for (int i = 0; i < paramsList.size(); i++) {
             AbstractRedisRequest<?> request = convert2RedisRequest(paramsList.get(i), size == i);
-            if(request == null){
-                continue;
+            if (request != null) {
+                Optional.ofNullable(countDownLatch).ifPresent(request::setCountDownLatch);
             }
-            Optional.ofNullable(countDownLatch).ifPresent(request::setCountDownLatch);
             out.add(request);
         }
     }

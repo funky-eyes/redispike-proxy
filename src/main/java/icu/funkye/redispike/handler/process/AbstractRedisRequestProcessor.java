@@ -16,6 +16,7 @@
  */
 package icu.funkye.redispike.handler.process;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -26,16 +27,19 @@ import com.alipay.remoting.RemotingContext;
 import icu.funkye.redispike.factory.AeroSpikeClientFactory;
 import icu.funkye.redispike.protocol.AbstractRedisRequest;
 import icu.funkye.redispike.protocol.RedisRequest;
+import icu.funkye.redispike.util.ThreadPoolFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractRedisRequestProcessor<T extends RedisRequest<?>> implements RedisRequestProcessor<T> {
 
-    protected final IAerospikeClient client = AeroSpikeClientFactory.getClient();
+    protected final IAerospikeClient       client           = AeroSpikeClientFactory.getClient();
 
-    protected final Logger           logger = LoggerFactory.getLogger(getClass());
+    protected final Logger                 logger           = LoggerFactory.getLogger(getClass());
 
-    protected CommandCode            cmdCode;
+    protected CommandCode                  cmdCode;
+
+    protected static final ExecutorService EXECUTOR_SERVICE = ThreadPoolFactory.newVirtualThreadPerTaskExecutor();
 
     @Override
     public void process(RemotingContext ctx, RemotingCommand msg, ExecutorService defaultExecutor) throws Exception {
@@ -58,26 +62,27 @@ public abstract class AbstractRedisRequestProcessor<T extends RedisRequest<?>> i
     }
 
     public void write(RemotingContext ctx, AbstractRedisRequest request) {
-        CountDownLatch countDownLatch = request.getCountDownLatch();
-        if (request.isFlush()) {
-            if (countDownLatch != null) {
-                try {
-                    countDownLatch.await(10, TimeUnit.SECONDS);
-                } catch (InterruptedException e) {
-                    logger.error(e.getMessage(), e);
+        CompletableFuture.runAsync(() -> {
+            CountDownLatch countDownLatch = request.getCountDownLatch();
+            if (request.isFlush()) {
+                if (countDownLatch != null) {
+                    try {
+                        countDownLatch.await(10, TimeUnit.SECONDS);
+                    } catch (InterruptedException e) {
+                        logger.error(e.getMessage(), e);
+                    }
+                }
+                if (logger.isDebugEnabled()) {
+                    logger.debug("writeAndFlush response:{}", request.getResponse());
+                }
+                ctx.writeAndFlush(request.getResponse());
+            } else {
+                ctx.getChannelContext().write(request.getResponse());
+                countDownLatch.countDown();
+                if (logger.isDebugEnabled()) {
+                    logger.debug("write response:{}", request.getResponse());
                 }
             }
-            if (logger.isDebugEnabled()) {
-                logger.debug("writeAndFlush response:{}", request.getResponse());
-            }
-            ctx.writeAndFlush(request.getResponse());
-        } else {
-            ctx.getChannelContext().write(request.getResponse());
-            countDownLatch.countDown();
-            if (logger.isDebugEnabled()) {
-                logger.debug("write response:{}", request.getResponse());
-            }
-        }
+        }, EXECUTOR_SERVICE);
     }
-
 }
