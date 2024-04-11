@@ -11,3 +11,4 @@ target/
 *.bak
 *.log*
 data/
+*.json
