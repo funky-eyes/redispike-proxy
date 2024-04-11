@@ -160,6 +160,8 @@ public class ServerTest {
             map.put("d", "e");
             result = jedis.hset(key, map);
             Assertions.assertEquals(result, 2);
+            List<String> list = jedis.hmget(key, "b", "d");
+            Assertions.assertEquals(list.size(), 2);
             result = jedis.hdel(key, map.keySet().toArray(new String[0]));
             Assertions.assertEquals(result, 2);
             key = String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue));
