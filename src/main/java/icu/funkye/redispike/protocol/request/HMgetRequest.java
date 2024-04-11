@@ -16,8 +16,8 @@
  */
 package icu.funkye.redispike.protocol.request;
 
+import java.util.ArrayList;
 import java.util.List;
-import com.alipay.remoting.util.StringUtils;
 
 import icu.funkye.redispike.protocol.AbstractRedisRequest;
 import icu.funkye.redispike.protocol.RedisResponse;
@@ -29,7 +29,7 @@ public class HMgetRequest extends AbstractRedisRequest<String> {
 
     final List<String> field;
 
-    BulkResponse response = new BulkResponse();
+    BulkResponse response = new BulkResponse(new ArrayList<>());
 
     public HMgetRequest(String key, List<String> field, boolean flush) {
         this.flush = flush;
@@ -46,7 +46,7 @@ public class HMgetRequest extends AbstractRedisRequest<String> {
 
     @Override
     public void setResponse(String data) {
-        this.response.setData(data);
+        this.response.appender(data);
     }
 
     @Override
