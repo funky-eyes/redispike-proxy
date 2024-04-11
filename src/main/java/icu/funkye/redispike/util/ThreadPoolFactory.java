@@ -42,7 +42,7 @@ public class ThreadPoolFactory {
             }
         }
         int v = Integer.parseInt(version);
-        return v>=19;
+        return v >= 19;
     }
 
     public static ExecutorService newVirtualThreadPerTaskExecutor() {
