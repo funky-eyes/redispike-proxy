@@ -19,42 +19,34 @@ package icu.funkye.redispike.handler.process.impl;
 import com.aerospike.client.AerospikeException;
 import com.aerospike.client.Key;
 import com.aerospike.client.Language;
-import com.aerospike.client.Record;
 import com.aerospike.client.Value;
 import com.aerospike.client.listener.ExecuteListener;
-import com.aerospike.client.listener.RecordListener;
-import com.aerospike.client.policy.QueryPolicy;
 import com.aerospike.client.task.RegisterTask;
 import com.alipay.remoting.RemotingContext;
 
 import icu.funkye.redispike.factory.AeroSpikeClientFactory;
 import icu.funkye.redispike.handler.process.AbstractRedisRequestProcessor;
 import icu.funkye.redispike.protocol.RedisRequestCommandCode;
-import icu.funkye.redispike.protocol.request.SMembersRequest;
-import icu.funkye.redispike.protocol.request.SRandmemberRequest;
+import icu.funkye.redispike.protocol.request.SCardRequest;
+import icu.funkye.redispike.protocol.request.SRemRequest;
 import icu.funkye.redispike.util.IntegerUtils;
 
-public class SRandmemberRequestProcessor extends AbstractRedisRequestProcessor<SRandmemberRequest> {
+public class SCardRequestProcessor extends AbstractRedisRequestProcessor<SCardRequest> {
 
-    public SRandmemberRequestProcessor() {
-        this.cmdCode = new RedisRequestCommandCode(IntegerUtils.hashCodeToShort(SRandmemberRequest.class.hashCode()));
-        RegisterTask task = client.register(null, this.getClass().getClassLoader(), "lua/srandmember.lua",
-            "srandmember.lua", Language.LUA);
+    public SCardRequestProcessor() {
+        this.cmdCode = new RedisRequestCommandCode(IntegerUtils.hashCodeToShort(SCardRequest.class.hashCode()));
+        RegisterTask task = client.register(null, this.getClass().getClassLoader(), "lua/scard.lua", "scard.lua",
+            Language.LUA);
         task.waitTillComplete();
     }
 
     @Override
-    public void handle(RemotingContext ctx, SRandmemberRequest request) {
+    public void handle(RemotingContext ctx, SCardRequest request) {
         Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, request.getKey());
         client.execute(AeroSpikeClientFactory.eventLoops.next(), new ExecuteListener() {
             @Override
             public void onSuccess(Key key, Object obj) {
-                if (obj instanceof String) {
-                    String[] response = ((String) obj).split(",");
-                    for (String s : response) {
-                        request.setResponse(s);
-                    }
-                }
+                request.setResponse(obj.toString());
                 ctx.writeAndFlush(request.getResponse());
             }
 
@@ -63,6 +55,6 @@ public class SRandmemberRequestProcessor extends AbstractRedisRequestProcessor<S
                 logger.error(exception.getMessage(), exception);
                 ctx.writeAndFlush(request.getResponse());
             }
-        }, client.getWritePolicyDefault(), key, "srandmember", "getBinNames", Value.get(request.getCount()));
+        }, client.getWritePolicyDefault(), key, "scard", "count_bins");
     }
 }

@@ -67,7 +67,7 @@ public class ServerTest {
             try (Pipeline pipeline = jedis.pipelined()) {
                 for (String value : keys) {
                     pipeline.hset(key, value, "b");
-                    pipeline.sync();
+                    pipeline.syncAndReturnAll();
                 }
             }
             jedis.del(key);
@@ -76,6 +76,7 @@ public class ServerTest {
                     pipeline.set(key, value);
                     pipeline.sync();
                 }
+
             }
             jedis.del(key);
         }
@@ -107,7 +108,9 @@ public class ServerTest {
             for (String value2 : keys) {
                 jedis.sadd(key, value2);
             }
-            long result = jedis.srem(key, keys.remove(0));
+            long result = jedis.scard(key);
+            Assertions.assertEquals(result, 3);
+            result = jedis.srem(key, keys.remove(0));
             Assertions.assertEquals(result, 1);
             result = jedis.srem(key, keys.toArray(new String[0]));
             Assertions.assertEquals(result, 2);
@@ -187,7 +190,7 @@ public class ServerTest {
         Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, "a");
         Record record = aspClient.get(aspClient.getReadPolicyDefault(), key);
         Map<String, Object> map = record.bins;
-        Assertions.assertEquals(map.get("a"), "b");
+        Assertions.assertEquals(map.get(" "), "b");
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
             String result = jedis.get("a");
             Assertions.assertEquals(result, "b");
