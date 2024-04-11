@@ -44,7 +44,7 @@ public class GetRequestProcessor extends AbstractRedisRequestProcessor<GetReques
                     ctx.writeAndFlush(request.getResponse());
                     return;
                 }
-                String value = record.getString(request.getKey());
+                String value = record.getString(" ");
                 if (StringUtil.isNotBlank(value)) {
                     request.setResponse(value);
                 }

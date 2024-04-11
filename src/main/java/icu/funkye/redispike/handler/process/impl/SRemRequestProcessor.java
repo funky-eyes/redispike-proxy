@@ -44,8 +44,8 @@ public class SRemRequestProcessor extends AbstractRedisRequestProcessor<SRemRequ
 
     public SRemRequestProcessor() {
         this.cmdCode = new RedisRequestCommandCode(IntegerUtils.hashCodeToShort(SRemRequest.class.hashCode()));
-        RegisterTask task = client.register(null, SPopRequestProcessor.class.getClassLoader(), "lua/srem.lua",
-            "srem.lua", Language.LUA);
+        RegisterTask task = client.register(null, this.getClass().getClassLoader(), "lua/srem.lua", "srem.lua",
+            Language.LUA);
         task.waitTillComplete();
     }
 

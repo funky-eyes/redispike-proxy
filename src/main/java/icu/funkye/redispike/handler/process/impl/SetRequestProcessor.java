@@ -44,7 +44,7 @@ public class SetRequestProcessor extends AbstractRedisRequestProcessor<SetReques
 
     @Override
     public void handle(RemotingContext ctx, SetRequest request) {
-        Bin bin = new Bin(request.getKey(), request.getValue());
+        Bin bin = new Bin(" ", request.getValue());
         Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, request.getKey());
         WritePolicy writePolicy = this.defaultWritePolicy;
         if (request.getTtl() != null) {
