@@ -31,7 +31,7 @@ public class ThreadPoolFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ThreadPoolFactory.class);
 
-    public static boolean isJDK21() {
+    public static boolean isJDK19OrAbove() {
         String version = System.getProperty("java.version");
         if (version.startsWith("1.")) {
             version = version.substring(2, 3);
@@ -41,11 +41,12 @@ public class ThreadPoolFactory {
                 version = version.substring(0, dot);
             }
         }
-        return "21".equals(version);
+        int v = Integer.parseInt(version);
+        return v>=19;
     }
 
     public static ExecutorService newVirtualThreadPerTaskExecutor() {
-        if (isJDK21()) {
+        if (isJDK19OrAbove()) {
             try {
                 Class<Executors> clz = (Class<Executors>) Class.forName("java.util.concurrent.Executors");
                 Method method = clz.getMethod("newVirtualThreadPerTaskExecutor");
