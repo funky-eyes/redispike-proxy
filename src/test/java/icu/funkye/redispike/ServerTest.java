@@ -171,6 +171,14 @@ public class ServerTest {
             Assertions.assertEquals(result, 0);
             String value = jedis.hget(key, "f");
             Assertions.assertEquals(value, "g");
+            value = jedis.hget(key, "l");
+            Assertions.assertNull(value);
+            list = jedis.hmget(key, "l", "p");
+            Assertions.assertTrue(list.isEmpty());
+            boolean hexists = jedis.hexists(key, "i");
+            Assertions.assertFalse(hexists);
+            hexists = jedis.hexists(key, "f");
+            Assertions.assertTrue(hexists);
             map = jedis.hgetAll(key);
             Assertions.assertEquals(map.size(), 1);
             result = jedis.del(key);

@@ -17,6 +17,7 @@
 package icu.funkye.redispike.handler.process.impl;
 
 import java.util.Optional;
+
 import com.aerospike.client.AerospikeException;
 import com.aerospike.client.Key;
 import com.aerospike.client.Record;
@@ -26,35 +27,38 @@ import com.alipay.remoting.RemotingContext;
 import icu.funkye.redispike.factory.AeroSpikeClientFactory;
 import icu.funkye.redispike.handler.process.AbstractRedisRequestProcessor;
 import icu.funkye.redispike.protocol.RedisRequestCommandCode;
-import icu.funkye.redispike.protocol.request.HMgetRequest;
+import icu.funkye.redispike.protocol.request.HExistsRequest;
 import icu.funkye.redispike.util.IntegerUtils;
 
-public class HMgetRequestProcessor extends AbstractRedisRequestProcessor<HMgetRequest> {
+public class HExistsRequestProcessor extends AbstractRedisRequestProcessor<HExistsRequest> {
 
-    public HMgetRequestProcessor() {
-        this.cmdCode = new RedisRequestCommandCode(IntegerUtils.hashCodeToShort(HMgetRequest.class.hashCode()));
+    public HExistsRequestProcessor() {
+        this.cmdCode = new RedisRequestCommandCode(IntegerUtils.hashCodeToShort(HExistsRequest.class.hashCode()));
     }
 
     @Override
-    public void handle(RemotingContext ctx, HMgetRequest request) {
+    public void handle(RemotingContext ctx, HExistsRequest request) {
         Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, request.getKey());
         client.get(AeroSpikeClientFactory.eventLoops.next(), new RecordListener() {
             @Override
             public void onSuccess(Key key, Record record) {
                 if (record == null) {
-                    write(ctx,request);
+                    write(ctx, request);
                     return;
                 }
-                Optional.ofNullable(record.bins)
-                    .ifPresent(bins -> bins.values().forEach(v -> request.setResponse(v.toString())));
+                if (record.bins != null) {
+                    request.setResponse("1");
+                } else {
+                    request.setResponse("0");
+                }
                 write(ctx, request);
             }
 
             @Override
             public void onFailure(AerospikeException ae) {
                 logger.error(ae.getMessage(), ae);
-                write(ctx,request);
+                write(ctx, request);
             }
-        }, client.getReadPolicyDefault(), key,request.getField().toArray(new String[0]));
+        }, client.getReadPolicyDefault(), key, request.getField());
     }
 }
