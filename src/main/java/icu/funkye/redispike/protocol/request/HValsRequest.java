@@ -51,7 +51,6 @@ public class HValsRequest extends AbstractRedisRequest<String> {
         return response;
     }
 
-
     public void setResponse(BulkResponse response) {
         this.response = response;
     }
