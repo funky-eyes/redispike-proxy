@@ -16,32 +16,25 @@
  */
 package icu.funkye.redispike.protocol.request;
 
+import java.util.ArrayList;
 import com.alipay.remoting.util.StringUtils;
 
 import icu.funkye.redispike.protocol.AbstractRedisRequest;
 import icu.funkye.redispike.protocol.RedisResponse;
 import icu.funkye.redispike.protocol.response.BulkResponse;
-import icu.funkye.redispike.protocol.response.IntegerResponse;
 
-public class HExistsRequest extends AbstractRedisRequest<String> {
+public class HValsRequest extends AbstractRedisRequest<String> {
 
-    final String          key;
+    final String key;
 
-    final String          field;
+    BulkResponse response = new BulkResponse(new ArrayList<>());
 
-    RedisResponse<String> response;
-
-    public HExistsRequest(String key, String field, boolean flush) {
+    public HValsRequest(String key, boolean flush) {
         this.flush = flush;
         this.key = key;
-        if (StringUtils.isBlank(field)) {
-            BulkResponse response = new BulkResponse();
-            response.setError("ERR wrong number of arguments for 'hexists' command");
-            this.response = response;
-        } else {
-            this.response = new IntegerResponse();
+        if (StringUtils.isBlank(key)) {
+            response.setError("ERR wrong number of arguments for 'hvals' command");
         }
-        this.field = field;
     }
 
     public String getKey() {
@@ -50,7 +43,7 @@ public class HExistsRequest extends AbstractRedisRequest<String> {
 
     @Override
     public void setResponse(String data) {
-        this.response.setData(data);
+        this.response.appender(data);
     }
 
     @Override
@@ -58,12 +51,13 @@ public class HExistsRequest extends AbstractRedisRequest<String> {
         return response;
     }
 
-    public String getField() {
-        return field;
-    }
 
     public void setResponse(BulkResponse response) {
         this.response = response;
+    }
+
+    public void setError(String errorMsg) {
+        this.response.setError(errorMsg);
     }
 
 }
