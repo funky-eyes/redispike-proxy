@@ -30,6 +30,7 @@ import com.alipay.remoting.RemotingContext;
 import com.alipay.remoting.RemotingProcessor;
 import icu.funkye.redispike.handler.process.impl.GetRequestProcessor;
 import icu.funkye.redispike.handler.process.impl.HDelRequestProcessor;
+import icu.funkye.redispike.handler.process.impl.HExistsRequestProcessor;
 import icu.funkye.redispike.handler.process.impl.HGetAllRequestProcessor;
 import icu.funkye.redispike.handler.process.impl.HGetRequestProcessor;
 import icu.funkye.redispike.handler.process.impl.HMgetRequestProcessor;
@@ -88,6 +89,8 @@ public class RedisCommandHandler implements CommandHandler {
         processorMap.put(sRemRequestProcessor.getCmdCode().value(), sRemRequestProcessor);
         SCardRequestProcessor sCardRequestProcessor = new SCardRequestProcessor();
         processorMap.put(sCardRequestProcessor.getCmdCode().value(), sCardRequestProcessor);
+        HExistsRequestProcessor hExistsRequestProcessor = new HExistsRequestProcessor();
+        processorMap.put(hExistsRequestProcessor.getCmdCode().value(), hExistsRequestProcessor);
     }
 
     @Override
