@@ -35,6 +35,7 @@ import icu.funkye.redispike.handler.process.impl.HGetAllRequestProcessor;
 import icu.funkye.redispike.handler.process.impl.HGetRequestProcessor;
 import icu.funkye.redispike.handler.process.impl.HMgetRequestProcessor;
 import icu.funkye.redispike.handler.process.impl.HSetRequestProcessor;
+import icu.funkye.redispike.handler.process.impl.HValsRequestProcessor;
 import icu.funkye.redispike.handler.process.impl.KeysRequestProcessor;
 import icu.funkye.redispike.handler.process.impl.SCardRequestProcessor;
 import icu.funkye.redispike.handler.process.impl.SPopRequestProcessor;
@@ -52,9 +53,9 @@ import org.slf4j.LoggerFactory;
 
 public class RedisCommandHandler implements CommandHandler {
 
-    private final Logger                        logger       = LoggerFactory.getLogger(getClass());
+    private final Logger                           logger       = LoggerFactory.getLogger(getClass());
 
-    Map<Short, RemotingProcessor<RedisRequest>> processorMap = new HashMap<>();
+    Map<Short, RemotingProcessor<RedisRequest<?>>> processorMap = new HashMap<>();
 
     public RedisCommandHandler() {
         CommandRequestProcessor commandRequestProcessor = new CommandRequestProcessor();
@@ -91,6 +92,8 @@ public class RedisCommandHandler implements CommandHandler {
         processorMap.put(sCardRequestProcessor.getCmdCode().value(), sCardRequestProcessor);
         HExistsRequestProcessor hExistsRequestProcessor = new HExistsRequestProcessor();
         processorMap.put(hExistsRequestProcessor.getCmdCode().value(), hExistsRequestProcessor);
+        HValsRequestProcessor hValsRequestProcessor = new HValsRequestProcessor();
+        processorMap.put(hValsRequestProcessor.getCmdCode().value(), hValsRequestProcessor);
     }
 
     @Override
