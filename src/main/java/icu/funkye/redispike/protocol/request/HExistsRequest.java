@@ -25,9 +25,9 @@ import icu.funkye.redispike.protocol.response.IntegerResponse;
 
 public class HExistsRequest extends AbstractRedisRequest<String> {
 
-    final String key;
+    final String          key;
 
-    final String field;
+    final String          field;
 
     RedisResponse<String> response;
 
@@ -38,7 +38,7 @@ public class HExistsRequest extends AbstractRedisRequest<String> {
             BulkResponse response = new BulkResponse();
             response.setError("ERR wrong number of arguments for 'hget' command");
             this.response = response;
-        }else {
+        } else {
             this.response = new IntegerResponse();
         }
         this.field = field;

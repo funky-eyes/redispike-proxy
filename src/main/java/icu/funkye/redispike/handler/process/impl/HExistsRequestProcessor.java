@@ -57,8 +57,8 @@ public class HExistsRequestProcessor extends AbstractRedisRequestProcessor<HExis
             @Override
             public void onFailure(AerospikeException ae) {
                 logger.error(ae.getMessage(), ae);
-                write(ctx,request);
+                write(ctx, request);
             }
-        }, client.getReadPolicyDefault(), key,request.getField());
+        }, client.getReadPolicyDefault(), key, request.getField());
     }
 }

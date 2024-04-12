@@ -16,10 +16,8 @@
  */
 package icu.funkye.redispike.handler.process.impl;
 
-import java.util.ArrayList;
 import java.util.Optional;
 import com.aerospike.client.AerospikeException;
-import com.aerospike.client.Bin;
 import com.aerospike.client.Key;
 import com.aerospike.client.Record;
 import com.aerospike.client.listener.RecordListener;
@@ -28,7 +26,6 @@ import com.alipay.remoting.RemotingContext;
 import icu.funkye.redispike.factory.AeroSpikeClientFactory;
 import icu.funkye.redispike.handler.process.AbstractRedisRequestProcessor;
 import icu.funkye.redispike.protocol.RedisRequestCommandCode;
-import icu.funkye.redispike.protocol.request.HGetAllRequest;
 import icu.funkye.redispike.protocol.request.HMgetRequest;
 import icu.funkye.redispike.util.IntegerUtils;
 
