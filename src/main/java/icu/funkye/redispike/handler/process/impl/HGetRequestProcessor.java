@@ -49,9 +49,9 @@ public class HGetRequestProcessor extends AbstractRedisRequestProcessor<HGetRequ
                     write(ctx, request);
                     return;
                 }
-                String value = record.getString(request.getField());
-                if (StringUtil.isNotBlank(value)) {
-                    request.setResponse(value);
+                Object value = record.getValue(request.getField());
+                if (value != null) {
+                    request.setResponse(value.toString());
                 }
                 write(ctx, request);
             }

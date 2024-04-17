@@ -50,13 +50,20 @@ public class HIncrbyRequestProcessor extends AbstractRedisRequestProcessor<HIncr
     @Override
     public void handle(RemotingContext ctx, HIncrbyRequest request) {
         Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, request.getKey());
-        String value = request.getValue();
-        Bin bin = new Bin(request.getField(), value.contains(".") ? Double.parseDouble(value) : Long.parseLong(request
-            .getValue()));
+        Object value;
+        if (request.getValue().contains(".")) {
+            value = Double.parseDouble(request.getValue());
+        } else {
+            value = Long.parseLong(request.getValue());
+        }
+        Bin bin = new Bin(request.getField(), value);
         client.operate(AeroSpikeClientFactory.eventLoops.next(), new RecordListener() {
             @Override
             public void onSuccess(Key key, Record record) {
-                request.setResponse(record.getString(request.getField()));
+                Object value = record.getValue(request.getField());
+                if (value != null) {
+                    request.setResponse(value.toString());
+                }
                 write(ctx, request);
             }
 
@@ -67,4 +74,5 @@ public class HIncrbyRequestProcessor extends AbstractRedisRequestProcessor<HIncr
             }
         }, defaultWritePolicy, key, Operation.add(bin), Operation.get(request.getField()));
     }
+
 }
