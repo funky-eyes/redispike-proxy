@@ -27,6 +27,7 @@ import icu.funkye.redispike.protocol.request.HExistsRequest;
 import icu.funkye.redispike.protocol.request.HGetAllRequest;
 import icu.funkye.redispike.protocol.request.HGetRequest;
 import icu.funkye.redispike.protocol.request.HIncrbyRequest;
+import icu.funkye.redispike.protocol.request.HIncrbyfloatRequest;
 import icu.funkye.redispike.protocol.request.HMgetRequest;
 import icu.funkye.redispike.protocol.request.HSetRequest;
 import icu.funkye.redispike.protocol.request.HValsRequest;
@@ -118,6 +119,8 @@ public class RedisCommandDecoder implements CommandDecoder {
                 return new HGetRequest(params.get(1), params.size() > 2 ? params.get(2) : null, flush);
             case "hincrby":
                 return new HIncrbyRequest(params.get(1), params.get(2), params.get(3), flush);
+            case "hincrbyfloat":
+                return new HIncrbyfloatRequest(params.get(1), params.get(2), params.get(3), flush);
             case "hgetall":
                 return new HGetAllRequest(params.get(1), flush);
             case "hvals":
