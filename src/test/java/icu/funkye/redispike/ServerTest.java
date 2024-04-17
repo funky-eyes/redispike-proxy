@@ -57,38 +57,6 @@ public class ServerTest {
     }
 
     @Test
-    public void TestPippline() {
-        List<String> keys = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            keys.add(String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue)));
-        }
-        String key = String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue));
-        try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
-            try (Pipeline pipeline = jedis.pipelined()) {
-                for (String value : keys) {
-                    pipeline.hset(key, value, "b");
-                }
-                pipeline.sync();
-            }
-            jedis.del(key);
-            try (Pipeline pipeline = jedis.pipelined()) {
-                for (String value : keys) {
-                    pipeline.set(value, value);
-                }
-                pipeline.syncAndReturnAll();
-                for (String value : keys) {
-                    pipeline.get(value);
-                }
-                List<Object> list = pipeline.syncAndReturnAll();
-                for (Object object : list) {
-                    Assertions.assertTrue(keys.contains(object.toString()));
-                }
-            }
-            jedis.del(key);
-        }
-    }
-
-    @Test
     public void TestSet() {
         List<String> keys = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
@@ -310,6 +278,38 @@ public class ServerTest {
             Assertions.assertEquals(result, "OK");
             result = String.valueOf(jedis.del(keys.toArray(new String[0])));
             Assertions.assertEquals(result, String.valueOf(keys.size()));
+        }
+    }
+
+    @Test
+    public void TestPippline() {
+        List<String> keys = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            keys.add(String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue)));
+        }
+        String key = String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue));
+        try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
+            try (Pipeline pipeline = jedis.pipelined()) {
+                for (String value : keys) {
+                    pipeline.hset(key, value, "b");
+                }
+                pipeline.sync();
+            }
+            jedis.del(key);
+            try (Pipeline pipeline = jedis.pipelined()) {
+                for (String value : keys) {
+                    pipeline.set(value, value);
+                }
+                pipeline.syncAndReturnAll();
+                for (String value : keys) {
+                    pipeline.get(value);
+                }
+                List<Object> list = pipeline.syncAndReturnAll();
+                for (Object object : list) {
+                    Assertions.assertTrue(keys.contains(object.toString()));
+                }
+            }
+            jedis.del(key);
         }
     }
 
