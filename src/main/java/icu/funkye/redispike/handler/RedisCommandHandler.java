@@ -98,8 +98,8 @@ public class RedisCommandHandler implements CommandHandler {
         processorMap.put(hIncrbyRequestProcessor.getCmdCode().value(), hIncrbyRequestProcessor);
         HIncrbyfloatRequestProcessor hIncrbyfloatRequestProcessor = new HIncrbyfloatRequestProcessor();
         processorMap.put(hIncrbyfloatRequestProcessor.getCmdCode().value(), hIncrbyfloatRequestProcessor);
-/*        HLenRequestProcessor hLenRequestProcessor = new HLenRequestProcessor();
-        processorMap.put(hLenRequestProcessor.getCmdCode().value(), hLenRequestProcessor);*/
+        HLenRequestProcessor hLenRequestProcessor = new HLenRequestProcessor();
+        processorMap.put(hLenRequestProcessor.getCmdCode().value(), hLenRequestProcessor);
     }
 
     @Override
