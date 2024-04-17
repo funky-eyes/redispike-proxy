@@ -25,6 +25,7 @@ import com.aerospike.client.listener.WriteListener;
 import com.aerospike.client.policy.RecordExistsAction;
 import com.aerospike.client.policy.WritePolicy;
 import com.alipay.remoting.RemotingContext;
+import com.alipay.remoting.util.StringUtils;
 import icu.funkye.redispike.factory.AeroSpikeClientFactory;
 import icu.funkye.redispike.handler.process.AbstractRedisRequestProcessor;
 import icu.funkye.redispike.protocol.RedisRequestCommandCode;
@@ -45,7 +46,7 @@ public class HSetRequestProcessor extends AbstractRedisRequestProcessor<HSetRequ
     public void handle(RemotingContext ctx, HSetRequest request) {
         Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, request.getKey());
         List<Bin> list = new ArrayList<>();
-        request.getKv().forEach((k, v) -> list.add(new Bin(k, v)));
+        request.getKv().forEach((k, v) -> list.add(new Bin(k, StringUtils.isNumeric(v)?Long.parseLong(v):v)));
         WritePolicy writePolicy;
         if (request.getOperate() != null && request.getOperate() == Operate.NX) {
             writePolicy = new WritePolicy(defaultWritePolicy);

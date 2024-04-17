@@ -16,39 +16,50 @@
  */
 package icu.funkye.redispike.handler.process.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.aerospike.client.AerospikeException;
+import com.aerospike.client.Bin;
 import com.aerospike.client.Key;
+import com.aerospike.client.Operation;
 import com.aerospike.client.Record;
 import com.aerospike.client.listener.RecordListener;
+import com.aerospike.client.listener.WriteListener;
+import com.aerospike.client.policy.RecordExistsAction;
+import com.aerospike.client.policy.WritePolicy;
 import com.alipay.remoting.RemotingContext;
-import com.alipay.sofa.common.profile.StringUtil;
 
 import icu.funkye.redispike.factory.AeroSpikeClientFactory;
 import icu.funkye.redispike.handler.process.AbstractRedisRequestProcessor;
 import icu.funkye.redispike.protocol.RedisRequestCommandCode;
-import icu.funkye.redispike.protocol.request.HGetRequest;
+import icu.funkye.redispike.protocol.request.HIncrbyRequest;
+import icu.funkye.redispike.protocol.request.HSetRequest;
+import icu.funkye.redispike.protocol.request.conts.Operate;
 import icu.funkye.redispike.util.IntegerUtils;
 
-public class HGetRequestProcessor extends AbstractRedisRequestProcessor<HGetRequest> {
+public class HIncrbyRequestProcessor extends AbstractRedisRequestProcessor<HIncrbyRequest> {
+    WritePolicy defaultWritePolicy;
 
-    public HGetRequestProcessor() {
-        this.cmdCode = new RedisRequestCommandCode(IntegerUtils.hashCodeToShort(HGetRequest.class.hashCode()));
+    public HIncrbyRequestProcessor() {
+        this.cmdCode = new RedisRequestCommandCode(IntegerUtils.hashCodeToShort(HIncrbyRequest.class.hashCode()));
+        this.defaultWritePolicy = client.getWritePolicyDefault();
+        this.defaultWritePolicy.sendKey = true;
     }
 
     @Override
-    public void handle(RemotingContext ctx, HGetRequest request) {
-        if (request.getField() == null) {
-            write(ctx, request);
-            return;
-        }
+    public void handle(RemotingContext ctx, HIncrbyRequest request) {
         Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, request.getKey());
-        client.get(AeroSpikeClientFactory.eventLoops.next(), new RecordListener() {
+        Object value;
+        if (request.getValue().contains(".")) {
+            value = Double.parseDouble(request.getValue());
+        } else {
+            value = Long.parseLong(request.getValue());
+        }
+        Bin bin = new Bin(request.getField(), value);
+        client.operate(AeroSpikeClientFactory.eventLoops.next(), new RecordListener() {
             @Override
             public void onSuccess(Key key, Record record) {
-                if (record == null) {
-                    write(ctx, request);
-                    return;
-                }
                 Object value = record.getValue(request.getField());
                 if (value != null) {
                     request.setResponse(value.toString());
@@ -57,10 +68,11 @@ public class HGetRequestProcessor extends AbstractRedisRequestProcessor<HGetRequ
             }
 
             @Override
-            public void onFailure(AerospikeException ae) {
-                logger.error(ae.getMessage(), ae);
+            public void onFailure(AerospikeException exception) {
+                logger.error(exception.getMessage(), exception);
                 write(ctx, request);
             }
-        }, client.getReadPolicyDefault(), key, request.getField());
+        }, defaultWritePolicy, key, Operation.add(bin), Operation.get(request.getField()));
     }
+
 }
