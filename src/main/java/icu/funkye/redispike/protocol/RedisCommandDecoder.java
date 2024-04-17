@@ -94,9 +94,9 @@ public class RedisCommandDecoder implements CommandDecoder {
             LOGGER.debug("cmd: {}", params);
         }
         switch (cmd) {
-            case "hlen":
+/*            case "hlen":
                 params.remove(0);
-                return new HLenRequest(params, flush);
+                return new HLenRequest(params, flush);*/
             case "hmget":
                 params.remove(0);
                 return new HMgetRequest(params.remove(0), params, flush);
