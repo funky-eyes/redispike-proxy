@@ -68,14 +68,14 @@ public class ServerTest {
                 for (String value : keys) {
                     pipeline.hset(key, value, "b");
                 }
-                pipeline.syncAndReturnAll();
+                pipeline.sync();
             }
             jedis.del(key);
             try (Pipeline pipeline = jedis.pipelined()) {
                 for (String value : keys) {
                     pipeline.set(value, value);
                 }
-                pipeline.sync();
+                pipeline.syncAndReturnAll();
                 for (String value : keys) {
                     pipeline.get(value);
                 }
