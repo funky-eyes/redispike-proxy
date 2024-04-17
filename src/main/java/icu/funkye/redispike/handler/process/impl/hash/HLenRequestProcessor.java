@@ -63,6 +63,6 @@ public class HLenRequestProcessor extends AbstractRedisRequestProcessor<HLenRequ
                 logger.error(exception.getMessage(), exception);
                 write(ctx, request);
             }
-        }, client.getWritePolicyDefault(), key, "hlen", "count_bins");
+        }, client.getWritePolicyDefault(), key, "hlen", "hash_count_bins");
     }
 }
