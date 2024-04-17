@@ -40,7 +40,7 @@ jobs:
       - name: "Test, Check style, Check PMD, Check license with Maven and Java"
         if: matrix.java == '8'
         run: |
-          ./mvnw -T 4C clean test -Dasp-client.version=4.1.2 && sh ./tools/check_format.sh
+          ./mvnw -T 4C clean test -Dasp-client.version=6.3.0 && sh ./tools/check_format.sh
       - name: "Test with Maven and Java${{ matrix.java }}"
         if: matrix.java != '8'
         run: |
