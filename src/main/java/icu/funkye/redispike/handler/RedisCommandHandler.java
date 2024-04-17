@@ -16,38 +16,36 @@
  */
 package icu.funkye.redispike.handler;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import com.alipay.remoting.CommandCode;
 import com.alipay.remoting.CommandHandler;
 import com.alipay.remoting.RemotingContext;
 import com.alipay.remoting.RemotingProcessor;
 import icu.funkye.redispike.handler.process.impl.GetRequestProcessor;
-import icu.funkye.redispike.handler.process.impl.HDelRequestProcessor;
-import icu.funkye.redispike.handler.process.impl.HExistsRequestProcessor;
-import icu.funkye.redispike.handler.process.impl.HGetAllRequestProcessor;
-import icu.funkye.redispike.handler.process.impl.HGetRequestProcessor;
-import icu.funkye.redispike.handler.process.impl.HIncrbyRequestProcessor;
-import icu.funkye.redispike.handler.process.impl.HIncrbyfloatRequestProcessor;
-import icu.funkye.redispike.handler.process.impl.HMgetRequestProcessor;
-import icu.funkye.redispike.handler.process.impl.HSetRequestProcessor;
-import icu.funkye.redispike.handler.process.impl.HValsRequestProcessor;
+import icu.funkye.redispike.handler.process.impl.hash.HDelRequestProcessor;
+import icu.funkye.redispike.handler.process.impl.hash.HExistsRequestProcessor;
+import icu.funkye.redispike.handler.process.impl.hash.HGetAllRequestProcessor;
+import icu.funkye.redispike.handler.process.impl.hash.HGetRequestProcessor;
+import icu.funkye.redispike.handler.process.impl.hash.HIncrbyRequestProcessor;
+import icu.funkye.redispike.handler.process.impl.hash.HIncrbyfloatRequestProcessor;
+import icu.funkye.redispike.handler.process.impl.hash.HLenRequestProcessor;
+import icu.funkye.redispike.handler.process.impl.hash.HMgetRequestProcessor;
+import icu.funkye.redispike.handler.process.impl.hash.HSetRequestProcessor;
+import icu.funkye.redispike.handler.process.impl.hash.HValsRequestProcessor;
 import icu.funkye.redispike.handler.process.impl.KeysRequestProcessor;
-import icu.funkye.redispike.handler.process.impl.SCardRequestProcessor;
-import icu.funkye.redispike.handler.process.impl.SPopRequestProcessor;
-import icu.funkye.redispike.handler.process.impl.SRandmemberRequestProcessor;
-import icu.funkye.redispike.handler.process.impl.SRemRequestProcessor;
+import icu.funkye.redispike.handler.process.impl.set.SCardRequestProcessor;
+import icu.funkye.redispike.handler.process.impl.set.SPopRequestProcessor;
+import icu.funkye.redispike.handler.process.impl.set.SRandmemberRequestProcessor;
+import icu.funkye.redispike.handler.process.impl.set.SRemRequestProcessor;
 import icu.funkye.redispike.handler.process.impl.SetRequestProcessor;
 import icu.funkye.redispike.handler.process.impl.CommandRequestProcessor;
 import icu.funkye.redispike.handler.process.impl.DelRequestProcessor;
-import icu.funkye.redispike.handler.process.impl.SAddRequestProcessor;
-import icu.funkye.redispike.handler.process.impl.SMembersRequestProcessor;
+import icu.funkye.redispike.handler.process.impl.set.SAddRequestProcessor;
+import icu.funkye.redispike.handler.process.impl.set.SMembersRequestProcessor;
 import icu.funkye.redispike.protocol.RedisRequest;
 import icu.funkye.redispike.protocol.response.BulkResponse;
 import org.slf4j.Logger;
@@ -100,6 +98,8 @@ public class RedisCommandHandler implements CommandHandler {
         processorMap.put(hIncrbyRequestProcessor.getCmdCode().value(), hIncrbyRequestProcessor);
         HIncrbyfloatRequestProcessor hIncrbyfloatRequestProcessor = new HIncrbyfloatRequestProcessor();
         processorMap.put(hIncrbyfloatRequestProcessor.getCmdCode().value(), hIncrbyfloatRequestProcessor);
+        HLenRequestProcessor hLenRequestProcessor = new HLenRequestProcessor();
+        processorMap.put(hLenRequestProcessor.getCmdCode().value(), hLenRequestProcessor);
     }
 
     @Override
