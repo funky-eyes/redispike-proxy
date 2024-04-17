@@ -16,17 +16,12 @@
  */
 package icu.funkye.redispike.handler.process.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.aerospike.client.AerospikeException;
 import com.aerospike.client.Bin;
 import com.aerospike.client.Key;
 import com.aerospike.client.Operation;
 import com.aerospike.client.Record;
 import com.aerospike.client.listener.RecordListener;
-import com.aerospike.client.listener.WriteListener;
-import com.aerospike.client.policy.RecordExistsAction;
 import com.aerospike.client.policy.WritePolicy;
 import com.alipay.remoting.RemotingContext;
 
@@ -34,29 +29,28 @@ import icu.funkye.redispike.factory.AeroSpikeClientFactory;
 import icu.funkye.redispike.handler.process.AbstractRedisRequestProcessor;
 import icu.funkye.redispike.protocol.RedisRequestCommandCode;
 import icu.funkye.redispike.protocol.request.HIncrbyRequest;
-import icu.funkye.redispike.protocol.request.HSetRequest;
-import icu.funkye.redispike.protocol.request.conts.Operate;
+import icu.funkye.redispike.protocol.request.HIncrbyfloatRequest;
 import icu.funkye.redispike.util.IntegerUtils;
 
-public class HIncrbyRequestProcessor extends AbstractRedisRequestProcessor<HIncrbyRequest> {
+public class HIncrbyfloatRequestProcessor extends AbstractRedisRequestProcessor<HIncrbyfloatRequest> {
     WritePolicy defaultWritePolicy;
 
-    public HIncrbyRequestProcessor() {
-        this.cmdCode = new RedisRequestCommandCode(IntegerUtils.hashCodeToShort(HIncrbyRequest.class.hashCode()));
+    public HIncrbyfloatRequestProcessor() {
+        this.cmdCode = new RedisRequestCommandCode(IntegerUtils.hashCodeToShort(HIncrbyfloatRequest.class.hashCode()));
         this.defaultWritePolicy = client.getWritePolicyDefault();
         this.defaultWritePolicy.sendKey = true;
     }
 
     @Override
-    public void handle(RemotingContext ctx, HIncrbyRequest request) {
+    public void handle(RemotingContext ctx, HIncrbyfloatRequest request) {
         Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, request.getKey());
-        Bin bin = new Bin(request.getField(), Long.parseLong(request.getValue()));
+        Bin bin = new Bin(request.getField(), Double.parseDouble(request.getValue()));
         client.operate(AeroSpikeClientFactory.eventLoops.next(), new RecordListener() {
             @Override
             public void onSuccess(Key key, Record record) {
                 Object value = record.getValue(request.getField());
                 if (value != null) {
-                    request.setResponse(value.toString());
+                    request.setResponse(String.valueOf(value));
                 }
                 write(ctx, request);
             }

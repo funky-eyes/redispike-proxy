@@ -46,7 +46,17 @@ public class HSetRequestProcessor extends AbstractRedisRequestProcessor<HSetRequ
     public void handle(RemotingContext ctx, HSetRequest request) {
         Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, request.getKey());
         List<Bin> list = new ArrayList<>();
-        request.getKv().forEach((k, v) -> list.add(new Bin(k, StringUtils.isNumeric(v)?Long.parseLong(v):v)));
+        request.getKv().forEach((k, v) -> {
+            Object value;
+            if (StringUtils.isNumeric(v)) {
+                value = Long.parseLong(v);
+            } else if (v.matches("-?\\d+(\\.\\d+)?")) {
+                value = Double.parseDouble(v);
+            } else {
+                value = v;
+            }
+            list.add(new Bin(k, value));
+        });
         WritePolicy writePolicy;
         if (request.getOperate() != null && request.getOperate() == Operate.NX) {
             writePolicy = new WritePolicy(defaultWritePolicy);

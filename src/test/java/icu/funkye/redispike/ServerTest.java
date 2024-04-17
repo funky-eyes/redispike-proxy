@@ -194,6 +194,13 @@ public class ServerTest {
             Assertions.assertEquals(result, 1);
             result = jedis.hincrBy(key, "t", 5);
             Assertions.assertEquals(result, 6);
+            result = jedis.hincrBy(key, "t", -1);
+            Assertions.assertEquals(result, 5);
+            jedis.del(key);
+            result = jedis.hset(key, "t", "0.0");
+            Assertions.assertEquals(result, 1);
+            Double res = jedis.hincrByFloat(key, "t", 5.1);
+            Assertions.assertEquals(res, 5.1);
             jedis.del(key);
         }
     }
