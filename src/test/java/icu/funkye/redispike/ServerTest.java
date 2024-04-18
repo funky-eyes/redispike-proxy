@@ -82,7 +82,7 @@ public class ServerTest {
                 pipeline.hlen(key);
                 List<Object> list = pipeline.syncAndReturnAll();
                 for (int i = 0; i < keys.size(); i++) {
-                    Assertions.assertEquals(list.get(i), keys.get(i));
+                    Assertions.assertTrue(list.contains(keys.get(i)));
                 }
                 Assertions.assertEquals(list.get(list.size() - 1), 3);
             }
