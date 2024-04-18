@@ -22,22 +22,23 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import com.alipay.remoting.CommandDecoder;
-import icu.funkye.redispike.protocol.request.HDelRequest;
-import icu.funkye.redispike.protocol.request.HExistsRequest;
-import icu.funkye.redispike.protocol.request.HGetAllRequest;
-import icu.funkye.redispike.protocol.request.HGetRequest;
-import icu.funkye.redispike.protocol.request.HIncrbyRequest;
-import icu.funkye.redispike.protocol.request.HIncrbyfloatRequest;
-import icu.funkye.redispike.protocol.request.HMgetRequest;
-import icu.funkye.redispike.protocol.request.HSetRequest;
-import icu.funkye.redispike.protocol.request.HValsRequest;
+import icu.funkye.redispike.protocol.request.hash.HDelRequest;
+import icu.funkye.redispike.protocol.request.hash.HExistsRequest;
+import icu.funkye.redispike.protocol.request.hash.HGetAllRequest;
+import icu.funkye.redispike.protocol.request.hash.HGetRequest;
+import icu.funkye.redispike.protocol.request.hash.HIncrbyRequest;
+import icu.funkye.redispike.protocol.request.hash.HIncrbyfloatRequest;
+import icu.funkye.redispike.protocol.request.hash.HLenRequest;
+import icu.funkye.redispike.protocol.request.hash.HMgetRequest;
+import icu.funkye.redispike.protocol.request.hash.HSetRequest;
+import icu.funkye.redispike.protocol.request.hash.HValsRequest;
 import icu.funkye.redispike.protocol.request.KeysRequest;
-import icu.funkye.redispike.protocol.request.SAddRequest;
-import icu.funkye.redispike.protocol.request.SCardRequest;
-import icu.funkye.redispike.protocol.request.SMembersRequest;
-import icu.funkye.redispike.protocol.request.SPopRequest;
-import icu.funkye.redispike.protocol.request.SRandmemberRequest;
-import icu.funkye.redispike.protocol.request.SRemRequest;
+import icu.funkye.redispike.protocol.request.set.SAddRequest;
+import icu.funkye.redispike.protocol.request.set.SCardRequest;
+import icu.funkye.redispike.protocol.request.set.SMembersRequest;
+import icu.funkye.redispike.protocol.request.set.SPopRequest;
+import icu.funkye.redispike.protocol.request.set.SRandmemberRequest;
+import icu.funkye.redispike.protocol.request.set.SRemRequest;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.DecoderException;
@@ -127,6 +128,9 @@ public class RedisCommandDecoder implements CommandDecoder {
                 return new HValsRequest(params.get(1), flush);
             case "hexists":
                 return new HExistsRequest(params.get(1), params.get(2), flush);
+            case "hlen":
+                params.remove(0);
+                return new HLenRequest(params, flush);
             case "scard":
                 return new SCardRequest(params.get(1), flush);
             case "sadd":

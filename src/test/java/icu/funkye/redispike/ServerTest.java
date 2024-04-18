@@ -59,29 +59,32 @@ public class ServerTest {
     @Test
     public void TestPippline() {
         List<String> keys = new ArrayList<>();
+        String key = String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue));
         for (int i = 0; i < 3; i++) {
             keys.add(String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue)));
         }
-        String key = String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue));
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
             try (Pipeline pipeline = jedis.pipelined()) {
                 for (String value : keys) {
                     pipeline.hset(key, value, "b");
                 }
-                pipeline.syncAndReturnAll();
+                pipeline.sync();
+                pipeline.hlen(key);
+                List<Object> list = pipeline.syncAndReturnAll();
+                Assertions.assertEquals(list.get(list.size() - 1), 3L);
             }
             jedis.del(key);
             try (Pipeline pipeline = jedis.pipelined()) {
                 for (String value : keys) {
                     pipeline.set(value, value);
                 }
-                pipeline.sync();
+                pipeline.syncAndReturnAll();
                 for (String value : keys) {
                     pipeline.get(value);
                 }
                 List<Object> list = pipeline.syncAndReturnAll();
-                for (Object object : list) {
-                    Assertions.assertTrue(keys.contains(object.toString()));
+                for (int i = 0; i < keys.size(); i++) {
+                    Assertions.assertTrue(list.contains(keys.get(i)));
                 }
             }
             jedis.del(key);
