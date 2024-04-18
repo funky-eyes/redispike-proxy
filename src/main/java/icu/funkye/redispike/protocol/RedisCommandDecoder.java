@@ -129,6 +129,8 @@ public class RedisCommandDecoder implements CommandDecoder {
             case "hexists":
                 return new HExistsRequest(params.get(1), params.get(2), flush);
             case "hlen":
+                params.remove(0);
+                return new HLenRequest(params, flush);
             case "scard":
                 return new SCardRequest(params.get(1), flush);
             case "sadd":

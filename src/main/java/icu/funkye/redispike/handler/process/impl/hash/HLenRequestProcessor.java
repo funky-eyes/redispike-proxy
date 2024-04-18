@@ -54,6 +54,7 @@ public class HLenRequestProcessor extends AbstractRedisRequestProcessor<HLenRequ
         client.execute(AeroSpikeClientFactory.eventLoops.next(), new ExecuteListener() {
             @Override
             public void onSuccess(Key key, Object obj) {
+                logger.info("hlen response:{}", request);
                 request.setResponse(obj.toString());
                 write(ctx, request);
             }
