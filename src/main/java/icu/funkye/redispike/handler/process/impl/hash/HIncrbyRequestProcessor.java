@@ -37,7 +37,6 @@ public class HIncrbyRequestProcessor extends AbstractRedisRequestProcessor<HIncr
     public HIncrbyRequestProcessor() {
         this.cmdCode = new RedisRequestCommandCode(IntegerUtils.hashCodeToShort(HIncrbyRequest.class.hashCode()));
         this.defaultWritePolicy = client.getWritePolicyDefault();
-        this.defaultWritePolicy.sendKey = true;
     }
 
     @Override
