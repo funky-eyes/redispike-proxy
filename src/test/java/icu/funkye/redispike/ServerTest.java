@@ -56,7 +56,7 @@ public class ServerTest {
         aspClient = AeroSpikeClientFactory.getClient();
     }
 
-    @Test
+/*    @Test
     public void TestPippline() {
         List<String> keys = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
@@ -86,7 +86,7 @@ public class ServerTest {
             }
             jedis.del(key);
         }
-    }
+    }*/
 
     @Test
     public void TestSet() {

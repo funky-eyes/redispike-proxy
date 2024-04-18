@@ -47,10 +47,6 @@ public class HLenRequest extends AbstractRedisRequest<String> {
         return key;
     }
 
-    public void setKey(String key) {
-        this.key = key;
-    }
-
     public void setResponse(IntegerResponse response) {
         this.response = response;
     }

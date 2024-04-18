@@ -51,24 +51,19 @@ public class HLenRequestProcessor extends AbstractRedisRequestProcessor<HLenRequ
     @Override
     public void handle(RemotingContext ctx, HLenRequest request) {
         Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, request.getKey());
-        Object object = client.execute(client.getWritePolicyDefault(), key, "hlen", "hash_count_bins");
-        logger.info("hlen object:{}", object);
-        request.setResponse(object.toString());
-        logger.info("hlen response:{}", request);
-        write(ctx, request);
-        /*client.execute(AeroSpikeClientFactory.eventLoops.next(), new ExecuteListener() {
+        client.execute(AeroSpikeClientFactory.eventLoops.next(), new ExecuteListener() {
             @Override
             public void onSuccess(Key key, Object obj) {
                 logger.info("hlen response:{}", request);
                 request.setResponse(obj.toString());
                 write(ctx, request);
             }
-        
+
             @Override
             public void onFailure(AerospikeException exception) {
                 logger.error(exception.getMessage(), exception);
                 write(ctx, request);
             }
-        }, client.getWritePolicyDefault(), key, "hlen", "hash_count_bins");*/
+        }, client.getWritePolicyDefault(), key, "hlen", "hash_count_bins");
     }
 }
