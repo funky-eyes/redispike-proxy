@@ -56,7 +56,6 @@ public class HLenRequestProcessor extends AbstractRedisRequestProcessor<HLenRequ
             public void onSuccess(Key key, Object obj) {
                 request.setResponse(obj.toString());
                 write(ctx, request);
-                logger.info("hlen response:{}", obj);
             }
 
             @Override
