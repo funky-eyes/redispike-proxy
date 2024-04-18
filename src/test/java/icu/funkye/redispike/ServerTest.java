@@ -56,14 +56,14 @@ public class ServerTest {
         aspClient = AeroSpikeClientFactory.getClient();
     }
 
-/*    @Test
+    @Test
     public void TestPippline() {
         List<String> keys = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            keys.add(String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue)));
-        }
         String key = String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue));
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
+            for (int i = 0; i < 3; i++) {
+                keys.add(String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue)));
+            }
             try (Pipeline pipeline = jedis.pipelined()) {
                 for (String value : keys) {
                     pipeline.hset(key, value, "b");
@@ -86,7 +86,7 @@ public class ServerTest {
             }
             jedis.del(key);
         }
-    }*/
+    }
 
     @Test
     public void TestSet() {
@@ -160,8 +160,6 @@ public class ServerTest {
             map.put("d", "e");
             result = jedis.hset(key, map);
             Assertions.assertEquals(result, 2);
-            result = jedis.hlen(key);
-            Assertions.assertEquals(result, map.size());
             List<String> list = jedis.hmget(key, "b", "d");
             Assertions.assertEquals(list.size(), 2);
             list = jedis.hvals(key);
@@ -203,6 +201,8 @@ public class ServerTest {
             Assertions.assertEquals(result, 1);
             Double res = jedis.hincrByFloat(key, "t", 5.1);
             Assertions.assertEquals(res, 5.1);
+            result = jedis.hlen(key);
+            Assertions.assertEquals(result, 1);
             jedis.del(key);
         }
     }

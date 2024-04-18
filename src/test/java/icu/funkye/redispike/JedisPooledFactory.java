@@ -45,8 +45,8 @@ public class JedisPooledFactory {
                 if (jedisPool == null) {
                     GenericObjectPoolConfig<Jedis> config = new GenericObjectPoolConfig<Jedis>();
                     config.setMaxTotal(100);
-                    config.setMinIdle(2);
-                    config.setMaxIdle(10);
+                    config.setMinIdle(10);
+                    config.setMaxIdle(100);
                     jedisPool = new JedisPool(config, ip, port, 10000);
                 }
             }
