@@ -71,7 +71,7 @@ public class ServerTest {
                 pipeline.sync();
                 pipeline.hlen(key);
                 List<Object> list = pipeline.syncAndReturnAll();
-                Assertions.assertEquals(list.get(list.size() - 1), 3);
+                Assertions.assertEquals(list.get(list.size() - 1), 3L);
             }
             jedis.del(key);
             try (Pipeline pipeline = jedis.pipelined()) {
