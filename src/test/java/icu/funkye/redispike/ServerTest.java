@@ -60,10 +60,10 @@ public class ServerTest {
     public void TestPippline() {
         List<String> keys = new ArrayList<>();
         String key = String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue));
+        for (int i = 0; i < 3; i++) {
+            keys.add(String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue)));
+        }
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
-            for (int i = 0; i < 3; i++) {
-                keys.add(String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue)));
-            }
             try (Pipeline pipeline = jedis.pipelined()) {
                 for (String value : keys) {
                     pipeline.hset(key, value, "b");
