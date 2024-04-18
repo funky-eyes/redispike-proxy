@@ -79,10 +79,12 @@ public class ServerTest {
                 for (String value : keys) {
                     pipeline.get(value);
                 }
+                pipeline.hlen(key);
                 List<Object> list = pipeline.syncAndReturnAll();
-                for (Object object : list) {
-                    Assertions.assertTrue(keys.contains(object.toString()));
+                for (int i = 0; i < keys.size(); i++) {
+                    Assertions.assertEquals(list.get(i), keys.get(i));
                 }
+                Assertions.assertEquals(list.get(list.size() - 1), 3);
             }
             jedis.del(key);
         }
@@ -201,8 +203,6 @@ public class ServerTest {
             Assertions.assertEquals(result, 1);
             Double res = jedis.hincrByFloat(key, "t", 5.1);
             Assertions.assertEquals(res, 5.1);
-            /*  result = jedis.hlen(key);
-            Assertions.assertEquals(result, 1);*/
             jedis.del(key);
         }
     }
