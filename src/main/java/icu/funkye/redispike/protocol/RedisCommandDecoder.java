@@ -28,6 +28,7 @@ import icu.funkye.redispike.protocol.request.hash.HGetAllRequest;
 import icu.funkye.redispike.protocol.request.hash.HGetRequest;
 import icu.funkye.redispike.protocol.request.hash.HIncrbyRequest;
 import icu.funkye.redispike.protocol.request.hash.HIncrbyfloatRequest;
+import icu.funkye.redispike.protocol.request.hash.HKeysRequest;
 import icu.funkye.redispike.protocol.request.hash.HLenRequest;
 import icu.funkye.redispike.protocol.request.hash.HMgetRequest;
 import icu.funkye.redispike.protocol.request.hash.HSetRequest;
@@ -116,6 +117,9 @@ public class RedisCommandDecoder implements CommandDecoder {
             case "del":
                 params.remove(0);
                 return new DelRequest(params, flush);
+            case "hkeys":
+                params.remove(0);
+                return new HKeysRequest(params, flush);
             case "hget":
                 return new HGetRequest(params.get(1), params.size() > 2 ? params.get(2) : null, flush);
             case "hincrby":

@@ -32,6 +32,7 @@ import icu.funkye.redispike.handler.process.impl.hash.HGetAllRequestProcessor;
 import icu.funkye.redispike.handler.process.impl.hash.HGetRequestProcessor;
 import icu.funkye.redispike.handler.process.impl.hash.HIncrbyRequestProcessor;
 import icu.funkye.redispike.handler.process.impl.hash.HIncrbyfloatRequestProcessor;
+import icu.funkye.redispike.handler.process.impl.hash.HKeysRequestProcessor;
 import icu.funkye.redispike.handler.process.impl.hash.HLenRequestProcessor;
 import icu.funkye.redispike.handler.process.impl.hash.HMgetRequestProcessor;
 import icu.funkye.redispike.handler.process.impl.hash.HSetRequestProcessor;
@@ -100,6 +101,8 @@ public class RedisCommandHandler implements CommandHandler {
         processorMap.put(hIncrbyfloatRequestProcessor.getCmdCode().value(), hIncrbyfloatRequestProcessor);
         HLenRequestProcessor hLenRequestProcessor = new HLenRequestProcessor();
         processorMap.put(hLenRequestProcessor.getCmdCode().value(), hLenRequestProcessor);
+        HKeysRequestProcessor hKeysRequestProcessor = new HKeysRequestProcessor();
+        processorMap.put(hKeysRequestProcessor.getCmdCode().value(), hKeysRequestProcessor);
     }
 
     @Override
