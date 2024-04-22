@@ -150,6 +150,20 @@ public class ServerTest {
     }
 
     @Test
+    public void testhHash2() {
+        String key = String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue));
+        Map<String, String> map = new HashMap<>();
+        map.put("b", "c");
+        map.put("d", "e");
+        try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
+            long result = jedis.hset(key, map);
+            Assertions.assertEquals(result, 2);
+            Set<String> set = jedis.hkeys(key);
+            Assertions.assertTrue(set.containsAll(map.keySet()));
+        }
+    }
+
+    @Test
     public void testhHash() {
         String key = String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue));
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
@@ -163,8 +177,6 @@ public class ServerTest {
             map.put("d", "e");
             result = jedis.hset(key, map);
             Assertions.assertEquals(result, 2);
-            Set<String> set = jedis.hkeys(key);
-            Assertions.assertTrue(set.containsAll(map.keySet()));
             List<String> list = jedis.hmget(key, "b", "d");
             Assertions.assertEquals(list.size(), 2);
             list = jedis.hvals(key);
