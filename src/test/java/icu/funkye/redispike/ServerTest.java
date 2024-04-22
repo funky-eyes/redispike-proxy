@@ -31,8 +31,11 @@ import org.apache.commons.cli.ParseException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import icu.funkye.redispike.factory.AeroSpikeClientFactory;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +43,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.params.SetParams;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ServerTest {
     static Server           server;
     static IAerospikeClient aspClient;
@@ -57,6 +61,7 @@ public class ServerTest {
     }
 
     @Test
+    @Order(value = Integer.MIN_VALUE)
     public void TestPippline() {
         List<String> keys = new ArrayList<>();
         String key = String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue));
@@ -150,6 +155,7 @@ public class ServerTest {
     }
 
     @Test
+    @Order(value = Integer.MAX_VALUE)
     public void testhHash() {
         String key = String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue));
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
@@ -163,6 +169,8 @@ public class ServerTest {
             map.put("d", "e");
             result = jedis.hset(key, map);
             Assertions.assertEquals(result, 2);
+            Set<String> set = jedis.hkeys(key);
+            Assertions.assertTrue(set.containsAll(map.keySet()));
             List<String> list = jedis.hmget(key, "b", "d");
             Assertions.assertEquals(list.size(), 2);
             list = jedis.hvals(key);
