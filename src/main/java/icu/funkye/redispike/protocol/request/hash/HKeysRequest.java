@@ -16,6 +16,7 @@
  */
 package icu.funkye.redispike.protocol.request.hash;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import icu.funkye.redispike.protocol.AbstractRedisRequest;
@@ -26,7 +27,7 @@ public class HKeysRequest extends AbstractRedisRequest<String> {
 
     String       key;
 
-    BulkResponse response = new BulkResponse();
+    BulkResponse response = new BulkResponse(new ArrayList<>());
 
     public HKeysRequest(List<String> params, boolean flush) {
         this.flush = flush;
