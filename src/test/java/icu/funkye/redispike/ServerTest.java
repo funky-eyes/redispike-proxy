@@ -31,6 +31,7 @@ import org.apache.commons.cli.ParseException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import icu.funkye.redispike.factory.AeroSpikeClientFactory;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
@@ -57,6 +58,7 @@ public class ServerTest {
     }
 
     @Test
+    @Order(value = Integer.MIN_VALUE)
     public void TestPippline() {
         List<String> keys = new ArrayList<>();
         String key = String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue));
