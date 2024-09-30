@@ -75,7 +75,7 @@ public class SetRequestProcessor extends AbstractRedisRequestProcessor<SetReques
 
                                 @Override
                                 public void onFailure(AerospikeException ae) {
-                                    logger.error(ae.getMessage(), ae);
+                                    logger.error("key: {}, error: {}",request.getKey(), ae.getMessage(), ae);
                                     write(ctx, request);
                                 }
                             }, client.getWritePolicyDefault(), key, bin);
