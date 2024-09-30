@@ -55,6 +55,7 @@ public class SetRequestProcessor extends AbstractRedisRequestProcessor<SetReques
                 writePolicy.expiration = Integer.max((int) (request.getTtl() / 1000), 1);
             }
         }
+        logger.info("set key: {}", request.getKey());
         if (request.getOperate() != null) {
             if (request.getOperate() == Operate.NX) {
                 writePolicy = new WritePolicy(writePolicy);
@@ -75,7 +76,7 @@ public class SetRequestProcessor extends AbstractRedisRequestProcessor<SetReques
 
                                 @Override
                                 public void onFailure(AerospikeException ae) {
-                                    logger.error("key: {}, error: {}",request.getKey(), ae.getMessage(), ae);
+                                        logger.error("key: {}, error: {}",request.getKey(), ae.getMessage(), ae);
                                     write(ctx, request);
                                 }
                             }, client.getWritePolicyDefault(), key, bin);
