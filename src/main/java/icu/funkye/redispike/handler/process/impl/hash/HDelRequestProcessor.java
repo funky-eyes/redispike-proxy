@@ -16,16 +16,12 @@
  */
 package icu.funkye.redispike.handler.process.impl.hash;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import com.aerospike.client.AerospikeException;
-import com.aerospike.client.Bin;
 import com.aerospike.client.Key;
-import com.aerospike.client.Record;
-import com.aerospike.client.listener.DeleteListener;
-import com.aerospike.client.listener.RecordListener;
-import com.aerospike.client.listener.WriteListener;
+import com.aerospike.client.Language;
+import com.aerospike.client.Value;
+import com.aerospike.client.listener.ExecuteListener;
+import com.aerospike.client.task.RegisterTask;
 import com.alipay.remoting.RemotingContext;
 import icu.funkye.redispike.factory.AeroSpikeClientFactory;
 import icu.funkye.redispike.handler.process.AbstractRedisRequestProcessor;
@@ -37,57 +33,26 @@ public class HDelRequestProcessor extends AbstractRedisRequestProcessor<HDelRequ
 
     public HDelRequestProcessor() {
         this.cmdCode = new RedisRequestCommandCode(IntegerUtils.hashCodeToShort(HDelRequest.class.hashCode()));
+        RegisterTask task = client.register(null, this.getClass().getClassLoader(), "lua/hdel.lua", "hdel.lua",
+            Language.LUA);
+        task.waitTillComplete();
     }
 
     @Override public void handle(RemotingContext ctx, HDelRequest request) {
-            Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, request.getKey());
-            client.get(AeroSpikeClientFactory.eventLoops.next(), new RecordListener() {
+        Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, request.getKey());
+        client.execute(AeroSpikeClientFactory.eventLoops.next(), new ExecuteListener() {
                 @Override
-                public void onSuccess(Key key, Record record) {
-                    Map<String, Object> map = record.bins;
-                    for (String field : request.getFields()) {
-                        map.remove(field);
-                    }
-                    if (map.isEmpty()) {
-                        client.delete(AeroSpikeClientFactory.eventLoops.next(), new DeleteListener() {
-                            @Override
-                            public void onSuccess(Key key, boolean b) {
-                                request.setResponse(
-                                        String.valueOf(request.getFields().size()));
-                                write(ctx,request);
-                            }
-
-                            @Override
-                            public void onFailure(AerospikeException exception) {
-                                logger.error(exception.getMessage(), exception);
-                                write(ctx,request);
-                            }
-                        }, client.getWritePolicyDefault(), key);
-                    } else {
-                        List<Bin> newBins = new ArrayList<>();
-                        map.forEach((k, v) -> newBins.add(new Bin(k, (String)v)));
-                        client.put(AeroSpikeClientFactory.eventLoops.next(), new WriteListener() {
-                            @Override
-                            public void onSuccess(Key key) {
-                                request.setResponse(
-                                        String.valueOf(request.getFields().size()));
-                                write(ctx,request);
-                            }
-
-                            @Override
-                            public void onFailure(AerospikeException exception) {
-                                logger.error(exception.getMessage(), exception);
-                                write(ctx,request);
-                            }
-                        }, client.getWritePolicyDefault(), key, newBins.toArray(new Bin[0]));
-                    }
+                public void onSuccess(Key key, Object obj) {
+                    request.setResponse(obj.toString());
+                    write(ctx, request);
                 }
 
                 @Override
                 public void onFailure(AerospikeException exception) {
                     logger.error(exception.getMessage(), exception);
-                    write(ctx,request);
+                    write(ctx, request);
                 }
-            }, client.getReadPolicyDefault(), key);
+            }, client.getWritePolicyDefault(), key, "hdel", "delete_bins_return_count",
+            Value.get(String.join(",", request.getFields())));
     }
 }
