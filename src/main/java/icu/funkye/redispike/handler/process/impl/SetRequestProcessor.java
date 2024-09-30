@@ -52,10 +52,9 @@ public class SetRequestProcessor extends AbstractRedisRequestProcessor<SetReques
             if (request.getTtlType() == TtlType.EX) {
                 writePolicy.expiration = request.getTtl().intValue();
             } else {
-                writePolicy.expiration = Integer.max((int) (request.getTtl() / 1000), 1);
+                writePolicy.expiration = Integer.max((int)(request.getTtl() / 1000), 1);
             }
         }
-        logger.info("set key: {}", request.getKey());
         if (request.getOperate() != null) {
             if (request.getOperate() == Operate.NX) {
                 writePolicy = new WritePolicy(writePolicy);
@@ -76,7 +75,7 @@ public class SetRequestProcessor extends AbstractRedisRequestProcessor<SetReques
 
                                 @Override
                                 public void onFailure(AerospikeException ae) {
-                                        logger.error("key: {}, error: {}",request.getKey(), ae.getMessage(), ae);
+                                    logger.error(ae.getMessage(), ae);
                                     write(ctx, request);
                                 }
                             }, client.getWritePolicyDefault(), key, bin);
@@ -85,7 +84,7 @@ public class SetRequestProcessor extends AbstractRedisRequestProcessor<SetReques
 
                     @Override
                     public void onFailure(AerospikeException ae) {
-                        logger.error("key: {}, error: {}",request.getKey(), ae.getMessage(), ae);
+                        logger.error(ae.getMessage(), ae);
                         write(ctx, request);
                     }
                 }, client.getReadPolicyDefault(), key);
@@ -105,7 +104,7 @@ public class SetRequestProcessor extends AbstractRedisRequestProcessor<SetReques
 
             @Override
             public void onFailure(AerospikeException ae) {
-                logger.error("key: {}, error: {}",request.getKey(), ae.getMessage(), ae);
+                logger.error(ae.getMessage(), ae);
                 write(ctx, request);
             }
         }, writePolicy, key, bin);

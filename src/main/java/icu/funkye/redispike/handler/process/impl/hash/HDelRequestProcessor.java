@@ -33,26 +33,27 @@ public class HDelRequestProcessor extends AbstractRedisRequestProcessor<HDelRequ
 
     public HDelRequestProcessor() {
         this.cmdCode = new RedisRequestCommandCode(IntegerUtils.hashCodeToShort(HDelRequest.class.hashCode()));
-        RegisterTask task = client.register(null, this.getClass().getClassLoader(), "lua/hdel.lua", "hdel.lua",
-            Language.LUA);
+        RegisterTask task =
+            client.register(null, this.getClass().getClassLoader(), "lua/hdel.lua", "hdel.lua", Language.LUA);
         task.waitTillComplete();
     }
 
-    @Override public void handle(RemotingContext ctx, HDelRequest request) {
+    @Override
+    public void handle(RemotingContext ctx, HDelRequest request) {
         Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, request.getKey());
         client.execute(AeroSpikeClientFactory.eventLoops.next(), new ExecuteListener() {
-                @Override
-                public void onSuccess(Key key, Object obj) {
-                    request.setResponse(obj.toString());
-                    write(ctx, request);
-                }
+            @Override
+            public void onSuccess(Key key, Object obj) {
+                request.setResponse(obj.toString());
+                write(ctx, request);
+            }
 
-                @Override
-                public void onFailure(AerospikeException exception) {
-                    logger.error(exception.getMessage(), exception);
-                    write(ctx, request);
-                }
-            }, client.getWritePolicyDefault(), key, "hdel", "delete_bins_return_count",
+            @Override
+            public void onFailure(AerospikeException exception) {
+                logger.error(exception.getMessage(), exception);
+                write(ctx, request);
+            }
+        }, client.getWritePolicyDefault(), key, "hdel", "delete_bins_return_count",
             Value.get(String.join(",", request.getFields())));
     }
 }
