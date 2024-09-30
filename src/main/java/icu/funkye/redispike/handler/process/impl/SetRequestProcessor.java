@@ -52,7 +52,7 @@ public class SetRequestProcessor extends AbstractRedisRequestProcessor<SetReques
             if (request.getTtlType() == TtlType.EX) {
                 writePolicy.expiration = request.getTtl().intValue();
             } else {
-                writePolicy.expiration = Integer.max((int)(request.getTtl() / 1000), 1);
+                writePolicy.expiration = Integer.max((int) (request.getTtl() / 1000), 1);
             }
         }
         if (request.getOperate() != null) {

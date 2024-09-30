@@ -33,8 +33,8 @@ public class HDelRequestProcessor extends AbstractRedisRequestProcessor<HDelRequ
 
     public HDelRequestProcessor() {
         this.cmdCode = new RedisRequestCommandCode(IntegerUtils.hashCodeToShort(HDelRequest.class.hashCode()));
-        RegisterTask task =
-            client.register(null, this.getClass().getClassLoader(), "lua/hdel.lua", "hdel.lua", Language.LUA);
+        RegisterTask task = client.register(null, this.getClass().getClassLoader(), "lua/hdel.lua", "hdel.lua",
+            Language.LUA);
         task.waitTillComplete();
     }
 

@@ -47,12 +47,12 @@ import redis.clients.jedis.params.SetParams;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ServerTest {
-    static Server server;
+    static Server           server;
     static IAerospikeClient aspClient;
 
-    static Logger logger = LoggerFactory.getLogger(ServerTest.class);
+    static Logger           logger      = LoggerFactory.getLogger(ServerTest.class);
 
-    private final Long RandomValue = 1000000L;
+    private final Long      RandomValue = 1000000L;
 
     @BeforeAll
     public static void init() throws ParseException {
