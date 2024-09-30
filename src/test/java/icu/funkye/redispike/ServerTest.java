@@ -50,7 +50,7 @@ public class ServerTest {
 
     static Logger           logger      = LoggerFactory.getLogger(ServerTest.class);
 
-    private final int       RandomValue = 10000000;
+    private final Long       RandomValue = 1000000000L;
 
     @BeforeAll
     public static void init() throws ParseException {
@@ -64,9 +64,9 @@ public class ServerTest {
     @Order(value = Integer.MIN_VALUE)
     public void TestPippline() {
         List<String> keys = new ArrayList<>();
-        String key = String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue));
+        String key = String.valueOf(ThreadLocalRandom.current().nextLong(RandomValue));
         for (int i = 0; i < 3; i++) {
-            keys.add(String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue)));
+            keys.add(String.valueOf(ThreadLocalRandom.current().nextLong(RandomValue)));
         }
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
             try (Pipeline pipeline = jedis.pipelined()) {
@@ -100,9 +100,9 @@ public class ServerTest {
     public void TestSet() {
         List<String> keys = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
-            keys.add(String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue)));
+            keys.add(String.valueOf(ThreadLocalRandom.current().nextLong(RandomValue)));
         }
-        String key = String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue));
+        String key = String.valueOf(ThreadLocalRandom.current().nextLong(RandomValue));
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
             for (String value : keys) {
                 jedis.sadd(key, value);
@@ -136,7 +136,7 @@ public class ServerTest {
     public void testKeys() {
         List<String> keys = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
-            keys.add(String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue)));
+            keys.add(String.valueOf(ThreadLocalRandom.current().nextLong(RandomValue)));
         }
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
             for (String key : keys) {
@@ -157,7 +157,7 @@ public class ServerTest {
     @Test
     @Order(value = Integer.MAX_VALUE)
     public void testhHash() {
-        String key = String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue));
+        String key = String.valueOf(ThreadLocalRandom.current().nextLong(RandomValue));
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
             Long result = jedis.hset(key.getBytes(StandardCharsets.UTF_8), "b".getBytes(StandardCharsets.UTF_8),
                 "c".getBytes(StandardCharsets.UTF_8));
@@ -177,7 +177,7 @@ public class ServerTest {
             Assertions.assertEquals(list.size(), 2);
             result = jedis.hdel(key, map.keySet().toArray(new String[0]));
             Assertions.assertEquals(result, 2);
-            key = String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue));
+            key = String.valueOf(ThreadLocalRandom.current().nextLong(RandomValue));
             result = jedis.hsetnx(key, "f", "g");
             Assertions.assertEquals(result, 1);
             result = jedis.hsetnx(key, "f", "g");
@@ -246,14 +246,14 @@ public class ServerTest {
     @Test
     public void testGetNilAsp() {
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
-            String result = jedis.get(String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue)));
+            String result = jedis.get(String.valueOf(ThreadLocalRandom.current().nextLong(RandomValue)));
             Assertions.assertNull(result);
         }
     }
 
     @Test
     public void testSetExAsp() {
-        String key = String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue));
+        String key = String.valueOf(ThreadLocalRandom.current().nextLong(RandomValue));
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
             String result = jedis.set(key, "b", SetParams.setParams().ex(1L));
             Assertions.assertEquals(result, "OK");
@@ -267,13 +267,13 @@ public class ServerTest {
 
     @Test
     public void testSetNxNilAsp() {
-        String key = String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue));
+        String key = String.valueOf(ThreadLocalRandom.current().nextLong(RandomValue));
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
             String result = jedis.set(key, "b", SetParams.setParams().nx());
             Assertions.assertEquals(result, "OK");
             result = jedis.set(key, "b", SetParams.setParams().nx());
             Assertions.assertNull(result);
-            key = String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue));
+            key = String.valueOf(ThreadLocalRandom.current().nextLong(RandomValue));
             result = String.valueOf(jedis.setnx(key, "b"));
             Assertions.assertEquals(result, "1");
             result = String.valueOf(jedis.setnx(key, "b"));
@@ -283,7 +283,7 @@ public class ServerTest {
 
     @Test
     public void testSetExNxAsp() {
-        String key = String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue));
+        String key = String.valueOf(ThreadLocalRandom.current().nextLong(RandomValue));
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
             String result = jedis.set(key, "b", SetParams.setParams().nx().ex(1L));
             Assertions.assertEquals(result, "OK");
@@ -297,7 +297,7 @@ public class ServerTest {
 
     @Test
     public void testDelAsp() {
-        String key = String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue));
+        String key = String.valueOf(ThreadLocalRandom.current().nextLong(RandomValue));
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
             String result = jedis.set(key, "b");
             Assertions.assertEquals(result, "OK");
@@ -310,7 +310,7 @@ public class ServerTest {
     public void testBatchDelAsp() {
         List<String> keys = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
-            keys.add(String.valueOf(ThreadLocalRandom.current().nextInt(RandomValue)));
+            keys.add(String.valueOf(ThreadLocalRandom.current().nextLong(RandomValue)));
         }
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
             String result = jedis.set(keys.get(0), "b");
