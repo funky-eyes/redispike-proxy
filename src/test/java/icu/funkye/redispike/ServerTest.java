@@ -50,7 +50,7 @@ public class ServerTest {
 
     static Logger           logger      = LoggerFactory.getLogger(ServerTest.class);
 
-    private final Long       RandomValue = 1000000000L;
+    private final Long       RandomValue = 1000000L;
 
     @BeforeAll
     public static void init() throws ParseException {
@@ -175,8 +175,12 @@ public class ServerTest {
             Assertions.assertEquals(list.size(), 2);
             list = jedis.hvals(key);
             Assertions.assertEquals(list.size(), 2);
+            String b = jedis.hget(key, "b");
+            Assertions.assertEquals("c", b);
             result = jedis.hdel(key, map.keySet().toArray(new String[0]));
             Assertions.assertEquals(result, 2);
+            b = jedis.hget(key, "b");
+            Assertions.assertNull(b);
             key = String.valueOf(ThreadLocalRandom.current().nextLong(RandomValue));
             result = jedis.hsetnx(key, "f", "g");
             Assertions.assertEquals(result, 1);
