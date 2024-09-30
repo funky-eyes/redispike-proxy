@@ -33,6 +33,7 @@ ignore:
   - ".style/.*"
   - "*.md"
   - "*Test"
+  - "src/main/resources/lua/*"
 comment:
   layout: "reach,diff,flags,tree"
   behavior: default
