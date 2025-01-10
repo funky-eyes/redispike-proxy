@@ -56,7 +56,7 @@ public class ThreadPoolFactory {
                 LOGGER.error(e.getMessage(), e);
             }
         }
-        return new ThreadPoolExecutor(0, 200, 120L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(),
+        return new ThreadPoolExecutor(0, 200, 120L, TimeUnit.SECONDS, new SynchronousQueue<>(),
             new ThreadDaemonFactory());
     }
 

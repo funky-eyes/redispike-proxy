@@ -119,7 +119,7 @@ public class RedisCommandHandler implements CommandHandler {
 
     private void processSingleRequest(RemotingContext ctx, Object object) {
         if (object instanceof RedisRequest) {
-            RedisRequest request = (RedisRequest) object;
+            RedisRequest<?> request = (RedisRequest<?>) object;
             try {
                 processorMap.get(request.getCmdCode().value()).process(ctx, request, getDefaultExecutor());
             } catch (Exception e) {
