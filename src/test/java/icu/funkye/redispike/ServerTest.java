@@ -43,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
+import redis.clients.jedis.exceptions.JedisDataException;
 import redis.clients.jedis.params.SetParams;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -60,6 +61,16 @@ public class ServerTest {
         server.start("-p 6789".split(" "));
         JedisPooledFactory.getJedisPoolInstance("127.0.0.1", 6789);
         aspClient = AeroSpikeClientFactory.getClient();
+    }
+
+    @Test
+    @Order(value = Integer.MIN_VALUE)
+    public void TestErr() {
+        try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
+            jedis.aclDelUser("test");
+        } catch (Exception e) {
+            Assertions.assertInstanceOf(JedisDataException.class, e);
+        }
     }
 
     @Test
@@ -136,7 +147,7 @@ public class ServerTest {
     @Test
     @DisabledIfSystemProperty(named = "asp-client.version", matches = "4.1.2")
     public void testKeys() {
-        /*        List<String> keys = new ArrayList<>();
+        List<String> keys = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
             keys.add(String.valueOf(ThreadLocalRandom.current().nextLong(RandomValue)));
         }
@@ -153,7 +164,7 @@ public class ServerTest {
             Assertions.assertEquals(result.size(), 1);
             result = jedis.keys("*123");
             Assertions.assertEquals(result.size(), 1);
-        }*/
+        }
     }
 
     @Test
