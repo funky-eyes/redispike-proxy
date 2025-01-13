@@ -43,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
+import redis.clients.jedis.exceptions.JedisDataException;
 import redis.clients.jedis.params.SetParams;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -68,7 +69,7 @@ public class ServerTest {
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
             jedis.aclDelUser("test");
         } catch (Exception e) {
-            logger.error("TestErr", e);
+	        Assertions.assertInstanceOf(JedisDataException.class, e);
         }
     }
 
