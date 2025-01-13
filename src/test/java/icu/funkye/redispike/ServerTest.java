@@ -64,7 +64,7 @@ public class ServerTest {
     }
 
     @Test
-    @Order(value = Integer.MIN_VALUE)
+    @Order(1)
     public void TestErr() {
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
             jedis.aclDelUser("test");
@@ -74,7 +74,7 @@ public class ServerTest {
     }
 
     @Test
-    @Order(value = Integer.MIN_VALUE)
+    @Order(2)
     public void TestPippline() {
         List<String> keys = new ArrayList<>();
         String key = String.valueOf(ThreadLocalRandom.current().nextLong(RandomValue));
@@ -110,6 +110,7 @@ public class ServerTest {
     }
 
     @Test
+    @Order(3)
     public void TestSet() {
         List<String> keys = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
@@ -146,6 +147,7 @@ public class ServerTest {
 
     @Test
     @DisabledIfSystemProperty(named = "asp-client.version", matches = "4.1.2")
+    @Order(Integer.MAX_VALUE)
     public void testKeys() {
         List<String> keys = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
@@ -153,7 +155,7 @@ public class ServerTest {
         }
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
             for (String key : keys) {
-                jedis.set(key, "b");
+                jedis.set(key, "b", SetParams.setParams().ex(5L));
             }
             Set<String> result = jedis.keys("123");
             Assertions.assertEquals(result.size(), 0);
@@ -168,7 +170,7 @@ public class ServerTest {
     }
 
     @Test
-    @Order(value = Integer.MAX_VALUE)
+    @Order(5)
     public void testhHash() {
         String key = String.valueOf(ThreadLocalRandom.current().nextLong(RandomValue));
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
@@ -235,6 +237,7 @@ public class ServerTest {
 
     @Test
     @EnabledOnOs(OS.LINUX)
+    @Order(6)
     public void testRedisSet() {
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
             String result = jedis.set("a", "bq");
@@ -247,6 +250,7 @@ public class ServerTest {
     }
 
     @Test
+    @Order(7)
     public void testGetSetAsp() {
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
             String result = jedis.set("a", "b");
@@ -264,6 +268,7 @@ public class ServerTest {
     }
 
     @Test
+    @Order(8)
     public void testGetNilAsp() {
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
             String result = jedis.get(String.valueOf(ThreadLocalRandom.current().nextLong(RandomValue)));
@@ -272,6 +277,7 @@ public class ServerTest {
     }
 
     @Test
+    @Order(9)
     public void testSetExAsp() {
         String key = String.valueOf(ThreadLocalRandom.current().nextLong(RandomValue));
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
@@ -286,6 +292,7 @@ public class ServerTest {
     }
 
     @Test
+    @Order(10)
     public void testSetNxNilAsp() {
         String key = String.valueOf(ThreadLocalRandom.current().nextLong(RandomValue));
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
@@ -302,6 +309,7 @@ public class ServerTest {
     }
 
     @Test
+    @Order(11)
     public void testSetExNxAsp() {
         String key = String.valueOf(ThreadLocalRandom.current().nextLong(RandomValue));
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
@@ -316,6 +324,7 @@ public class ServerTest {
     }
 
     @Test
+    @Order(12)
     public void testDelAsp() {
         String key = String.valueOf(ThreadLocalRandom.current().nextLong(RandomValue));
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
@@ -327,6 +336,7 @@ public class ServerTest {
     }
 
     @Test
+    @Order(13)
     public void testBatchDelAsp() {
         List<String> keys = new ArrayList<>();
         for (int i = 0; i < 2; i++) {

@@ -68,6 +68,6 @@ public class HMgetRequest extends AbstractRedisRequest<String> {
 
     @Override
     public String toString() {
-        return "HGetRequest{" + "key='" + key + '\'' + ", field='" + field + '\'' + ", response=" + response + '}';
+        return "HMGetRequest{" + "key='" + key + '\'' + ", field='" + field + '\'' + ", response=" + response + '}';
     }
 }

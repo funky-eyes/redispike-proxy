@@ -47,6 +47,6 @@ public class NotSupportRequest extends AbstractRedisRequest<String> {
 
     @Override
     public String toString() {
-        return "GetRequest{" + "key='" + command + '\'' + ", response=" + response + '}';
+        return "NotSupport{" + "key='" + command + '\'' + ", response=" + response + '}';
     }
 }

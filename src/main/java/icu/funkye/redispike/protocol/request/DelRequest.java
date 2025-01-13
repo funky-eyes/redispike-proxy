@@ -56,6 +56,6 @@ public class DelRequest extends AbstractRedisRequest<String> {
 
     @Override
     public String toString() {
-        return "GetRequest{" + "key='" + key + '\'' + ", response=" + response + '}';
+        return "DelRequest{" + "key='" + key + '\'' + ", response=" + response + '}';
     }
 }
