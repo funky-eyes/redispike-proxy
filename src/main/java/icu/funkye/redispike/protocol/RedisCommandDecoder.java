@@ -93,8 +93,8 @@ public class RedisCommandDecoder implements CommandDecoder {
 
     private AbstractRedisRequest<?> convert2RedisRequest(List<String> params, boolean flush) {
         String cmd = params.get(0);
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("cmd: {}", params);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("cmd: {}", params);
         }
         switch (cmd) {
             case "auth":
