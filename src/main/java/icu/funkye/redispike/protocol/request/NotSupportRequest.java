@@ -22,7 +22,7 @@ import icu.funkye.redispike.protocol.response.BulkResponse;
 
 public class NotSupportRequest extends AbstractRedisRequest<String> {
 
-    String command;
+    String       command;
 
     BulkResponse response = new BulkResponse();
 
@@ -37,7 +37,7 @@ public class NotSupportRequest extends AbstractRedisRequest<String> {
 
     @Override
     public void setResponse(String data) {
-        this.response.setData(data);
+        this.response.setError(data);
     }
 
     @Override

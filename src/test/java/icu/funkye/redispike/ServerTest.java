@@ -67,8 +67,8 @@ public class ServerTest {
     public void TestErr() {
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
             jedis.aclDelUser("test");
-        }catch (Exception e){
-            logger.error("TestErr",e);
+        } catch (Exception e) {
+            logger.error("TestErr", e);
         }
     }
 
