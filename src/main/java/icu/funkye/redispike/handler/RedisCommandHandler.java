@@ -112,7 +112,7 @@ public class RedisCommandHandler implements CommandHandler {
         registryProcessor(authRequestProcessor);
     }
 
-    private void registryProcessor(RedisRequestProcessor processor) {
+    private void registryProcessor(RedisRequestProcessor<?> processor) {
         processorMap.put(processor.getCmdCode().value(), processor);
     }
 
