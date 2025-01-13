@@ -53,6 +53,14 @@ public class AuthRequest extends AbstractRedisRequest<String> {
         return response;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public String toString() {
         return "AuthRequest{" + "key='" + command + '\'' + ", response=" + response + '}';

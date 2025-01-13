@@ -38,7 +38,7 @@ public class AuthRequestProcessor extends AbstractRedisRequestProcessor<AuthRequ
     @Override
 	public void handle(RemotingContext ctx, AuthRequest request) {
         if (AeroSpikeClientFactory.originClientPolicy.password == null
-            || Objects.equals(AeroSpikeClientFactory.originClientPolicy.password, request.getCommand())) {
+            || Objects.equals(AeroSpikeClientFactory.originClientPolicy.password, request.getPassword())) {
             request.setResponse("OK");
         } else {
             request.setErrorResponse("ERR Client sent AUTH, but no password is set");
