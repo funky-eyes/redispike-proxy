@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import com.alipay.remoting.CommandDecoder;
+import icu.funkye.redispike.protocol.request.AuthRequest;
 import icu.funkye.redispike.protocol.request.NotSupportRequest;
 import icu.funkye.redispike.protocol.request.hash.HDelRequest;
 import icu.funkye.redispike.protocol.request.hash.HExistsRequest;
@@ -96,6 +97,8 @@ public class RedisCommandDecoder implements CommandDecoder {
             LOGGER.debug("cmd: {}", params);
         }
         switch (cmd) {
+            case "auth":
+                return new AuthRequest(params.get(0), flush);
             case "hmget":
                 params.remove(0);
                 return new HMgetRequest(params.remove(0), params, flush);
