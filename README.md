@@ -1,5 +1,7 @@
 # redispike-proxy
-High-performance Aerospike proxy for the Redis protocold
+High-performance Aerospike proxy for the Redis protocol
+
+[![codecov](https://codecov.io/gh/funky-eyes/redispike-proxy/graph/badge.svg?token=TBNYFEE7Q7)](https://codecov.io/gh/funky-eyes/redispike-proxy)
 
 ### compatibility
 
