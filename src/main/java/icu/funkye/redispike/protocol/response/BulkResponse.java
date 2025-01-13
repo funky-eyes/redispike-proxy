@@ -16,7 +16,6 @@
  */
 package icu.funkye.redispike.protocol.response;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import com.alipay.remoting.util.StringUtils;
