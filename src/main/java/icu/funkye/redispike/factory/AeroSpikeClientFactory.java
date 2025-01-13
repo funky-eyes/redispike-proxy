@@ -39,7 +39,11 @@ public class AeroSpikeClientFactory {
     public static volatile String           namespace;
 
     public static volatile String           set;
+
     public static volatile EventLoops       eventLoops;
+
+    public static volatile ClientPolicy     originClientPolicy;
+
     static {
         EventPolicy eventPolicy = new EventPolicy();
         if (Epoll.isAvailable()) {
@@ -63,6 +67,7 @@ public class AeroSpikeClientFactory {
                 if (client == null) {
                     clientPolicy.maxConnsPerNode = 65535;
                     clientPolicy.eventLoops = eventLoops;
+                    originClientPolicy = clientPolicy;
                     client = new AerospikeClient(clientPolicy, hosts);
                 }
             } finally {

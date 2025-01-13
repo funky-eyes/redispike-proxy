@@ -98,7 +98,7 @@ public class RedisCommandDecoder implements CommandDecoder {
         }
         switch (cmd) {
             case "auth":
-                return new AuthRequest(params.get(0), flush);
+                return new AuthRequest(params.get(0), params.get(1), flush);
             case "hmget":
                 params.remove(0);
                 return new HMgetRequest(params.remove(0), params, flush);

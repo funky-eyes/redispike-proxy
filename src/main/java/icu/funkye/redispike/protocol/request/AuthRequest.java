@@ -24,12 +24,14 @@ public class AuthRequest extends AbstractRedisRequest<String> {
 
     String       command;
 
+    String       password;
+
     BulkResponse response = new BulkResponse();
 
-    public AuthRequest(String command, boolean flush) {
+    public AuthRequest(String command, String password, boolean flush) {
         this.flush = flush;
         this.command = command;
-        response.setData("ok");
+        this.password = password;
     }
 
     public String getCommand() {
@@ -38,6 +40,11 @@ public class AuthRequest extends AbstractRedisRequest<String> {
 
     @Override
     public void setResponse(String data) {
+        this.response.setData(data);
+    }
+
+    @Override
+    public void setErrorResponse(String data) {
         this.response.setError(data);
     }
 
