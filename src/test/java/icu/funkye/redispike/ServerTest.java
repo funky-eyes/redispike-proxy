@@ -69,7 +69,7 @@ public class ServerTest {
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
             jedis.aclDelUser("test");
         } catch (Exception e) {
-	        Assertions.assertInstanceOf(JedisDataException.class, e);
+            Assertions.assertInstanceOf(JedisDataException.class, e);
         }
     }
 
