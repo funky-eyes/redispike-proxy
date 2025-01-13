@@ -147,17 +147,15 @@ public class ServerTest {
 
     @Test
     @DisabledIfSystemProperty(named = "asp-client.version", matches = "4.1.2")
-    @Order(4)
+    @Order(Integer.MAX_VALUE)
     public void testKeys() {
         List<String> keys = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
             keys.add(String.valueOf(ThreadLocalRandom.current().nextLong(RandomValue)));
         }
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
-            jedis.flushAll();
-            jedis.flushDB();
             for (String key : keys) {
-                jedis.set(key, "b");
+                jedis.set(key, "b", SetParams.setParams().ex(5L));
             }
             Set<String> result = jedis.keys("123");
             Assertions.assertEquals(result.size(), 0);
