@@ -33,6 +33,8 @@ public interface RedisRequest<T> extends RemotingCommand  {
 
     void setResponse(T data);
 
+    default void setErrorResponse(T data){}
+
     default ProtocolCode getProtocolCode() {
         return null;
     }

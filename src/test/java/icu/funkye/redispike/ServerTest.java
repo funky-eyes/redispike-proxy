@@ -352,6 +352,15 @@ public class ServerTest {
         }
     }
 
+    @Test
+    @Order(13)
+    public void testAuth() {
+        try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
+            String result = jedis.auth("123");
+            Assertions.assertEquals("OK", result);
+        }
+    }
+
     @AfterAll
     public static void shutdown() {
         Optional.ofNullable(server).ifPresent(Server::shutdown);

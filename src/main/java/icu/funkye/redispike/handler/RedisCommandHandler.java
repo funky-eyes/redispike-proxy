@@ -25,6 +25,8 @@ import com.alipay.remoting.CommandCode;
 import com.alipay.remoting.CommandHandler;
 import com.alipay.remoting.RemotingContext;
 import com.alipay.remoting.RemotingProcessor;
+import icu.funkye.redispike.handler.process.RedisRequestProcessor;
+import icu.funkye.redispike.handler.process.impl.AuthRequestProcessor;
 import icu.funkye.redispike.handler.process.impl.GetRequestProcessor;
 import icu.funkye.redispike.handler.process.impl.NotSupportProcessor;
 import icu.funkye.redispike.handler.process.impl.hash.HDelRequestProcessor;
@@ -103,9 +105,15 @@ public class RedisCommandHandler implements CommandHandler {
         HLenRequestProcessor hLenRequestProcessor = new HLenRequestProcessor();
         processorMap.put(hLenRequestProcessor.getCmdCode().value(), hLenRequestProcessor);
         HKeysRequestProcessor hKeysRequestProcessor = new HKeysRequestProcessor();
-        processorMap.put(hKeysRequestProcessor.getCmdCode().value(), hKeysRequestProcessor);
+        registryProcessor(hKeysRequestProcessor);
         NotSupportProcessor notSupportProcessor = new NotSupportProcessor();
-        processorMap.put(notSupportProcessor.getCmdCode().value(), notSupportProcessor);
+        registryProcessor(notSupportProcessor);
+        AuthRequestProcessor authRequestProcessor = new AuthRequestProcessor();
+        registryProcessor(authRequestProcessor);
+    }
+
+    private void registryProcessor(RedisRequestProcessor<?> processor) {
+        processorMap.put(processor.getCmdCode().value(), processor);
     }
 
     @Override
