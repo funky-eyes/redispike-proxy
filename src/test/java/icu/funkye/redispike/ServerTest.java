@@ -64,6 +64,16 @@ public class ServerTest {
 
     @Test
     @Order(value = Integer.MIN_VALUE)
+    public void TestErr() {
+        try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
+            jedis.aclDelUser("test");
+        }catch (Exception e){
+            logger.error("TestErr",e);
+        }
+    }
+
+    @Test
+    @Order(value = Integer.MIN_VALUE)
     public void TestPippline() {
         List<String> keys = new ArrayList<>();
         String key = String.valueOf(ThreadLocalRandom.current().nextLong(RandomValue));
@@ -136,7 +146,7 @@ public class ServerTest {
     @Test
     @DisabledIfSystemProperty(named = "asp-client.version", matches = "4.1.2")
     public void testKeys() {
-        /*        List<String> keys = new ArrayList<>();
+        List<String> keys = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
             keys.add(String.valueOf(ThreadLocalRandom.current().nextLong(RandomValue)));
         }
@@ -153,7 +163,7 @@ public class ServerTest {
             Assertions.assertEquals(result.size(), 1);
             result = jedis.keys("*123");
             Assertions.assertEquals(result.size(), 1);
-        }*/
+        }
     }
 
     @Test

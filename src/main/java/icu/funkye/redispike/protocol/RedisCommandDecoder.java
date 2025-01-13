@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import com.alipay.remoting.CommandDecoder;
+import icu.funkye.redispike.protocol.request.NotSupportRequest;
 import icu.funkye.redispike.protocol.request.hash.HDelRequest;
 import icu.funkye.redispike.protocol.request.hash.HExistsRequest;
 import icu.funkye.redispike.protocol.request.hash.HGetAllRequest;
@@ -152,7 +153,7 @@ public class RedisCommandDecoder implements CommandDecoder {
                 return new SPopRequest(params.remove(0), params.size() > 0 ? Integer.parseInt(params.get(0)) : null,
                     flush);
             default:
-                return null;
+                return new NotSupportRequest(params.get(0), flush);
         }
     }
 
