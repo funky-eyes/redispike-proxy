@@ -24,7 +24,6 @@ import icu.funkye.redispike.factory.AeroSpikeClientFactory;
 import icu.funkye.redispike.handler.process.AbstractRedisRequestProcessor;
 import icu.funkye.redispike.protocol.RedisRequestCommandCode;
 import icu.funkye.redispike.protocol.request.AuthRequest;
-import icu.funkye.redispike.protocol.request.NotSupportRequest;
 import icu.funkye.redispike.util.IntegerUtils;
 
 /**
@@ -33,7 +32,7 @@ import icu.funkye.redispike.util.IntegerUtils;
 public class AuthRequestProcessor extends AbstractRedisRequestProcessor<AuthRequest> {
 
     public AuthRequestProcessor() {
-        this.cmdCode = new RedisRequestCommandCode(IntegerUtils.hashCodeToShort(AuthRequestProcessor.class.hashCode()));
+        this.cmdCode = new RedisRequestCommandCode(IntegerUtils.hashCodeToShort(AuthRequest.class.hashCode()));
     }
 
     @Override
