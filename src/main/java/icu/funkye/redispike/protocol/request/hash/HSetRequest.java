@@ -22,6 +22,7 @@ import java.util.Map;
 import icu.funkye.redispike.protocol.AbstractRedisRequest;
 import icu.funkye.redispike.protocol.RedisResponse;
 import icu.funkye.redispike.protocol.request.conts.Operate;
+import icu.funkye.redispike.protocol.response.BulkResponse;
 import icu.funkye.redispike.protocol.response.IntegerResponse;
 import icu.funkye.redispike.util.CollectionUtils;
 
@@ -82,6 +83,12 @@ public class HSetRequest extends AbstractRedisRequest<String> {
 
     public String getKey() {
         return key;
+    }
+
+    @Override
+    public void setErrorResponse(String data) {
+        this.response = new BulkResponse();
+        ((BulkResponse) response).setError(data);
     }
 
     @Override

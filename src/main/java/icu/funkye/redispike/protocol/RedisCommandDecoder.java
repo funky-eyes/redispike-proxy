@@ -78,7 +78,7 @@ public class RedisCommandDecoder implements CommandDecoder {
             LOGGER.debug("cmds: {}", paramsList);
         }
         CountDownLatch countDownLatch = null;
-        if(size>0){
+        if (size > 0) {
             countDownLatch = new CountDownLatch(size);
         }
         // convert to RedisRequest
