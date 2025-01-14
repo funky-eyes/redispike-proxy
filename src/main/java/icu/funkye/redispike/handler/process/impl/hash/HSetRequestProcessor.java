@@ -24,7 +24,6 @@ import com.aerospike.client.Key;
 import com.aerospike.client.Language;
 import com.aerospike.client.listener.ExecuteListener;
 import com.aerospike.client.listener.WriteListener;
-import com.aerospike.client.policy.RecordExistsAction;
 import com.aerospike.client.policy.WritePolicy;
 import com.aerospike.client.task.RegisterTask;
 import com.alipay.remoting.RemotingContext;
@@ -65,20 +64,22 @@ public class HSetRequestProcessor extends AbstractRedisRequestProcessor<HSetRequ
         });
         WritePolicy writePolicy = defaultWritePolicy;
         if (request.getOperate() != null && request.getOperate() == Operate.NX) {
-           Bin bin = list.get(0);
+            Bin bin = list.get(0);
             client.execute(AeroSpikeClientFactory.eventLoops.next(), new ExecuteListener() {
-                @Override public void onSuccess(Key key, Object obj) {
+                @Override
+                public void onSuccess(Key key, Object obj) {
                     request.setResponse(obj.toString());
-                    write(ctx,request);
+                    write(ctx, request);
                 }
 
-                @Override public void onFailure(AerospikeException ae) {
+                @Override
+                public void onFailure(AerospikeException ae) {
                     logger.error(ae.getMessage(), ae);
                     request.setErrorResponse(ae.getMessage());
-                    write(ctx,request);
+                    write(ctx, request);
                 }
             }, writePolicy, key, "write_bin_if_not_exists", bin.name, bin.value);
-        }else {
+        } else {
             client.put(AeroSpikeClientFactory.eventLoops.next(), new WriteListener() {
                 @Override public void onSuccess(Key key) {
                     request.setResponse(String.valueOf(request.getKv().size()));
