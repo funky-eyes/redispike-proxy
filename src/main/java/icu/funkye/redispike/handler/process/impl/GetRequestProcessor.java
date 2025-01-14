@@ -21,7 +21,7 @@ import com.aerospike.client.Key;
 import com.aerospike.client.Record;
 import com.aerospike.client.listener.RecordListener;
 import com.alipay.remoting.RemotingContext;
-import com.alipay.sofa.common.profile.StringUtil;
+import com.alipay.sofa.common.utils.StringUtil;
 import icu.funkye.redispike.factory.AeroSpikeClientFactory;
 import icu.funkye.redispike.handler.process.AbstractRedisRequestProcessor;
 import icu.funkye.redispike.protocol.RedisRequestCommandCode;

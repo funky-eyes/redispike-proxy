@@ -21,9 +21,12 @@ import java.util.List;
 import com.aerospike.client.AerospikeException;
 import com.aerospike.client.Bin;
 import com.aerospike.client.Key;
+import com.aerospike.client.Language;
+import com.aerospike.client.Value;
+import com.aerospike.client.listener.ExecuteListener;
 import com.aerospike.client.listener.WriteListener;
-import com.aerospike.client.policy.RecordExistsAction;
 import com.aerospike.client.policy.WritePolicy;
+import com.aerospike.client.task.RegisterTask;
 import com.alipay.remoting.RemotingContext;
 import com.alipay.remoting.util.StringUtils;
 import icu.funkye.redispike.factory.AeroSpikeClientFactory;
@@ -40,6 +43,9 @@ public class HSetRequestProcessor extends AbstractRedisRequestProcessor<HSetRequ
         this.cmdCode = new RedisRequestCommandCode(IntegerUtils.hashCodeToShort(HSetRequest.class.hashCode()));
         this.defaultWritePolicy = client.getWritePolicyDefault();
         this.defaultWritePolicy.sendKey = true;
+        RegisterTask task = client.register(null, this.getClass().getClassLoader(), "lua/hsetnx.lua", "hsetnx.lua",
+            Language.LUA);
+        task.waitTillComplete();
     }
 
     @Override
@@ -57,25 +63,35 @@ public class HSetRequestProcessor extends AbstractRedisRequestProcessor<HSetRequ
             }
             list.add(new Bin(k, value));
         });
-        WritePolicy writePolicy;
+        WritePolicy writePolicy = defaultWritePolicy;
         if (request.getOperate() != null && request.getOperate() == Operate.NX) {
-            writePolicy = new WritePolicy(defaultWritePolicy);
-            writePolicy.recordExistsAction = RecordExistsAction.CREATE_ONLY;
-        } else {
-            writePolicy = defaultWritePolicy;
-        }
-        client.put(AeroSpikeClientFactory.eventLoops.next(), new WriteListener() {
-            @Override
-            public void onSuccess(Key key) {
-                request.setResponse(String.valueOf(request.getKv().size()));
-                write(ctx,request);
-            }
+            Bin bin = list.get(0);
+            client.execute(AeroSpikeClientFactory.eventLoops.next(), new ExecuteListener() {
+                @Override
+                public void onSuccess(Key key, Object obj) {
+                    request.setResponse(obj.toString());
+                    write(ctx, request);
+                }
 
-            @Override
-            public void onFailure(AerospikeException ae) {
-                logger.error(ae.getMessage(), ae);
-                write(ctx,request);
-            }
-        }, writePolicy, key, list.toArray(new Bin[0]));
+                @Override
+                public void onFailure(AerospikeException ae) {
+                    logger.error(ae.getMessage(), ae);
+                    request.setErrorResponse(ae.getMessage());
+                    write(ctx, request);
+                }
+            }, writePolicy, key, "hsetnx", "write_bin_if_not_exists", Value.get(bin.name), bin.value);
+        } else {
+            client.put(AeroSpikeClientFactory.eventLoops.next(), new WriteListener() {
+                @Override public void onSuccess(Key key) {
+                    request.setResponse(String.valueOf(request.getKv().size()));
+                    write(ctx, request);
+                }
+
+                @Override public void onFailure(AerospikeException ae) {
+                    logger.error(ae.getMessage(), ae);
+                    write(ctx, request);
+                }
+            }, writePolicy, key, list.toArray(new Bin[0]));
+        }
     }
 }

@@ -57,12 +57,18 @@
         <dependency>
             <groupId>com.alipay.sofa</groupId>
             <artifactId>bolt</artifactId>
-            <version>1.6.7</version>
+            <version>1.6.11</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.alipay.sofa</groupId>
+                    <artifactId>hessian</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
-            <version>4.1.108.Final</version>
+            <version>4.1.110.Final</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
