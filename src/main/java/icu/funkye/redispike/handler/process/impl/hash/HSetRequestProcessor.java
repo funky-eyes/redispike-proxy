@@ -22,6 +22,7 @@ import com.aerospike.client.AerospikeException;
 import com.aerospike.client.Bin;
 import com.aerospike.client.Key;
 import com.aerospike.client.Language;
+import com.aerospike.client.Value;
 import com.aerospike.client.listener.ExecuteListener;
 import com.aerospike.client.listener.WriteListener;
 import com.aerospike.client.policy.WritePolicy;
@@ -78,7 +79,7 @@ public class HSetRequestProcessor extends AbstractRedisRequestProcessor<HSetRequ
                     request.setErrorResponse(ae.getMessage());
                     write(ctx, request);
                 }
-            }, writePolicy, key, "hsetnx", bin.name, bin.value);
+            }, writePolicy, key, "hsetnx", "write_bin_if_not_exists", Value.get(bin.name), bin.value);
         } else {
             client.put(AeroSpikeClientFactory.eventLoops.next(), new WriteListener() {
                 @Override public void onSuccess(Key key) {
