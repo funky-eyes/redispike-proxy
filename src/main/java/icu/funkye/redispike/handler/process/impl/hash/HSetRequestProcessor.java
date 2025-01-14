@@ -78,7 +78,7 @@ public class HSetRequestProcessor extends AbstractRedisRequestProcessor<HSetRequ
                     request.setErrorResponse(ae.getMessage());
                     write(ctx, request);
                 }
-            }, writePolicy, key, "write_bin_if_not_exists", bin.name, bin.value);
+            }, writePolicy, key, "hsetnx.lua", bin.name, bin.value);
         } else {
             client.put(AeroSpikeClientFactory.eventLoops.next(), new WriteListener() {
                 @Override public void onSuccess(Key key) {
