@@ -18,6 +18,7 @@ package icu.funkye.redispike.handler.process.impl.hash;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import com.aerospike.client.AerospikeException;
 import com.aerospike.client.Bin;
 import com.aerospike.client.Key;
@@ -29,6 +30,7 @@ import com.aerospike.client.policy.WritePolicy;
 import com.aerospike.client.task.RegisterTask;
 import com.alipay.remoting.RemotingContext;
 import com.alipay.remoting.util.StringUtils;
+import icu.funkye.redispike.conts.RedisConstants;
 import icu.funkye.redispike.factory.AeroSpikeClientFactory;
 import icu.funkye.redispike.handler.process.AbstractRedisRequestProcessor;
 import icu.funkye.redispike.protocol.RedisRequestCommandCode;
@@ -50,7 +52,9 @@ public class HSetRequestProcessor extends AbstractRedisRequestProcessor<HSetRequ
 
     @Override
     public void handle(RemotingContext ctx, HSetRequest request) {
-        Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, request.getKey());
+        Key key = new Key(AeroSpikeClientFactory.namespace, Optional.ofNullable(ctx.getConnection().getAttribute(
+                RedisConstants.REDIS_DB))
+                .orElseGet(() -> AeroSpikeClientFactory.set).toString(), request.getKey());
         List<Bin> list = new ArrayList<>();
         request.getKv().forEach((k, v) -> {
             Object value;

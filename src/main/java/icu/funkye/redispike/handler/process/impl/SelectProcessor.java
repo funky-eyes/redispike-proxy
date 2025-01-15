@@ -16,22 +16,31 @@
  */
 package icu.funkye.redispike.handler.process.impl;
 
+import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
+
 import com.alipay.remoting.RemotingContext;
+
 import icu.funkye.redispike.conts.RedisConstants;
 import icu.funkye.redispike.handler.process.AbstractRedisRequestProcessor;
 import icu.funkye.redispike.protocol.RedisRequestCommandCode;
-import icu.funkye.redispike.protocol.request.CommandRequest;
+import icu.funkye.redispike.protocol.request.SelectRequest;
 import icu.funkye.redispike.util.IntegerUtils;
 
-public class CommandRequestProcessor extends AbstractRedisRequestProcessor<CommandRequest> {
+/**
+ * @author jianbin@apache.org
+ */
+public class SelectProcessor extends AbstractRedisRequestProcessor<SelectRequest> {
 
-    public CommandRequestProcessor() {
-        this.cmdCode = new RedisRequestCommandCode(IntegerUtils.hashCodeToShort(CommandRequest.class.hashCode()));
+    public SelectProcessor() {
+        this.cmdCode = new RedisRequestCommandCode(IntegerUtils.hashCodeToShort(SelectRequest.class.hashCode()));
     }
 
     @Override
-    public void handle(RemotingContext ctx, CommandRequest request) {
-        request.setResponse(RedisConstants.REDIS_SUCCESS_RESULT);
-        write(ctx, request);
-    }
+	public void handle(RemotingContext ctx, SelectRequest request) {
+		ctx.getConnection().setAttribute(RedisConstants.REDIS_DB, request.getDb());
+		request.setResponse(RedisConstants.REDIS_SUCCESS_RESULT);
+		Optional.ofNullable(request.getCountDownLatch()).ifPresent(CountDownLatch::countDown);
+		write(ctx, request);
+	}
 }

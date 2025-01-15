@@ -16,6 +16,7 @@
  */
 package icu.funkye.redispike.handler.process.impl.hash;
 
+import java.util.Optional;
 import com.aerospike.client.AerospikeException;
 import com.aerospike.client.Bin;
 import com.aerospike.client.Key;
@@ -25,6 +26,7 @@ import com.aerospike.client.listener.RecordListener;
 import com.aerospike.client.policy.WritePolicy;
 import com.alipay.remoting.RemotingContext;
 
+import icu.funkye.redispike.conts.RedisConstants;
 import icu.funkye.redispike.factory.AeroSpikeClientFactory;
 import icu.funkye.redispike.handler.process.AbstractRedisRequestProcessor;
 import icu.funkye.redispike.protocol.RedisRequestCommandCode;
@@ -42,7 +44,9 @@ public class HIncrbyfloatRequestProcessor extends AbstractRedisRequestProcessor<
 
     @Override
     public void handle(RemotingContext ctx, HIncrbyfloatRequest request) {
-        Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, request.getKey());
+        Key key = new Key(AeroSpikeClientFactory.namespace, Optional.ofNullable(ctx.getConnection().getAttribute(
+                RedisConstants.REDIS_DB))
+                .orElseGet(() -> AeroSpikeClientFactory.set).toString(), request.getKey());
         Bin bin = new Bin(request.getField(), Double.parseDouble(request.getValue()));
         client.operate(AeroSpikeClientFactory.eventLoops.next(), new RecordListener() {
             @Override
@@ -61,5 +65,4 @@ public class HIncrbyfloatRequestProcessor extends AbstractRedisRequestProcessor<
             }
         }, defaultWritePolicy, key, Operation.add(bin), Operation.get(request.getField()));
     }
-
 }

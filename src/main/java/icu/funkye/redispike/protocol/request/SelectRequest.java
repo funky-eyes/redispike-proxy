@@ -14,24 +14,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package icu.funkye.redispike.handler.process.impl;
+package icu.funkye.redispike.protocol.request;
 
-import com.alipay.remoting.RemotingContext;
-import icu.funkye.redispike.conts.RedisConstants;
-import icu.funkye.redispike.handler.process.AbstractRedisRequestProcessor;
-import icu.funkye.redispike.protocol.RedisRequestCommandCode;
-import icu.funkye.redispike.protocol.request.CommandRequest;
-import icu.funkye.redispike.util.IntegerUtils;
+import icu.funkye.redispike.protocol.AbstractRedisRequest;
+import icu.funkye.redispike.protocol.RedisResponse;
+import icu.funkye.redispike.protocol.response.BulkResponse;
 
-public class CommandRequestProcessor extends AbstractRedisRequestProcessor<CommandRequest> {
+public class SelectRequest extends AbstractRedisRequest<String> {
 
-    public CommandRequestProcessor() {
-        this.cmdCode = new RedisRequestCommandCode(IntegerUtils.hashCodeToShort(CommandRequest.class.hashCode()));
+    final String db;
+
+    BulkResponse response = new BulkResponse();
+
+    public SelectRequest(String db, boolean flush) {
+        this.flush = flush;
+        this.db = db;
+    }
+
+    public String getDb() {
+        return db;
     }
 
     @Override
-    public void handle(RemotingContext ctx, CommandRequest request) {
-        request.setResponse(RedisConstants.REDIS_SUCCESS_RESULT);
-        write(ctx, request);
+    public void setResponse(String data) {
+        this.response.setError(data);
     }
+
+    @Override
+    public RedisResponse<String> getResponse() {
+        return response;
+    }
+
+    @Override
+    public String toString() {
+        return "SelectRequest{" + "db='" + db + '\'' + ", response=" + response + '}';
+    }
+
 }

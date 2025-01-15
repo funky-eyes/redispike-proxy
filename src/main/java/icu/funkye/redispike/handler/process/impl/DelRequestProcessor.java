@@ -17,6 +17,7 @@
 package icu.funkye.redispike.handler.process.impl;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -25,6 +26,7 @@ import com.aerospike.client.AerospikeException;
 import com.aerospike.client.Key;
 import com.aerospike.client.listener.DeleteListener;
 import com.alipay.remoting.RemotingContext;
+import icu.funkye.redispike.conts.RedisConstants;
 import icu.funkye.redispike.factory.AeroSpikeClientFactory;
 import icu.funkye.redispike.handler.process.AbstractRedisRequestProcessor;
 import icu.funkye.redispike.protocol.RedisRequestCommandCode;
@@ -41,7 +43,9 @@ public class DelRequestProcessor extends AbstractRedisRequestProcessor<DelReques
     public void handle(RemotingContext ctx, DelRequest request) {
         List<String> keys = request.getKey();
         List<Key> list =
-            keys.stream().map(key -> new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, key))
+            keys.stream().map(key -> new Key(AeroSpikeClientFactory.namespace, Optional.ofNullable(ctx.getConnection().getAttribute(
+                        RedisConstants.REDIS_DB))
+                .orElseGet(() -> AeroSpikeClientFactory.set).toString(), key))
                 .collect(Collectors.toList());
         CountDownLatch countDownLatch = new CountDownLatch(list.size());
         for (Key key : list) {

@@ -16,12 +16,14 @@
  */
 package icu.funkye.redispike.handler.process.impl;
 
+import java.util.Optional;
 import com.aerospike.client.AerospikeException;
 import com.aerospike.client.Key;
 import com.aerospike.client.Record;
 import com.aerospike.client.listener.RecordListener;
 import com.alipay.remoting.RemotingContext;
 import com.alipay.sofa.common.utils.StringUtil;
+import icu.funkye.redispike.conts.RedisConstants;
 import icu.funkye.redispike.factory.AeroSpikeClientFactory;
 import icu.funkye.redispike.handler.process.AbstractRedisRequestProcessor;
 import icu.funkye.redispike.protocol.RedisRequestCommandCode;
@@ -36,7 +38,9 @@ public class GetRequestProcessor extends AbstractRedisRequestProcessor<GetReques
 
     @Override
     public void handle(RemotingContext ctx, GetRequest request) {
-        Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, request.getKey());
+        Key key = new Key(AeroSpikeClientFactory.namespace, Optional.ofNullable(ctx.getConnection().getAttribute(
+                RedisConstants.REDIS_DB))
+                .orElseGet(() -> AeroSpikeClientFactory.set).toString(), request.getKey());
         client.get(AeroSpikeClientFactory.eventLoops.next(), new RecordListener() {
             @Override
             public void onSuccess(Key key, Record record) {
@@ -44,7 +48,7 @@ public class GetRequestProcessor extends AbstractRedisRequestProcessor<GetReques
                     write(ctx, request);
                     return;
                 }
-                String value = record.getString(" ");
+                String value = record.getString("");
                 if (StringUtil.isNotBlank(value)) {
                     request.setResponse(value);
                 }
