@@ -37,7 +37,7 @@ public class SelectRequest extends AbstractRedisRequest<String> {
 
     @Override
     public void setResponse(String data) {
-        this.response.setError(data);
+        this.response.setData(data);
     }
 
     @Override
