@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolAbstract;
+import redis.clients.jedis.util.Pool;
 
 /**
  */
@@ -30,16 +30,16 @@ public class JedisPooledFactory {
     /**
      * The constant LOGGER.
      */
-    protected static final Logger             LOGGER    = LoggerFactory.getLogger(JedisPooledFactory.class);
+    protected static final Logger       LOGGER    = LoggerFactory.getLogger(JedisPooledFactory.class);
 
-    private static volatile JedisPoolAbstract jedisPool = null;
+    private static volatile Pool<Jedis> jedisPool = null;
 
     /**
      * get the RedisPool instance (singleton)
      *
      * @return redisPool
      */
-    public static JedisPoolAbstract getJedisPoolInstance(String ip, int port) {
+    public static Pool<Jedis> getJedisPoolInstance(String ip, int port) {
         if (jedisPool == null) {
             synchronized (JedisPooledFactory.class) {
                 if (jedisPool == null) {

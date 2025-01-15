@@ -18,6 +18,7 @@ package icu.funkye.redispike.handler.process.impl.set;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.aerospike.client.AerospikeException;
 import com.aerospike.client.Bin;
@@ -26,6 +27,7 @@ import com.aerospike.client.listener.WriteListener;
 import com.aerospike.client.policy.WritePolicy;
 import com.alipay.remoting.RemotingContext;
 
+import icu.funkye.redispike.conts.RedisConstants;
 import icu.funkye.redispike.factory.AeroSpikeClientFactory;
 import icu.funkye.redispike.handler.process.AbstractRedisRequestProcessor;
 import icu.funkye.redispike.protocol.RedisRequestCommandCode;
@@ -43,7 +45,9 @@ public class SAddRequestProcessor extends AbstractRedisRequestProcessor<SAddRequ
 
     @Override
     public void handle(RemotingContext ctx, SAddRequest request) {
-        Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, request.getKey());
+        Key key = new Key(AeroSpikeClientFactory.namespace, Optional.ofNullable(ctx.getConnection().getAttribute(
+                RedisConstants.REDIS_DB))
+                .orElseGet(() -> AeroSpikeClientFactory.set).toString(), request.getKey());
         List<Bin> list = new ArrayList<>();
         for (String field : request.getFields()) {
             list.add(new Bin(field, ""));

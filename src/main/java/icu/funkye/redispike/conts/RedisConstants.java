@@ -14,20 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package icu.funkye.redispike.common;
-
-import com.alipay.remoting.Connection;
-import com.alipay.remoting.ConnectionEventProcessor;
-import org.junit.jupiter.api.Assertions;
+package icu.funkye.redispike.conts;
 
 /**
  * @author jianbin@apache.org
  */
-public class DISCONNECTEventProcessor implements ConnectionEventProcessor {
+public interface RedisConstants {
 
-    @Override
-    public void onEvent(String remoteAddr, Connection conn) {
-        Assertions.assertNotNull(conn);
-    }
+    String REDIS_DB             = "db";
+
+    String REDIS_SUCCESS_RESULT = "OK";
 
 }

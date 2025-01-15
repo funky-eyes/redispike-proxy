@@ -23,6 +23,7 @@ import com.aerospike.client.Host;
 import com.aerospike.client.policy.ClientPolicy;
 import com.alipay.remoting.ConnectionEventType;
 import com.alipay.remoting.ProtocolManager;
+import icu.funkye.redispike.conts.RedisConstants;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -79,7 +80,7 @@ public class Server {
         String targetUser = cl.getOptionValue("TU", null);
         String targetPassword = cl.getOptionValue("TP", null);
         AeroSpikeClientFactory.namespace = cl.getOptionValue("n", "test");
-        AeroSpikeClientFactory.set = cl.getOptionValue("s", "demoset");
+        AeroSpikeClientFactory.set = cl.getOptionValue("s", "0");
         Host[] hosts = Host.parseHosts(host, targetPort);
         ClientPolicy clientPolicy = new ClientPolicy();
         clientPolicy.user = targetUser;

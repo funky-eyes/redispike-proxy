@@ -27,6 +27,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import com.aerospike.client.IAerospikeClient;
 import com.aerospike.client.Key;
 import com.aerospike.client.Record;
+import icu.funkye.redispike.conts.RedisConstants;
 import org.apache.commons.cli.ParseException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -254,12 +255,12 @@ public class ServerTest {
     public void testGetSetAsp() {
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
             String result = jedis.set("a", "b");
-            Assertions.assertEquals(result, "OK");
+            Assertions.assertEquals(result, RedisConstants.REDIS_SUCCESS_RESULT);
         }
         Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, "a");
         Record record = aspClient.get(aspClient.getReadPolicyDefault(), key);
         Map<String, Object> map = record.bins;
-        Assertions.assertEquals(map.get(" "), "b");
+        Assertions.assertEquals(map.get(""), "b");
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
             String result = jedis.get("a");
             Assertions.assertEquals(result, "b");
@@ -282,7 +283,7 @@ public class ServerTest {
         String key = String.valueOf(ThreadLocalRandom.current().nextLong(RandomValue));
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
             String result = jedis.set(key, "b", SetParams.setParams().ex(1L));
-            Assertions.assertEquals(result, "OK");
+            Assertions.assertEquals(result, RedisConstants.REDIS_SUCCESS_RESULT);
             Thread.sleep(3000);
             result = jedis.get(key);
             Assertions.assertNull(result);
@@ -297,7 +298,7 @@ public class ServerTest {
         String key = String.valueOf(ThreadLocalRandom.current().nextLong(RandomValue));
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
             String result = jedis.set(key, "b", SetParams.setParams().nx());
-            Assertions.assertEquals(result, "OK");
+            Assertions.assertEquals(result, RedisConstants.REDIS_SUCCESS_RESULT);
             result = jedis.set(key, "b", SetParams.setParams().nx());
             Assertions.assertNull(result);
             key = String.valueOf(ThreadLocalRandom.current().nextLong(RandomValue));
@@ -314,7 +315,7 @@ public class ServerTest {
         String key = String.valueOf(ThreadLocalRandom.current().nextLong(RandomValue));
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
             String result = jedis.set(key, "b", SetParams.setParams().nx().ex(1L));
-            Assertions.assertEquals(result, "OK");
+            Assertions.assertEquals(result, RedisConstants.REDIS_SUCCESS_RESULT);
             Thread.sleep(3000);
             result = jedis.get(key);
             Assertions.assertNull(result);
@@ -329,7 +330,7 @@ public class ServerTest {
         String key = String.valueOf(ThreadLocalRandom.current().nextLong(RandomValue));
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
             String result = jedis.set(key, "b");
-            Assertions.assertEquals(result, "OK");
+            Assertions.assertEquals(result, RedisConstants.REDIS_SUCCESS_RESULT);
             result = String.valueOf(jedis.del(key));
             Assertions.assertEquals(result, "1");
         }
@@ -344,9 +345,9 @@ public class ServerTest {
         }
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
             String result = jedis.set(keys.get(0), "b");
-            Assertions.assertEquals(result, "OK");
+            Assertions.assertEquals(result, RedisConstants.REDIS_SUCCESS_RESULT);
             result = jedis.set(keys.get(1), "b");
-            Assertions.assertEquals(result, "OK");
+            Assertions.assertEquals(result, RedisConstants.REDIS_SUCCESS_RESULT);
             result = String.valueOf(jedis.del(keys.toArray(new String[0])));
             Assertions.assertEquals(result, String.valueOf(keys.size()));
         }
@@ -357,7 +358,23 @@ public class ServerTest {
     public void testAuth() {
         try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
             String result = jedis.auth("123");
-            Assertions.assertEquals("OK", result);
+            Assertions.assertEquals(RedisConstants.REDIS_SUCCESS_RESULT, result);
+        }
+    }
+
+    @Test
+    @Order(13)
+    public void testSelect() {
+        try (Jedis jedis = JedisPooledFactory.getJedisInstance()) {
+            jedis.del("a");
+            jedis.set("a", "b");
+            String result = jedis.select(2);
+            Assertions.assertEquals(RedisConstants.REDIS_SUCCESS_RESULT, result);
+            Assertions.assertNull(jedis.get("a"));
+            result = jedis.select(0);
+            Assertions.assertEquals(RedisConstants.REDIS_SUCCESS_RESULT, result);
+            Assertions.assertEquals(jedis.get("a"), "b");
+            jedis.del("a");
         }
     }
 

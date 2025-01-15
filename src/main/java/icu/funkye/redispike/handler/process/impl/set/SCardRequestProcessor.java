@@ -16,6 +16,7 @@
  */
 package icu.funkye.redispike.handler.process.impl.set;
 
+import java.util.Optional;
 import com.aerospike.client.AerospikeException;
 import com.aerospike.client.Key;
 import com.aerospike.client.Language;
@@ -23,6 +24,7 @@ import com.aerospike.client.listener.ExecuteListener;
 import com.aerospike.client.task.RegisterTask;
 import com.alipay.remoting.RemotingContext;
 
+import icu.funkye.redispike.conts.RedisConstants;
 import icu.funkye.redispike.factory.AeroSpikeClientFactory;
 import icu.funkye.redispike.handler.process.AbstractRedisRequestProcessor;
 import icu.funkye.redispike.protocol.RedisRequestCommandCode;
@@ -40,7 +42,9 @@ public class SCardRequestProcessor extends AbstractRedisRequestProcessor<SCardRe
 
     @Override
     public void handle(RemotingContext ctx, SCardRequest request) {
-        Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, request.getKey());
+        Key key = new Key(AeroSpikeClientFactory.namespace, Optional.ofNullable(ctx.getConnection().getAttribute(
+                RedisConstants.REDIS_DB))
+                .orElseGet(() -> AeroSpikeClientFactory.set).toString(), request.getKey());
         client.execute(AeroSpikeClientFactory.eventLoops.next(), new ExecuteListener() {
             @Override
             public void onSuccess(Key key, Object obj) {

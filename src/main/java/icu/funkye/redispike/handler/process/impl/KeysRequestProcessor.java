@@ -16,6 +16,7 @@
  */
 package icu.funkye.redispike.handler.process.impl;
 
+import java.util.Optional;
 import com.aerospike.client.AerospikeException;
 import com.aerospike.client.Key;
 import com.aerospike.client.Record;
@@ -24,6 +25,7 @@ import com.aerospike.client.policy.ScanPolicy;
 import com.alipay.remoting.RemotingContext;
 import com.alipay.remoting.util.StringUtils;
 
+import icu.funkye.redispike.conts.RedisConstants;
 import icu.funkye.redispike.factory.AeroSpikeClientFactory;
 import icu.funkye.redispike.handler.process.AbstractRedisRequestProcessor;
 import icu.funkye.redispike.protocol.RedisRequestCommandCode;
@@ -92,7 +94,8 @@ public class KeysRequestProcessor extends AbstractRedisRequestProcessor<KeysRequ
                 logger.error(exception.getMessage(), exception);
                 write(ctx, request);
             }
-        }, scanPolicy, AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set);
+        }, scanPolicy, AeroSpikeClientFactory.namespace, Optional.ofNullable(ctx.getConnection().getAttribute(
+                RedisConstants.REDIS_DB))
+                .orElseGet(() -> AeroSpikeClientFactory.set).toString());
     }
-
 }

@@ -29,6 +29,7 @@ import icu.funkye.redispike.handler.process.RedisRequestProcessor;
 import icu.funkye.redispike.handler.process.impl.AuthRequestProcessor;
 import icu.funkye.redispike.handler.process.impl.GetRequestProcessor;
 import icu.funkye.redispike.handler.process.impl.NotSupportProcessor;
+import icu.funkye.redispike.handler.process.impl.SelectProcessor;
 import icu.funkye.redispike.handler.process.impl.hash.HDelRequestProcessor;
 import icu.funkye.redispike.handler.process.impl.hash.HExistsRequestProcessor;
 import icu.funkye.redispike.handler.process.impl.hash.HGetAllRequestProcessor;
@@ -100,16 +101,12 @@ public class RedisCommandHandler implements CommandHandler {
         processorMap.put(hValsRequestProcessor.getCmdCode().value(), hValsRequestProcessor);
         HIncrbyRequestProcessor hIncrbyRequestProcessor = new HIncrbyRequestProcessor();
         processorMap.put(hIncrbyRequestProcessor.getCmdCode().value(), hIncrbyRequestProcessor);
-        HIncrbyfloatRequestProcessor hIncrbyfloatRequestProcessor = new HIncrbyfloatRequestProcessor();
-        processorMap.put(hIncrbyfloatRequestProcessor.getCmdCode().value(), hIncrbyfloatRequestProcessor);
-        HLenRequestProcessor hLenRequestProcessor = new HLenRequestProcessor();
-        processorMap.put(hLenRequestProcessor.getCmdCode().value(), hLenRequestProcessor);
-        HKeysRequestProcessor hKeysRequestProcessor = new HKeysRequestProcessor();
-        registryProcessor(hKeysRequestProcessor);
-        NotSupportProcessor notSupportProcessor = new NotSupportProcessor();
-        registryProcessor(notSupportProcessor);
-        AuthRequestProcessor authRequestProcessor = new AuthRequestProcessor();
-        registryProcessor(authRequestProcessor);
+        registryProcessor(new HIncrbyfloatRequestProcessor());
+        registryProcessor(new HLenRequestProcessor());
+        registryProcessor(new HKeysRequestProcessor());
+        registryProcessor(new NotSupportProcessor());
+        registryProcessor(new AuthRequestProcessor());
+        registryProcessor(new SelectProcessor());
     }
 
     private void registryProcessor(RedisRequestProcessor<?> processor) {
@@ -135,7 +132,9 @@ public class RedisCommandHandler implements CommandHandler {
                 processorMap.get(request.getCmdCode().value()).process(ctx, request, getDefaultExecutor());
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
-                ctx.writeAndFlush(new BulkResponse());
+                BulkResponse bulkResponse = new BulkResponse();
+                bulkResponse.setError(e.getMessage());
+                ctx.writeAndFlush(bulkResponse);
             }
         }
     }

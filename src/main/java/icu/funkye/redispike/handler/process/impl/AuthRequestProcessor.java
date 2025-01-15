@@ -20,6 +20,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import com.alipay.remoting.RemotingContext;
+import icu.funkye.redispike.conts.RedisConstants;
 import icu.funkye.redispike.factory.AeroSpikeClientFactory;
 import icu.funkye.redispike.handler.process.AbstractRedisRequestProcessor;
 import icu.funkye.redispike.protocol.RedisRequestCommandCode;
@@ -39,7 +40,7 @@ public class AuthRequestProcessor extends AbstractRedisRequestProcessor<AuthRequ
 	public void handle(RemotingContext ctx, AuthRequest request) {
         if (AeroSpikeClientFactory.originClientPolicy.password == null
             || Objects.equals(AeroSpikeClientFactory.originClientPolicy.password, request.getPassword())) {
-            request.setResponse("OK");
+            request.setResponse(RedisConstants.REDIS_SUCCESS_RESULT);
         } else {
             request.setErrorResponse("ERR Client sent AUTH, but no password is set");
         }

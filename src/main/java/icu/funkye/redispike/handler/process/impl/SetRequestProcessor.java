@@ -16,6 +16,7 @@
  */
 package icu.funkye.redispike.handler.process.impl;
 
+import java.util.Optional;
 import com.aerospike.client.AerospikeException;
 import com.aerospike.client.Bin;
 import com.aerospike.client.Key;
@@ -25,6 +26,7 @@ import com.aerospike.client.listener.WriteListener;
 import com.aerospike.client.policy.RecordExistsAction;
 import com.aerospike.client.policy.WritePolicy;
 import com.alipay.remoting.RemotingContext;
+import icu.funkye.redispike.conts.RedisConstants;
 import icu.funkye.redispike.factory.AeroSpikeClientFactory;
 import icu.funkye.redispike.handler.process.AbstractRedisRequestProcessor;
 import icu.funkye.redispike.protocol.RedisRequestCommandCode;
@@ -44,8 +46,12 @@ public class SetRequestProcessor extends AbstractRedisRequestProcessor<SetReques
 
     @Override
     public void handle(RemotingContext ctx, SetRequest request) {
-        Bin bin = new Bin(" ", request.getValue());
-        Key key = new Key(AeroSpikeClientFactory.namespace, AeroSpikeClientFactory.set, request.getKey());
+        Bin bin = new Bin("", request.getValue());
+        Key key = new Key(AeroSpikeClientFactory.namespace,
+            Optional.ofNullable(ctx.getConnection().getAttribute(RedisConstants.REDIS_DB))
+                .orElseGet(() -> Optional.ofNullable(ctx.getConnection().getAttribute(RedisConstants.REDIS_DB))
+                .orElseGet(() -> AeroSpikeClientFactory.set).toString()).toString(),
+            request.getKey());
         WritePolicy writePolicy = this.defaultWritePolicy;
         if (request.getTtl() != null) {
             writePolicy = new WritePolicy(writePolicy);
@@ -69,7 +75,7 @@ public class SetRequestProcessor extends AbstractRedisRequestProcessor<SetReques
                             client.put(AeroSpikeClientFactory.eventLoops.next(), new WriteListener() {
                                 @Override
                                 public void onSuccess(Key key) {
-                                    request.setResponse("OK");
+                                    request.setResponse(RedisConstants.REDIS_SUCCESS_RESULT);
                                     write(ctx, request);
                                 }
 
@@ -97,7 +103,7 @@ public class SetRequestProcessor extends AbstractRedisRequestProcessor<SetReques
                 if (request.getOriginalCommand().contains("nx")) {
                     request.setResponse("1");
                 } else {
-                    request.setResponse("OK");
+                    request.setResponse(RedisConstants.REDIS_SUCCESS_RESULT);
                 }
                 write(ctx, request);
             }
@@ -109,5 +115,4 @@ public class SetRequestProcessor extends AbstractRedisRequestProcessor<SetReques
             }
         }, writePolicy, key, bin);
     }
-
 }
