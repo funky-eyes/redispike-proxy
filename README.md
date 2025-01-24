@@ -119,3 +119,20 @@ Summary:
           avg       min       p50       p95       p99       max
         3.628     1.160     3.215     6.871     9.871    52.415
 ```
+
+### Compile
+
+#### jar:
+
+```
+mvn clean install -DskipTests
+java -jar target/redispike-proxy.jar
+```
+
+#### AOT
+
+```
+mvn native:compile -DskipTests
+./target/redispike-proxy
+
+```

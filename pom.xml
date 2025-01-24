@@ -17,7 +17,7 @@
         <mock-jedis.version>0.3.1</mock-jedis.version>
         <junit-jupiter.version>5.8.2</junit-jupiter.version>
         <commons-cli.version>1.6.0</commons-cli.version>
-        <log.version>1.2.13</log.version>
+        <log.version>1.2.12</log.version>
         <p3c-pmd.version>1.3.6</p3c-pmd.version>
         <maven-pmd-plugin.version>3.8</maven-pmd-plugin.version>
         <asp-client.version>4.1.2</asp-client.version>
@@ -57,7 +57,7 @@
         <dependency>
             <groupId>com.alipay.sofa</groupId>
             <artifactId>bolt</artifactId>
-            <version>1.6.11</version>
+            <version>1.6.12-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.alipay.sofa</groupId>
@@ -69,6 +69,12 @@
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
             <version>4.1.110.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty.incubator</groupId>
+            <artifactId>netty-incubator-transport-native-io_uring</artifactId>
+            <version>0.0.25.Final</version>
+            <classifier>linux-x86_64</classifier>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -84,6 +90,11 @@
 <build>
     <finalName>${artifactId}</finalName>
     <plugins>
+        <plugin>
+            <groupId>org.graalvm.buildtools</groupId>
+            <artifactId>native-maven-plugin</artifactId>
+            <version>0.10.4</version>
+        </plugin>
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
