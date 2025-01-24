@@ -1,23 +1,5 @@
 {
-  "resources":{
-  "includes":[{
-    "pattern":"\\QMETA-INF/services/java.lang.System$LoggerFinder\\E"
-  }, {
-    "pattern":"\\QMETA-INF/services/java.nio.channels.spi.SelectorProvider\\E"
-  }, {
-    "pattern":"\\QMETA-INF/services/java.time.zone.ZoneRulesProvider\\E"
-  }, {
-    "pattern":"\\QMETA-INF/services/javax.xml.parsers.SAXParserFactory\\E"
-  }, {
-    "pattern":"\\Qcom/alipay/remoting/log/logback/log-conf.xml\\E"
-  }, {
-    "pattern":"\\Qlogback-test.xml\\E"
-  }, {
-    "pattern":"\\Qlogback.xml\\E"
-  }, {
-    "pattern":"\\Qlua/spop.lua\\E"
-  }, {
-    "pattern":"\\Qorg/slf4j/impl/StaticLoggerBinder.class\\E"
-  }]},
-  "bundles":[]
+  "resources":{"includes":[{"pattern":"\\QMETA-INF/services/java.lang.System$LoggerFinder\\E"},{"pattern":"\\QMETA-INF/services/java.nio.channels.spi.SelectorProvider\\E"},{"pattern":"\\QMETA-INF/services/java.time.zone.ZoneRulesProvider\\E"},{"pattern":"\\QMETA-INF/services/javax.xml.parsers.SAXParserFactory\\E"},{"pattern":"\\Qcom/alipay/remoting/log/logback/log-conf.xml\\E"},{"pattern":"\\Qlogback-test.xml\\E"},{"pattern":"\\Qlogback.xml\\E"},{"pattern":"\\Qlua/spop.lua\\E"},{"pattern":"\\Qorg/slf4j/impl/StaticLoggerBinder.class\\E"}]},
+  "bundles":[],
+  "globs":[{"glob":"META-INF/services/java.lang.System$LoggerFinder"},{"glob":"META-INF/services/java.net.spi.InetAddressResolverProvider"},{"glob":"META-INF/services/java.nio.channels.spi.SelectorProvider"},{"glob":"META-INF/services/javax.management.remote.JMXConnectorServerProvider"},{"glob":"META-INF/services/javax.xml.parsers.SAXParserFactory"},{"glob":"com/alipay/remoting/log/logback/config.properties"},{"glob":"com/alipay/remoting/log/logback/log-conf.xml"},{"glob":"logback-test.xml"},{"glob":"logback.xml"},{"glob":"lua/hdel.lua"},{"glob":"lua/hlen.lua"},{"glob":"lua/hsetnx.lua"},{"glob":"lua/scard.lua"},{"glob":"lua/spop.lua"},{"glob":"lua/srandmember.lua"},{"glob":"lua/srem.lua"},{"glob":"org/slf4j/impl/StaticLoggerBinder.class"},{"module":"java.xml","glob":"jdk/xml/internal/jdkcatalog/JDKCatalog.xml"},{"module":"jdk.jfr","glob":"jdk/jfr/internal/query/view.ini"},{"module":"jdk.management.agent","glob":"jdk/internal/agent/resources/agent_zh.properties"},{"module":"jdk.management.agent","glob":"jdk/internal/agent/resources/agent_zh_Hans.properties"},{"module":"jdk.management.agent","glob":"jdk/internal/agent/resources/agent_zh_Hans_CN.properties"}]
 }
